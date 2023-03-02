@@ -22366,6 +22366,161 @@ class JoinArraysTest {
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+02.03.2023 Perşembe - 27.Ders
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Dizilerin sıraya dizilmesi (sorting):
+	Dizilerin sıraya dizilmesine yönelik pek çok algoritma vardır. Sıralama işleminin küçükten büyüğe yani artan
+	sırada (ascending order) yapılmasına doğal sıralama (natural sort order) denir. Biz burada kabarcık sıralama (bubble sort)
+	ve seçerek sıralama (selection sort) algoritmalarını kodlayacağız. Algoritmaların doğal sıralama olacak şekilde
+	anlatılacaktır. Ancak her iki sıralama da (ascending ve descending) kodlanacaktır
+
+
+	Anahtar Notlar: Algoritmaların karşılaştırılmasına yönelik iki ölçit vardır: hız (speed), kaynak kullanımı (resource usage)
+	Burada baskın ölçüt hızdır. Biz kabarcık sıralama ve seçerek sıralama algoritmalarını bu bölümde karşılaştırmayacağız
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Kabarcık sıralama algoritmasında dizinin yan yana iki elemanı karşılaştırılır duruma göre yer değiştirilir. Her yinelemede
+	en büyük eleman daraltılmış dizinin sonuna gider. Bçöylece her yinelemede eskisinden bir geriye kadar gitmek
+	yeterli olur
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+import static com.orhn.util.array.ArrayUtil.*;
+
+class App {
+	public static void main(String[] args) {
+		BubbleSortTest.run();
+	}
+}
+
+class BubbleSortTest{
+	public static void run()
+	{
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		for (;;){
+			System.out.print("Dizinini eleman sayısını giriniz : ");
+			int n = Integer.parseInt(kb.nextLine());
+
+			if(n <= 0)
+				break;
+
+			int [] a = getRandomArray(r, n, 0, 99);
+
+			print(2, a);
+
+			boolean desc = false;
+
+			bubbleSort(a, desc);
+
+			System.out.printf("%s sıralanmış dizi : %n", desc ? "Büyükten küçüğe" :  "Küçükten büyüğe");
+
+			print(2, a);
+
+		}
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Seçerek sıralama algoritmasında en küçük eleman bulunur, ilk eleman ile yer değiştirilir. Dizi bir daraltılır, aynı
+	şey daraltılmış dizi için de yapılır. Böylece ilerlenir
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+import static com.orhn.util.array.ArrayUtil.*;
+
+class App {
+	public static void main(String[] args) {
+		SelectionSortTest.run();
+	}
+}
+
+class SelectionSortTest{
+	public static void run()
+	{
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		for (;;){
+			System.out.print("Dizinini eleman sayısını giriniz : ");
+			int n = Integer.parseInt(kb.nextLine());
+
+			if(n <= 0)
+				break;
+
+			int [] a = getRandomArray(r, n, 0, 99);
+
+			print(2, a);
+
+			boolean desc = true;
+
+			selectionSort(a, desc);
+
+			System.out.printf("%s sıralanmış dizi : %n", desc ? "Büyükten küçüğe" :  "Küçükten büyüğe");
+
+			print(2, a);
+
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Partition algoritması ve ArrayUtil sınıfının partition metodu
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+import com.orhn.app.lottery.NumericLotteryApp;
+import com.orhn.util.array.ArrayUtil;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String[] args) {
+		PartitionTest.run();
+	}
+}
+class PartitionTest {
+	public static void run()
+	{
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		for (;;) {
+			System.out.print("Bir sayı giriniz:");
+			int count = Integer.parseInt(kb.nextLine());
+
+			if (count <= 0)
+				break;
+
+			System.out.print("Eşik değerini giriniz:");
+			int threshold = Integer.parseInt(kb.nextLine());
+
+			int [] a = ArrayUtil.getRandomArray(r, count, 0, 99);
+			System.out.println("---------------------------------------------------------");
+			ArrayUtil.print(2, a);
+			int partitionPoint = ArrayUtil.partition(a, threshold);
+
+			System.out.printf("Bölümleme Noktası:%d%n", partitionPoint);
+			ArrayUtil.print(2, a);
+			System.out.println("---------------------------------------------------------");
+		}
+
+		System.out.println("Tekrar yapıyor musunuz?");
+	}
+}
 
 
 -----------------------------------------------------------

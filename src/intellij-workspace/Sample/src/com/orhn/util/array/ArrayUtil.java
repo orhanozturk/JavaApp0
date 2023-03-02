@@ -51,6 +51,101 @@ public class ArrayUtil {
         return total;
     }
 
+    private static void bubbleSortAscending(int [] a)
+    {
+        for (int i = 0; i < a.length -1; ++i)
+            for (int k = 0; k < a.length -1 -i; ++k)
+                if(a[k] > a[k + 1])
+                    swap(a, k, k+1);
+    }
+
+    private static void bubbleSortDescending(int [] a)
+    {
+        for (int i = 0; i < a.length -1; ++i)
+            for (int k = 0; k < a.length -1 -i; ++k)
+                if(a[k] < a[k + 1])
+                    swap(a, k, k+1);
+    }
+
+    public static void bubbleSort(int [] a)
+    {
+        bubbleSort(a, false);
+    }
+    public static void bubbleSort(int [] a, boolean descending)
+    {
+        if(descending)
+            bubbleSortDescending(a);
+        else
+            bubbleSortAscending(a);
+    }
+
+    private  static void selectionSortAscending(int [] a)
+    {
+        int min, minIndex;
+
+        for (int i = 0; i < a.length - 1; ++i){
+            min = a[i];
+            minIndex = i;
+
+            for (int k = i + 1; k < a.length; ++k)
+                if(min > a[k]) {
+                    min = a[k];
+                    minIndex = k;
+                }
+
+            a[minIndex] = a[i];
+            a[i] = min;
+        }
+    }
+
+    private  static void selectionSortDescending(int [] a)
+    {
+        int max, maxIndex;
+
+        for (int i = 0; i < a.length - 1; ++i){
+            max = a[i];
+            maxIndex = i;
+
+            for (int k = i + 1; k < a.length; ++k)
+                if(max < a[k]) {
+                    max = a[k];
+                    maxIndex = k;
+                }
+
+            a[maxIndex] = a[i];
+            a[i] = max;
+        }
+    }
+    public static void selectionSort(int [] a)
+    {
+        selectionSort(a, false);
+    }
+
+    public static void selectionSort(int [] a, boolean descending)
+    {
+        if(descending)
+            selectionSortDescending(a);
+        else
+            selectionSortAscending(a);
+    }
+
+    public static int partition(int [] a, int threshold)
+    {
+        int partitionIndex = 0;
+
+        while (partitionIndex != a.length && a[partitionIndex] < threshold)
+            ++partitionIndex;
+
+        if(partitionIndex == a.length)
+            return partitionIndex;
+
+        for (int i = partitionIndex + 1; i < a.length; ++i)
+            if(a[i] < threshold)
+                swap(a, i, partitionIndex++);
+
+        return partitionIndex;
+    }
+
     public static void reverse(int [] a)
     {
         for (int i = 0; i < a.length / 2; ++i)
