@@ -146,6 +146,16 @@ public class ArrayUtil {
         return partitionIndex;
     }
 
+    public static int [] getHistogramData(int [] a, int n)
+    {
+        int []counts = new int[n+1];
+
+        for(int val : a)
+            ++counts[val];
+
+        return counts;
+    }
+
     public static void reverse(int [] a)
     {
         for (int i = 0; i < a.length / 2; ++i)

@@ -24,6 +24,11 @@ public class DateUtil {
 		
 	}
 
+
+	public static void printDateEN(int day, int month, int year)
+	{
+
+	}
 	
 	public static int getDayOfWeek(int day, int month, int year)
 	{

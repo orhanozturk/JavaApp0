@@ -73,7 +73,17 @@ public class StringUtil {
 		
 		return count;
 	}
-	
+
+	public static String changeCase(String s)
+	{
+		char []c = s.toCharArray();
+
+		for(int i = 0; i < c.length; ++i)
+			c[i] = Character.isLowerCase(c[i]) ? Character.toUpperCase(c[i]) : Character.toLowerCase(c[i]);
+
+		return String.valueOf(c);
+	}
+
 	public static int countStringIgnoreCase(String s1, String s2)
 	{
 		return countString(s1.toLowerCase(), s2.toLowerCase());
@@ -221,5 +231,20 @@ public class StringUtil {
 			s += str.charAt(i);
 		
 		return s;
+	}
+
+	public static String squeeze(String s1, String s2)
+	{
+		int len = s1.length();
+		char[] c = new char[len];
+		int idx = 0;
+
+		for (int i = 0; i < len; ++i){
+			char ch = s1.charAt(i);
+			if(!s2.contains(ch + ""))
+				c[idx++] = ch;
+		}
+
+		return String.valueOf(c, 0, idx);
 	}
 }
