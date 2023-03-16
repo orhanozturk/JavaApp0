@@ -179,5 +179,11 @@ public class ArrayUtil {
 
         System.out.println();
     }
+
+    public static void print(String [] s)
+    {
+        for(String str : s)
+            System.out.println(str);
+    }
 }
 

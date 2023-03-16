@@ -22910,6 +22910,292 @@ class App {
 -----------------------------------------------------------
 -----------------------------------------------------------
 
+16.03.2023 Perşembe - 29. Ders
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı int türden gün, ay ve yıl bilgilerine ilişkin tarihin aşağıdaki açıklamalara
+	göre haftanın hangi gününe geldiğini döndüren getDayOfWeek isimli metodu yazınız ve aşağıdaki kod ile test ediniz.
+	Açıklamalar:
+		- Metot geçersiz bir tarih durumunda -1 değerine geri dönecektir
+		- Haftanın günü 1.1.1900 ile verilen tarih arasındaki (verilen tarih dahil) gün sayısının 7(yedi) ile bölümünden
+		elde edilen kalan ile belirlenebilir. Buna göre değer sıfır ise "pazar", 1 ise "pazartesi", ..., 6 ise "cumartesi"
+		günlerine karşılık gelir
+
+		- 1.1.1900 öncesindeki tarihler geçersiz sayılacaktır
+		- getDayOfWeek metodu ile birlikte
+
+		- İleride daha iyisi yazılacaktır parametresi ile aldığı int türden gün, ay ve yıl bilgilerine ilişkin tarihin
+		hafta sonu olup olmadığınıu test eden isWeekend ve hafta içi olup olmadığını test eden isWeekday metotlarını yazınız.
+		Bu iki metot tarih geçerlilik kontrolü yapmayacaktır
+
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+import com.orhn.app.samples.dateapp.DateUtilApp;
+import com.orhn.app.samples.dateapp.test.PrintRandomDateTest;
+
+class App {
+	public static void main(String [] args)
+	{
+		PrintRandomDateTest.run();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı en fazla üç basamaklı bir sayının Türkçe okunuşunu döndüren numToText3DigitsTR
+	isimli metodu NumberUtil sınıfı içerisinde yazınız ve aşağıdaki kod ile test ediniz.
+	Açıklamalar:
+		- Metot 3 basamaktan büyük sayı kontrolü yapmayacaktır
+		- Örnekler:
+				123		-> yüzyirmiüç
+				-123	-> eksiyüzyirmiüç
+				203		-> ikiyüzüç
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+import com.orhn.util.NumberUtil;
+
+class App {
+	public static void main(String [] args)
+	{
+		NumToText3DigitsTRTest.run();
+	}
+}
+
+class NumToText3DigitsTRTest {
+	public static void run()
+	{
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		System.out.print("Bir sayı giriniz:");
+		int count = Integer.parseInt(kb.nextLine());
+
+		for (int i = 0; i < count; ++i) {
+			int val = r.nextInt(-999, 1000);
+			String fmt = (val < 0 ? "-%03d " : " %03d ") +  " -> %s%n";
+			System.out.printf(fmt, Math.abs(val), NumberUtil.numToText3DigitsTR(val));
+		}
+
+		System.out.println("Tekrar yapıyor musunuz?");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı long türden bir sayının en fazla üç basamaklı ayrılmış sayılarından
+	oluşan diziyi döndüren getDigitsInThrees metodunu NumberUtil sınıfı içerisinde yazınız ve aşağıdaki kod ile test
+	ediniz
+	Örnekler:
+	1234567 -> 1 234 567
+	3456	-> 3 456
+	567		-> 576
+
+	21:37
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+import com.orhn.util.NumberUtil;
+import com.orhn.util.array.ArrayUtil;
+
+class App {
+	public static void main(String [] args)
+	{
+		GetDigitsTest.run();
+	}
+}
+
+class GetDigitsTest {
+	public static void run()
+	{
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		System.out.print("Bir sayı giriniz:");
+		int count = Integer.parseInt(kb.nextLine());
+
+		for (int i = 0; i < count; ++i) {
+			long a = r.nextLong();
+
+			System.out.println("-----------------------------------------");
+			System.out.println(a);
+			ArrayUtil.print(NumberUtil.getDigits(a));
+			ArrayUtil.print(NumberUtil.getDigitsInTwos(a));
+			ArrayUtil.print(NumberUtil.getDigitsInThrees(a));
+			System.out.println("-----------------------------------------");
+		}
+
+		System.out.println("Tekrar yapıyor musunuz?");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Klavyeden int türden bir n sayısı için değer isteyiniz. n elemanlı bir String dizisi
+	yaratınız. Bu dizinin her bir elemanını rasgele uzunlukta üretilmiş Türkçe karakterlerden oluşan yazılarla
+	doldurunuz. Bu işlemden sonra StringUtil sınıfı içerisinde yazacağınız parametresi ile aldığı int türden bir String
+	dizisinin elemanlarını, yine parametresi ile aldığı bir ayraç ile birleştirilmiş bir String'e geri dönen join isimli
+	metodu çağırarak sonucu ekrana yazdırınız
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+import com.orhn.util.StringUtil;
+import com.orhn.util.array.ArrayUtil;
+
+class App {
+	public static void main(String [] args)
+	{
+		JoinWithDelimiterApp.run();
+	}
+}
+
+class JoinWithDelimiterApp {
+	public static void run()
+	{
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		for (;;) {
+			System.out.print("Bir sayı giriniz:");
+			int count = Integer.parseInt(kb.nextLine());
+
+			if (count <= 0)
+				break;
+
+
+			String [] s = StringUtil.getRandomTextsTR(r, count, 5, 10);
+
+			System.out.println("----------------------------------------------------");
+			ArrayUtil.print(s);
+			System.out.println(StringUtil.join(s, '-'));
+			System.out.println("----------------------------------------------------");
+		}
+
+		System.out.println("Tekrar yapıyor musunuz?");
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte split metodu space karakterini ayraç olarak kabul ederek yazıyı ayrıştırmıştır. Ancak split metodu
+	regex (regular expression) kullandığından bu şekilde bir kullanım her karakter için aynı sonucu vermez. Ayraç tek bir
+	karakterden oluşsa bile bu tarz bir kullanım tavsiye edilmez. Örneği split metoduna "." argümanını geçerek ve yazıda
+	space yerine . koyarak çalıştırıp sonucu gözlemleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String str = "Bugün hava çok güzel";
+		String []words = str.split(" ");
+
+		for (int i = 0; i < words.length; ++i)
+			System.out.printf("(%s)%n", words[i]);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	split metodunda kullanılacak ayraç(lar) [ ile ] arasında yazılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String str = "Bugün hava çok güzel.Bu güzel havada Ne çalışsak daha güzel olur.";
+		String []words = str.split("[ .]");
+
+		for (int i = 0; i < words.length; ++i)
+			System.out.printf("(%s)%n", words[i]);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	split metodunda kullanılacak ayraç(lar) [ ile ] arasında yazılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String str = "Bugün hava çok güzel.Bu güzel havada Ne çalışsak daha güzel olur.";
+		String []words = str.split("[.]");
+
+		for (int i = 0; i < words.length; ++i)
+			System.out.printf("(%s)%n", words[i]);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	split metodunda aşağıdaki kullanımda birden fazla ayraç yanyana geldiğinde aralarında kalan boş string de diziye
+	eklenir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String str = "Bugün hava çok güzel. Bu güzel havada Ne çalışsak daha güzel olur. İyi bir java programcısı bu havada çalışır";
+		String []words = str.split("[ .]");
+
+		for (int i = 0; i < words.length; ++i)
+			System.out.printf("(%s)%n", words[i]);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	split metodunda aşağıdaki kullanımda birden fazla ayraç yanyana geldiğinde aralarında kalan boş string de diziye
+	eklenir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String str = "Bugün hava çok güzel. Bu güzel havada Ne çalışsak daha güzel olur. İyi bir java programcısı bu havada çalışır";
+		String []words = str.split("[ .]+");
+
+		for (int i = 0; i < words.length; ++i)
+			System.out.printf("(%s)%n", words[i]);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	[ ve ] karakterlerinin ayraç olarak verilebilmesi için ters bölü ile yazılması gerekir. Anımsanacağı gibi bir
+	String literal içerisinde ters bölü karakteri iki ters bölü ile yazılabilir. Aşağıdaki örneği inceleyiniz--------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String str = "Bugün hava çok güzel. Bu [[güzel]] havada Ne çalışsak daha güzel olur. İyi bir java programcısı bu havada çalışır";
+		String []words = str.split("[\\]\\[.]+");
+
+		for (int i = 0; i < words.length; ++i)
+			System.out.printf("(%s)%n", words[i]);
+	}
+}
+
+
 -----------------------------------------------------------
 -----------------------------------------------------------
 

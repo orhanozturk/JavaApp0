@@ -18,6 +18,41 @@ import static java.lang.Math.log10;
 import static java.lang.Math.abs;
 
 public class NumberUtil{
+
+    private static final String [] ONES;
+    private static final String [] TENS;
+
+    static {
+        ONES = new String []{"", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz"};
+        TENS = new String [] {"", "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş", "seksen", "doksan"};
+    }
+
+    private static String numToText3DigitsTR(String str, int val)
+    {
+        int a = val / 100;
+        int b = val / 10 % 10;
+        int c = val % 10;
+
+        if(a != 0){
+            if(a != 1)
+                str += ONES[a];
+            str += "yüz";
+        }
+
+        if(b != 0)
+            str += TENS[b];
+
+        if(c != 0)
+            str += ONES[c];
+
+        return str;
+    }
+
+    public static String numToText3DigitsTR(int val)
+    {
+        return val == 0 ? "sıfır" : numToText3DigitsTR(val < 0 ? "eksi" : "", Math.abs(val));
+    }
+
 	public static boolean isArmstrong(int a) 
 	{
 		return a >= 0 && getDigitsPowSum(a) == a;
@@ -156,6 +191,16 @@ public class NumberUtil{
     public static int [] getDigits(long a)
     {
         return getDigits(a, 1);
+    }
+
+    public static int [] getDigitsInTwos(long a)
+    {
+        return getDigits(a, 2);
+    }
+
+    public static int [] getDigitsInThrees(long a)
+    {
+        return getDigits(a, 3);
     }
 	
 	public static int getPrime(int n)

@@ -1,61 +1,78 @@
 /*----------------------------------------------------------------------------------------------------------------------
-	Sınıf Çalışması: Parametresi ile aldığı int türden gün, ay ve yıl bilgilerine ilişkin tarihin aşağıdaki açıklamalara
-	göre haftanın hangi gününe geldiğini döndüren getDayOfWeek isimli metodu yazınız ve aşağıdaki kod ile test ediniz.
+	Sınıf Çalışması: Klavyeden aşağıdaki formatta girilen bilgiyi ayrıştırarak ekrana sonuçları yazdıran programı
+	yazınız:
+	<ad soyad>:<ders adı>:<gg-aa-yyyy>:<gg-aa-yyyy>:<arasınav>:<final>
+	Oğuz Karan:Matematik:04/04/2022:01/07/2022:78:67
+	Barış Er:Radyo Haberleşmesi:03/04/2022:02/07/2022:89:100
+	Ziya ÇAYLAN:PLC Programlama:10/04/2022:13/06/2022:90:98
+	Emirhan Kabal:Fizik:07/03/2022:03/07/2022:85:75
+	Ozan Yiğit:İstatistik:07/04/2017:19/06/2017:90:100
+	Yunus Emre Uslu:Yazlım Geliştirme:28/04/2022:28/06/2022:60:70
+
 	Açıklamalar:
-		- Metot geçersiz bir tarih durumunda -1 değerine geri dönecektir
-		- Haftanın günü 1.1.1900 ile verilen tarih arasındaki (verilen tarih dahil) gün sayısının 7(yedi) ile bölümünden
-		elde edilen kalan ile belirlenebilir. Buna göre değer sıfır ise "pazar", 1 ise "pazartesi", ..., 6 ise "cumartesi"
-		günlerine karşılık gelir
+		- Format geçerlilik kontrolü yapılmayacaktır
+		- Formatta vize ve final notlarına göre vize * 0.4 + final * 0.6 formülü ile geçme notu hesaplanacak ve sınav
+		tarihleri hangi güne geldiği de belirlenerek ekrana yazdırılacaktır
+		- Ekran çıktısında "Geçti" ya da "Kaldı" bilgisi de olacaktır. Geçme notu 50 ve üstünde ise öğrenci geçmiş
+		sayılacaktır.
+		- Geçme notu round işlemi ile tamsayı olarak elde edilecektir
+		- İleride daha iyisi yazılacaktır
 
-		- 1.1.1900 öncesindeki tarihler geçersiz sayılacaktır
-		- getDayOfWeek metodu ile birlikte
-
-		- İleride daha iyisi yazılacaktır parametresi ile aldığı int türden gün, ay ve yıl bilgilerine ilişkin tarihin
-		hafta sonu olup olmadığınıu test eden isWeekend ve hafta içi olup olmadığını test eden isWeekday metotlarını yazınız.
-		Bu iki metot tarih geçerlilik kontrolü yapmayacaktır
+		Örnek çıktı:
+		-------------------------------------------
+		Ad Soyad: Oğuz Karan
+		Ders Adı: Matematik
+		Arasınav Tarihi: 4 Nisan 2022 Pazartesi
+		Final Tarihi: 1 Temmuz 2022 Cuma
+		Arasınav Notu: 78
+		Final Notu: 67
+		Geçme Notu: 71
+		Sonuç: Geçti
+		-------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------*/
 
-/*
-Homework
-Sınıf Çalışması: Parametresi ile aldığı en fazla üç basamaklı bir sayının Türkçe okunuşunu döndüren numToText3DigitsTR
-	isimli metodu NumberUtil sınıfı içerisinde yazınız ve aşağıdaki kod ile test ediniz.
-	Açıklamalar:
-		- Metot 3 basamaktan büyük sayı kontrolü yapmayacaktır
-		- Örnekler:
-				123		-> yüzyirmiüç
-				-123	-> eksiyüzyirmiüç
-				203		-> ikiyüzüç
- */
-
 package com.orhn.app;
-import com.orhn.util.NumberUtil;
-import java.util.Random;
-import java.util.Scanner;
 
 class App {
 	public static void main(String [] args)
 	{
-		NumToText3DigitsTRTest.run();
+		LectureInfoParserTest.run();
 	}
 }
 
-class NumToText3DigitsTRTest {
+
+public class LectureInfoParserTest {
+	public static void printLectureInfo(LectureInfo lectureInfo)
+	{
+		int grade = lectureInfo.getGrade();
+
+		System.out.printf("Adı Soyadı:%s%n", lectureInfo.studentName);
+		System.out.printf("Ders Adı:%s%n", lectureInfo.lectureName);
+		System.out.printf("Arasınav Tarihi:%s%n", lectureInfo.midtermDate);
+		System.out.printf("Final Tarihi:%s%n", lectureInfo.finalDate);
+		System.out.printf("Arasınav Notu:%d%n", lectureInfo.midtermGrade);
+		System.out.printf("Final Notu:%d%n", lectureInfo.finalGrade);
+		System.out.printf("Geçme Notu:%d%n", grade);
+		System.out.printf("Sonuç:%s%n", grade >= 50 ? "Geçti" : "Kaldı");
+	}
+
 	public static void run()
 	{
 		Scanner kb = new Scanner(System.in);
-		Random r = new Random();
 
-		System.out.print("Bir sayı giriniz:");
-		int count = Integer.parseInt(kb.nextLine());
+		for (;;) {
+			System.out.print("Formatlı yazıyı giriniz:");
+			String str = kb.nextLine();
 
-		for (int i = 0; i < count; ++i) {
-			int val = r.nextInt(-999, 1000);
-			String fmt = (val < 0 ? "-%03d " : " %03d ") +  " -> %s%n";
-			System.out.printf(fmt, Math.abs(val), NumberUtil.numToText3DigitsTR(val));
+			if ("elma".equals(str))
+				break;
+
+			LectureInfoParser parser = new LectureInfoParser(str);
+			LectureInfo lectureInfo = parser.lectureInfo;
+
+			printLectureInfo(lectureInfo);
 		}
 
 		System.out.println("Tekrar yapıyor musunuz?");
 	}
 }
-
-

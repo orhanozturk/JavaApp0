@@ -103,7 +103,20 @@ public class StringUtil {
 	{
 		return getRandomText(r, n, "abcdefghijklmnopqrstuwxvyzABCDEFGHIJKLMNOPQRSTUWXVYZ");
 	}
-	
+
+	public static String [] getRandomTextsTR(int count, int min, int max)
+	{
+		return getRandomTextsTR(new Random(), count, min, max);
+	}
+
+	public static String [] getRandomTextsTR(Random r, int count, int min, int max)
+	{
+		String [] result = new String[count];
+		for(int i = 0; i < count; ++i)
+			result[i] = getRandomTextTR(r, r.nextInt(min, max + 1));
+
+		return result;
+	}
 	public static String getRandomTextEN(int n)
 	{
 		return getRandomTextEN(new Random(), n);
@@ -246,5 +259,15 @@ public class StringUtil {
 		}
 
 		return String.valueOf(c, 0, idx);
+	}
+
+	public static String join(String [] s, char delimiter)
+	{
+		return join(s, delimiter + "");
+	}
+
+	public static String join(String [] s, String delimiter)
+	{
+		return String.join(delimiter, s);
 	}
 }
