@@ -41,6 +41,32 @@ public class ArrayUtil {
         return a;
     }
 
+    public static int [][] getRandomMatrix(Random r, int m, int n, int min, int max)
+    {
+        int [][] a = new int[m][];
+
+        for (int i = 0; i < m; ++i)
+            a[i] = getRandomArray(r, n, min, max);
+
+        return a;
+    }
+
+    public static int[][] getRandomSquareMatrix(Random r, int n, int min, int max)
+    {
+        return getRandomMatrix(r, n, n, min, max);
+    }
+
+    public  static int sumDiagonal(int [][] a)
+    {
+        int total = 0;
+
+        for (int i = 0; i < a.length; i++) {
+            total += a[i][i];
+        }
+
+        return total;
+    }
+
     public static int sum(int [] a)
     {
         int total = 0;
@@ -156,6 +182,20 @@ public class ArrayUtil {
         return counts;
     }
 
+    public static boolean isMatrix(int [][]a)
+    {
+        for (int i = 1; i < a.length; ++i)
+            if(a[i].length != a[0].length)
+                return false;
+
+        return true;
+    }
+
+    public static boolean isSquareMatrix(int [][]a)
+    {
+        return isMatrix(a) && a.length == a[0].length;
+    }
+
     public static void reverse(int [] a)
     {
         for (int i = 0; i < a.length / 2; ++i)
@@ -184,6 +224,17 @@ public class ArrayUtil {
     {
         for(String str : s)
             System.out.println(str);
+    }
+
+    public static void print(int [][]a)
+    {
+        print(1, a);
+    }
+
+    public static void print(int n, int [][]a)
+    {
+        for (int[] array : a)
+            print(n, array);
     }
 }
 

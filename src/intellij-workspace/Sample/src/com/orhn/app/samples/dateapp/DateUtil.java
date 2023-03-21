@@ -76,7 +76,19 @@ public class DateUtil {
 	{
 		return !isWeekend(day, month, year);
 	}
-	
+
+	public static String getDateStrTR(int day, int month, int year)
+	{
+		int dayOfWeek = getDayOfWeek(day, month, year);
+
+		if (dayOfWeek == -1) {
+			System.out.println("Geçersiz tarih");
+			return "01/01/1900";
+		}
+
+		return (day + " " + " " + monthsTR[month] + " " + " " + year + " " + " " + doysOfWeekTR[dayOfWeek]);
+	}
+
 	public static int getDayOfYear(int day, int month, int year)
 	{
 		if (!isValidDate(day, month, year))

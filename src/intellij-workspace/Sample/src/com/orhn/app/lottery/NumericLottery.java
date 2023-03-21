@@ -32,6 +32,16 @@ public class NumericLottery {
         return numbers;
     }
 
+    public int [][] getNumbers(int count)
+    {
+        int [][] numbers = new int[count][];
+
+        for (int i = 0; i < count; ++i)
+            numbers[i] = getNumbers();
+
+        return numbers;
+    }
+
     public boolean [] getFlags()
     {
         boolean [] flags = new boolean[50];

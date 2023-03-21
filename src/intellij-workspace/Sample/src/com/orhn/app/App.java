@@ -1,76 +1,46 @@
 /*----------------------------------------------------------------------------------------------------------------------
-	Sınıf Çalışması: Klavyeden aşağıdaki formatta girilen bilgiyi ayrıştırarak ekrana sonuçları yazdıran programı
-	yazınız:
-	<ad soyad>:<ders adı>:<gg-aa-yyyy>:<gg-aa-yyyy>:<arasınav>:<final>
-	Oğuz Karan:Matematik:04/04/2022:01/07/2022:78:67
-	Barış Er:Radyo Haberleşmesi:03/04/2022:02/07/2022:89:100
-	Ziya ÇAYLAN:PLC Programlama:10/04/2022:13/06/2022:90:98
-	Emirhan Kabal:Fizik:07/03/2022:03/07/2022:85:75
-	Ozan Yiğit:İstatistik:07/04/2017:19/06/2017:90:100
-	Yunus Emre Uslu:Yazlım Geliştirme:28/04/2022:28/06/2022:60:70
-
+	Sınıf Çalışması: Parametresi ile aldığı int türden bir kare matrisin esas köşegeni (diagonal) üzerindeki sayıların
+	toplamını döndüren sumDiagonal isimli metodu ArrayUtil sınıfı içerisinde yazınız ve test ediniz.
 	Açıklamalar:
-		- Format geçerlilik kontrolü yapılmayacaktır
-		- Formatta vize ve final notlarına göre vize * 0.4 + final * 0.6 formülü ile geçme notu hesaplanacak ve sınav
-		tarihleri hangi güne geldiği de belirlenerek ekrana yazdırılacaktır
-		- Ekran çıktısında "Geçti" ya da "Kaldı" bilgisi de olacaktır. Geçme notu 50 ve üstünde ise öğrenci geçmiş
-		sayılacaktır.
-		- Geçme notu round işlemi ile tamsayı olarak elde edilecektir
-		- İleride daha iyisi yazılacaktır
+	 - Metot karematris kontrolü yapmayacaktır
+	 - Bir kare matrisin esas köşegeni üzerindeki sayılar, örneğin:
 
-		Örnek çıktı:
-		-------------------------------------------
-		Ad Soyad: Oğuz Karan
-		Ders Adı: Matematik
-		Arasınav Tarihi: 4 Nisan 2022 Pazartesi
-		Final Tarihi: 1 Temmuz 2022 Cuma
-		Arasınav Notu: 78
-		Final Notu: 67
-		Geçme Notu: 71
-		Sonuç: Geçti
-		-------------------------------------------
+	 1 2 3
+	 4 5 6
+	 7 8 9
+
+	 matrisi için 1, 5 ve 9 sayılarıdır
 ----------------------------------------------------------------------------------------------------------------------*/
-
 package com.orhn.app;
+
+import com.orhn.util.array.ArrayUtil;
+
+import java.util.Random;
+import java.util.Scanner;
 
 class App {
 	public static void main(String [] args)
 	{
-		LectureInfoParserTest.run();
+		SumDiagonalTest.run();
+
 	}
 }
 
-
-public class LectureInfoParserTest {
-	public static void printLectureInfo(LectureInfo lectureInfo)
-	{
-		int grade = lectureInfo.getGrade();
-
-		System.out.printf("Adı Soyadı:%s%n", lectureInfo.studentName);
-		System.out.printf("Ders Adı:%s%n", lectureInfo.lectureName);
-		System.out.printf("Arasınav Tarihi:%s%n", lectureInfo.midtermDate);
-		System.out.printf("Final Tarihi:%s%n", lectureInfo.finalDate);
-		System.out.printf("Arasınav Notu:%d%n", lectureInfo.midtermGrade);
-		System.out.printf("Final Notu:%d%n", lectureInfo.finalGrade);
-		System.out.printf("Geçme Notu:%d%n", grade);
-		System.out.printf("Sonuç:%s%n", grade >= 50 ? "Geçti" : "Kaldı");
-	}
-
+class SumDiagonalTest {
 	public static void run()
 	{
 		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
 
-		for (;;) {
-			System.out.print("Formatlı yazıyı giriniz:");
-			String str = kb.nextLine();
+		System.out.print("Bir sayı giriniz:");
+		int count = kb.nextInt();
 
-			if ("elma".equals(str))
-				break;
 
-			LectureInfoParser parser = new LectureInfoParser(str);
-			LectureInfo lectureInfo = parser.lectureInfo;
+		for (int i = 0; i < count; ++i) {
+			int [][] a = ArrayUtil.getRandomSquareMatrix(r, r.nextInt(3, 8), 0, 99);
+			ArrayUtil.print(2, a);
 
-			printLectureInfo(lectureInfo);
+			System.out.printf("Esas köşegen üzerindeki elemanların toplamı:%d%n", ArrayUtil.sumDiagonal(a));
 		}
 
 		System.out.println("Tekrar yapıyor musunuz?");

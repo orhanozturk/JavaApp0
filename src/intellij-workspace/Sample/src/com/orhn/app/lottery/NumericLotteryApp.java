@@ -8,17 +8,23 @@ public class NumericLotteryApp {
     {
         Scanner kb = new Scanner(System.in);
 
+
+        NumericLottery lottery = new NumericLottery();
+
         for (;;){
             System.out.print("Kaç tane kupon oynamak istersiniz:");
             int n = Integer.parseInt(kb.nextLine());
 
-            NumericLottery lottery = new NumericLottery();
+            ArrayUtil.print(2, lottery.getNumbers(n));
 
+            /*
             if(n <= 0)
                 break;
 
             while (n-- > 0)
                ArrayUtil.print(2, lottery.getNumbers());
+
+             */
         }
     }
 }
