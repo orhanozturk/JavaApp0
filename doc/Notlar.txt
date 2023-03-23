@@ -23602,7 +23602,212 @@ class SumDiagonalTest {
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+23.03.2023 Perşembe - 31.Ders
 
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı int türden bir matrisin devriğini (transpose) döndüren transpose isimli metodu
+	ArrayUtil sınıfı içerisinde yazınız ve test ediniz.
+	Açıklamalar
+	- Metot matris olup olmama kontrolü yapmayacaktır
+	- Matrisin devriği satırların sütun sütunların da satır olduğu matristir. Örneğin:
+	1 2 3
+	4 5 6
+
+	matrisinin devriği
+	1 4
+	2 5
+	3 6
+
+	20:40
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.array.ArrayUtil;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		TransPoseTest.run();
+	}
+}
+
+class TransPoseTest {
+	public static void run()
+	{
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		System.out.print("Bir sayı giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; ++i) {
+			int [][] a = ArrayUtil.getRandomMatrix(r, r.nextInt(3, 8), r.nextInt(3, 8), 0, 99);
+			System.out.println("-----------------------------------------------");
+			ArrayUtil.print(2, a);
+			System.out.println("matrisinin devriği:");
+			ArrayUtil.print(2, ArrayUtil.transpose(a));
+			System.out.println("-----------------------------------------------");
+		}
+
+		System.out.println("Tekrar yapıyor musunuz?");
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Bir okulda Matematik sınavı ortak olarak yapılıyor olsun. Kaç şube ve herbir şubede kaç öğrenci olduğu
+	bilgisi klavyeden alınsın: Öğrencilerin notları rasgele belirlensin. Tüm bu işlemlerden sonra Matamatik sınavı için
+	herbir şubenin ayrı ayrı not ortalamaları ile okulun not ortalamasını bulan simülasyonu yazınız.
+	Açıklamalar:
+		- Notlar int türü ile tutulacaktır
+		- Programı mümkün olduğunca nesne yönelimli ve genel düşünerek yazınız
+	Not: İleride daha iyisi yazılacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.simulation.exam.ExamSimulationApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		ExamSimulationApp.run();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	for-each döngü deyiminin genel biçimi:
+	for (<tür> <değişken> : <dolaşılabilir türe ilişkin referans>)
+		<deyim>
+	Dolaşılabilir (iterable) tür kavramının detayları "Java ile Uygulama Geliştirme 1" kursunda ele alınacaktır. Diziler
+	de dolaşılabilir türler olduğundan for-each döngü deyimi ile kullanılabilirler.
+
+	for-each deyimi ile kod daha yalın hale gelir. Bu durumda for-each döngü deyimi yalınlığı ve okunabirliliği bozmadıktan
+	sonra kesinlikle kullanılmalıdır.
+
+	for-each döngü deyimi okunabililiği/algılanabililiği artırır. Kodu okuyan kişi klasik for döngüsü görürse
+	"for-each ile yazmamasının bir gereksi vardır. Aksi durumda for-each döngüsü ile yazardı" biçiminde anlar. Yani
+	programcının for-each döngü deyimini kullanmamasının bir gerekçesi olmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+		for-each döngü deyiminin dizi ile kullanımında döngü değişkenine her adımda o anki elemanın değeri atanır. Bu atama
+		dizinin başından sonuna kadar yinelenir. Aşağıda for-each döngü deyiminin yaklaşık karşılığı şu şekildedir:
+
+		{
+			int val;
+
+			for (int i = 0; i < a.length; ++i) {
+				val = a[i];
+				System.out.printf("%d ", val);
+			}
+		}
+		----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int a[] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+		for ( int val: a) {
+			System.out.printf("%d ", val);
+		}
+		System.out.println();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	for-each döngü deyiminde döngü değişkenine atama doğrudan (implicit) yapılır. Aşağıdaki for-each döngü deyimi
+	geçerlidir
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int a[] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+		for (long val: a) {
+			System.out.printf("%d ", val);
+		}
+		System.out.println();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	for-each döngü deyiminde döngü değişkenine atama doğrudan (implicit) yapılır. Aşağıdaki for-each döngü deyimi
+	geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int a[] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+		for (short val: a) {
+			System.out.printf("%d ", val);
+		}
+		System.out.println();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	for-each döngü deyiminde döngü değişkenininin faaliyet alanı (scope) döngü deyimi boyuncadır
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int a[] = {1, 2, 3, 4, 5, 6, 7, 8};
+
+		for (int val: a)
+			System.out.printf("%d ", val);
+
+		System.out.printf("val = %d%n", val); //error
+		System.out.println();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	for-each döngü deyiminde :'den sonraki ifade bir kez yapılır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		for (int val: Sample.getArray())
+			System.out.printf("%d ", val);
+
+		System.out.println();
+	}
+}
+
+class Sample {
+	public static  int[] getArray()
+	{
+		System.out.println("getArray");
+		return new int[]{1, 2, 3, 4, 5, 6, 7, 8};
+	}
+}
 -----------------------------------------------------------
 -----------------------------------------------------------
 

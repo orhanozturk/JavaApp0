@@ -19,8 +19,8 @@ import static java.lang.Math.abs;
 
 public class NumberUtil{
 
-    private static final String [] ONES;
-    private static final String [] TENS;
+    private static String [] ONES;
+    private static String [] TENS;
 
     static {
         ONES = new String []{"", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz"};
@@ -147,6 +147,11 @@ public class NumberUtil{
             return a;
 
         return c;
+    }
+
+    public static int min(int a, int b, int c)
+    {
+        return Math.min(Math.min(a, b), c);
     }
 	
 	public static void printCollatz(int n)

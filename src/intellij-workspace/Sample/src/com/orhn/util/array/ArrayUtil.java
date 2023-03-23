@@ -13,6 +13,13 @@ public class ArrayUtil {
         a[k] = temp;
     }
 
+    public static void swap(char [] a, int i, int k)
+    {
+        char temp = a[i];
+        a[i] = a[k];
+        a[k] = temp;
+    }
+
     public static void fillRandomArray(Random r, int [] a, int min, int bound)
     {
         for(int i = 0; i < a.length; ++i)
@@ -75,6 +82,30 @@ public class ArrayUtil {
             total += val;
 
         return total;
+    }
+
+    public static int sum(int [][] a)
+    {
+        int total = 0;
+
+        for (int i = 0; i < a.length; i++) {
+            total += sum(a[i]);
+        }
+
+        return total;
+    }
+
+    public  static int [][] transpose(int [][] a)
+    {
+        int [][] result = new int[a[0].length][a.length];
+
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                result[j][i] = a[i][j];
+            }
+        }
+
+        return result;
     }
 
     private static void bubbleSortAscending(int [] a)
@@ -182,6 +213,42 @@ public class ArrayUtil {
         return counts;
     }
 
+    public static void drawHistogram(int [] counts, int n, char ch)
+    {
+        int maxVal = max(counts);
+
+        for (int i = 0; i < counts.length; ++i) {
+            int nChar = (int)Math.floor(counts[i] * (double)n / maxVal);
+
+            while (nChar-- > 0)
+                System.out.print(ch);
+
+            System.out.println();
+        }
+    }
+
+    public static int max(int [] a)
+    {
+        int result = a[0];
+
+        for (int i = 1; i < a.length; i++) {
+            result = Math.max(result, a[i]);
+        }
+
+        return result;
+    }
+
+    public static int min(int [] a)
+    {
+        int result = a[0];
+
+        for (int i = 1; i < a.length; i++) {
+            result = Math.min(result, a[i]);
+        }
+
+        return result;
+    }
+
     public static boolean isMatrix(int [][]a)
     {
         for (int i = 1; i < a.length; ++i)
@@ -196,6 +263,11 @@ public class ArrayUtil {
         return isMatrix(a) && a.length == a[0].length;
     }
 
+    public static void reverse(char [] a)
+    {
+        for (int i = 0; i < a.length / 2; ++i)
+            swap(a, i, a.length - i - 1);
+    }
     public static void reverse(int [] a)
     {
         for (int i = 0; i < a.length / 2; ++i)

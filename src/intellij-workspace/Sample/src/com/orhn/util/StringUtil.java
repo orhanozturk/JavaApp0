@@ -270,4 +270,23 @@ public class StringUtil {
 	{
 		return String.join(delimiter, s);
 	}
+
+	public static String join(String [] s, char delimiter, boolean removeEmpties)
+	{
+		return join(s, delimiter + "", removeEmpties);
+	}
+
+	public static String join(String [] s, String delimiter, boolean removeEmpties)
+	{
+		String str = "";
+
+		for (int i = 0; i < s.length; i++) {
+			if(removeEmpties && s[i].isBlank())
+				continue;
+
+			str += s[i] + delimiter;
+		}
+
+		return str.substring(0, str.length() - delimiter.length());
+	}
 }
