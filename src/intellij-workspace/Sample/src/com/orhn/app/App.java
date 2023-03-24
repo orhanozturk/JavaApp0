@@ -1,23 +1,22 @@
 /*----------------------------------------------------------------------------------------------------------------------
-	for-each döngü deyiminde :'den sonraki ifade bir kez yapılır
+	Circle sınıfı
 ----------------------------------------------------------------------------------------------------------------------*/
-
 package com.orhn.app;
+
+import com.orhn.math.geometry.Circle;
 
 class App {
 	public static void main(String [] args)
 	{
-		for (int val: Sample.getArray())
-			System.out.printf("%d ", val);
+		Circle c = new Circle(-3.2);
 
-		System.out.println();
-	}
-}
+		System.out.printf("Radius : %f%n", c.getRadius());
+		System.out.printf("Area : %f%n", c.getArea());
+		System.out.printf("Circumference : %f%n", c.getCircumference());
 
-class Sample {
-	public static  int[] getArray()
-	{
-		System.out.println("getArray");
-		return new int[]{1, 2, 3, 4, 5, 6, 7, 8};
+		c.setRadius(6.7);
+		System.out.printf("Radius : %f%n", c.getRadius());
+		System.out.printf("Area : %f%n", c.getArea());
+		System.out.printf("Circumference : %f%n", c.getCircumference());
 	}
 }

@@ -23810,6 +23810,711 @@ class Sample {
 }
 -----------------------------------------------------------
 -----------------------------------------------------------
+24.03.2023 Cumar - 32.Ders
+
+/*----------------------------------------------------------------------------------------------------------------------
+	for-each döngü deyiminde döngü değişkenininin dğeri değiştirilebilir. Şüphesiz döngü değişkenini değiştirmek
+	dizi elemanlarını değiştirmez. Bu durumun pratikte çok anlamı yoktur
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int [] a = {1, 2, 3, 4, 5, 6, 7, 8};
+
+		for ( int val: a) {
+			++val;
+			System.out.printf("%d ", val);
+		}
+
+		System.out.println();
+
+		for (int val: a) {
+			System.out.printf("%d ", val);
+		}
+
+		System.out.println();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte dizinin elemanları değiştirilirken for-each kullanılmış olsa da kod okunabilir olmaz. Bu durumda
+	programcının klasik for döngü deyimini kullanması daha uygundur
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int [] a = {1, 2, 3, 4, 5, 6, 7, 8};
+
+		int idx = 0;
+
+		for ( int val: a)
+			++a[idx++];
+
+		for (int val: a) {
+			System.out.printf("%d ", val);
+		}
+
+		System.out.println();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte dizinin yarısına kadar dolaşılması for-each döngü deyimiyle yapılmış olsa da kod okunabilir olmaz.
+	Bu durumda programcının klasik for döngü deyimini kullanması daha uygundur
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int [] a = {1, 2, 3, 4, 5, 6, 7, 8};
+
+		int count = 0;
+
+		for (int val: a) {
+			System.out.printf("%d ", val);
+			if(++count == a.length / 2)
+				break;
+		}
+
+		System.out.println();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Anahtar Notlar: Genel olarak, dizi dolaşılırken indeks numarasının gerektiği durumlarda ve dizinin baştan sona dolaşılmadığı
+	durumlarda klasik for döngüsü seçilmesi daha uygundur. Diğer durumlar için for-each döngü deyimi seçilmelidir.
+---------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	String sınıfı for-each döngü deyimi ile kullanılamaz. Teknik olarak söylersek: String sınıfı "iterable" yazılmamıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String s = "ankara";
+
+		for (char c : s) { //error
+			System.out.println(c);
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	İstenirse toCharArray metodu ile tüm karakterler yine for-each döngü deyimi ile dolaşılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String s = "ankara";
+
+		for (char c : s.toCharArray()) {
+			System.out.println(c);
+		}
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	for-each döngü deyimi ile dizi dizilerinin dolaşılması
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int [][]a = {{1,2,3}, {3, 4, 5}, {6, 7, 8}, {9, 10, 11}};
+
+		for (int []array : a) {
+			for (int val: array) {
+				System.out.printf("%02d ", val);
+			}
+			System.out.println();
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte her bir adımda String dizisinin elemanı olan String referansları elde edilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String []cities = {"ankara", "edirne", "istanbul", "kastamonu"};
+
+		for (String city: cities) {
+			System.out.println(city);
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Elemanlarının Temel Erişim Belirleyicileri:
+	Sınıf elemanlarının (metotlar, veri elemanları, ctor'lar vs.) erişim belirleyicileri 4 tanedir ve bir eleman bunlardan
+	yalnızca biri ile bildirilebilir: public, protected, no-modifier, private
+
+	Erişim belirleyici anlamında sınıf 4 bölüme ayrılmıştır. Yani örneğin sınıfın public bir elemanı sınıfın public
+	bölümüne ait olur. Erişim belirleyiciler sınıf dışından erişimde enlamlıdır. Sınıfın dışı başka bir sınıfın içi
+	demektir. Sınıfın içinde erişim belirleyici anlamında bir kısıt yoktur. Yani sınıf içerisinde her bölüme erişilebilir.
+
+	Anahtar Notlar: Sınıfın no-modifier nölümü (hiçibir erişim belirleyici yazılmamış elemanı) Java'da erişim belirleyici
+	anlamında public, protected ve private bölümlerden farklıdır. Bazı dillerde olduğu gibi no-modifier bölüm diğerlerinden
+	biri anlamına GELMEZ. Bu durumun bir tek "enum class"'larda istisnası vardır. İleride ele alınacaktır
+
+	Sınıfın protected ve no-modifier bölümlerinin anlamları erişen sınıfların aynı pakette veya farklı pakette olmasına göre
+	değişmektedir. private ve public bölümlerin anlamları erişen sınıfların aynı pakette veya farklı pakette olmasına
+	göre değişmemektedir.
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+		Sınıfın public bölümüne sınıf dışından erişilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class B {
+	public void bar()
+	{
+		A a = new A();
+		a.foo();
+		a.x = 10;
+	}
+}
+
+class A {
+	public  int x;
+	public A()
+	{
+		//
+	}
+	public void foo()
+	{
+
+	}
+}
+
+
+*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın public bölümüne sınıf dışından erişilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package orhn;
+
+public class A {
+    public  int x;
+    public A()
+    {
+        //
+    }
+    public void foo()
+    {
+
+    }
+}
+
+package ozturk;
+
+import orhn.A;
+
+public class B {
+    public void bar()
+    {
+        A a = new A();
+        a.foo();
+        a.x = 10;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+		Sınıfın private bölümüne sınıf dışından erişilemez
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+class B{
+	public void bar()
+	{
+		A a =  new A(); //error
+		a.x = 11; //error
+		a.foo(); //error
+	}
+}
+
+class A{
+	private int x;
+	private A()
+	{
+
+	}
+
+	private void foo()
+	{
+
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın private bölümüne sınıf dışından erişilemez
+----------------------------------------------------------------------------------------------------------------------*/
+package orhn;
+
+public class A {
+    private   int x;
+    private A()
+    {
+        //
+    }
+    private void foo()
+    {
+
+    }
+}
+
+package ozturk;
+
+import orhn.A;
+
+public class B {
+    public void bar()
+    {
+        A a = new A();
+        a.foo();
+        a.x = 10;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Görüldüğü gibi sınıfın public ve private bölümlerinin anlamları aynı pakette olan (friendly) sınıflar ve farklı
+    pakette olan sınıflar açısından değişiklik göstermemektedir
+---------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+		Sınıfın no-modifier bölümü aynı paketteki diğer sınıflar için public anlamındadır (friendly)
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+class B{
+	public void bar()
+	{
+		A a =  new A();
+		a.x = 11;
+		a.foo();
+	}
+}
+
+class A{
+	int x;
+	A()
+	{
+
+	}
+
+	void foo()
+	{
+
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın no-modifier bölümü farklı paketteki diğer sınıflar için private anlamındadır
+----------------------------------------------------------------------------------------------------------------------*/
+package orhn;
+
+public class A {
+    int x;
+    A()
+    {
+        //
+    }
+    void foo()
+    {
+
+    }
+}
+
+package ozturk;
+
+import orhn.A;
+
+public class B {
+    public void bar()
+    {
+        A a = new A(); //error
+        a.foo(); //error
+        a.x = 10; //error
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+		Sınıfın protected bölümü aynı paketteki diğer sınıflar için public anlamındadır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+class B{
+	public void bar()
+	{
+		A a =  new A();
+		a.x = 11;
+		a.foo();
+	}
+}
+
+class A{
+	protected int x;
+	protected A()
+	{
+
+	}
+
+	protected void foo()
+	{
+
+	}
+}
+
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıfın protected bölümü farklı paketteki diğer sınıflar içim "türetme/kalıtım (inheritance)" söz konusu değilse
+    private anlamındadır. Farklı pakette ancak "türemiş sınıf (derived/sub class)" kendisine ait protected bölüme
+    erişebilir. Türetme ve protected bölümün anlamı detaylı olarak ileride ele alınacaktır
+---------------------------------------------------------------------------------------------------------------------*/
+
+package orhn;
+
+public class A {
+    protected int x;
+    protected A()
+    {
+        //
+    }
+    protected void foo()
+    {
+
+    }
+}
+package ozturk;
+
+import orhn.A;
+
+public class B {
+    public void bar()
+    {
+        A a = new A(); //error
+        a.foo(); //error
+        a.x = 10; //error
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın bölümlerine erişim tablosu
+
+	Erişim Belirleyici		Kendisi			Friendly sınıflar		Farklı paketteki sınıflar			Türemiş sınıflar
+	public					   T 					T 						  T 								T
+	protected				   T 					T 						  F 								T
+	no-modifier				   T 					T 						  F 								F
+	private					   T 					F 						  F 								F
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfların özellikle veri elemanlarının gizlenmesine (yani diğer sınıflardan erişilebilmesinin engellenmesine)
+	nesne yönelimli programlama tekniğinde "kapsülleme/sınıfsal temsil (encapsulation)" denir. Bu kavramın geneline
+	"veri/bilgi gizleme (data/information hiding)" denir. Burada temel amaç dışarıyı sınıf dışını ilgilendirmeyecek
+	verilerin/bilgilerin dışarıya verilmemesidir. Bu kavram gerçek hayattan programlamaya aktarılmıştır. Örneğin araba
+	kullanırken arabanın vites değişimlerinin içsel olarak nasıl yapıldığının bilinmesi gerekmez.
+
+	Bu anlamda sınıf yazan (server) ve sınıfı kullanan (client) bakış açısı farklıdır. Şüphesiz sınıfı yazan için iki
+	bakış açısı da düşünülmelidir. Sınıfı  kullanan bakış açısı için (müşteri kodlar) içsel detayların önemi yoktur
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Anahtar Notlar: Programlamada isimlendirmede bazı teknikler kullanılabilmektedir. Bu teknikler dışında da isimlendirme
+	yapılabilir. Bunlar çok kullanılan ve bilinen tekniklerdir:
+
+	1. Unix stili (snake case): Bu isimlendirmede karakterlerin tamamı küçük harfle yazılır ve birden fazla kelime için
+	aralarına alttire karakteri konur. Örneğin:
+		number_of_students, serial_port
+	Bu isimlendirme Java'da doğrudan tercih edilmez.
+
+	2. Camel case (lower camel case): Bu isimlendirmede kelimeler bitişik yazılır. İlk kelimenin baş harfi küçük diğer
+	kelimelerin baş harflari büyük olarak yazılır. Geri kalan karakterler küçük harfle yazılır. Bu isimlendirme Java'da
+	genel olarak yerel değişken isimleri, metot isimleri ve parametre değişken isimlerinde tercih edilir. Örneğin:
+		parseInt, nextLine, nextBoolean, isArmstrong
+
+	3. Pascal case (upper camel case): Bu isimlendirmede kelimeler bitişik yazılır. Tüm kelimelerin baş hafleri büyük,
+	geri kalan karakterler küçük harf olarak yazılır. Bu isimlendirme Java'da genel olarak sınıf ve benzeri tür isimlerinde
+	(user defined type) tercih edilir. Örneğin:
+		Random, String, FileOutputStream, NumberUtil, TimeUnit
+
+	İsimlendirmede bunlardan biri ya da birden fazlası kullanılabilir. Kullanılmak zorunda da değildir. Örneğin Java'da
+	paket isimlerinin tamamı küçük harf olacak şekilde ve birden fazla kelimeden oluşanlar da bitişik olarak yazılır.
+	Örneğin:
+		java.util, org.csystem.app, com.springframework
+	Yukarıda anlatılan teknikler tamamen geneldir. Hatta bazen bir ya da birden fazla teknik biraz değiştirilerek de
+	kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Nesne yönelimli programlamada sınıfın özellikle private bölümündeki veri elemanlarının isimlerilmesine yönelik
+	bazı teknilkler kullanılabilmektedir. Örneğin baz programcılar private veri elemanları için "m_", "d_", "_", "m"
+	gibi önekler kullanabilir. Biz sınıfın private ve non-static veri elemanları için "m_" önekini kullanacağız. Veri
+	elemanı private ve static ise genel olarak "ms_" önekinin kullanacağız. Bazı programcılar sınıfın private bölümündeki
+	veri elemanları için hiçbir önek (ya da sonek) kullanmazlar. Bu da bir tekniktir
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir veri elemanı gizlendiğinde sınıfın müşteri kodlarının bu elemanın değerini değiştirmesi veya bu elemanın değerini
+	elde etmesi gerekebilir. Bu durumda sınıfın bu veri elemanlarına erişen public metotlar yazılır. Veri elemanlarına
+	erişip değerini elde etmek için yazılan metotlara "get metotları (getters)" denir. Veri elemanlarına erişip değerini
+	değiştirmeye yarayan metotlara "set metotları (setters)" denir. Sınıfın bu şekildeki metotlarına "accessors" denir.
+	Tersine get veya set metotlarının bir veri elemanına karşılık gelmesi gerekmez. Her ne şekilde olursa olsun bu metotlar
+	müşteri kodlar için "accessor" metotlardır. Bu durum ileride ele alınacaktır
+
+	Sınıfın set metotlarının isimleri genel olarak "set" ile başlatılır. get metotları ise "get" ile başlatılır. Eğer
+	bir get metodu boolean bir değere geri dönecekse ismi genel olarak "is" ile başlatılır. Sınıfı yazan programcı
+	özel durumlar dışında bu isimlendirmeye dikkat etmelidir. Uygulamada kullanılan bazı ortamlar (framework) ve
+	kütüphaneler (libraries) programcı tarafından yazılmış sınıflar için bu metotları bu isimlendirme ile beklerler
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Date birthDate = new Date(11, 7, 1985);
+		System.out.printf("%02d/%02d/%04d%n", birthDate.getDay(), birthDate.getMonth(), birthDate.getYear());
+
+		birthDate.setDay(24);
+		birthDate.setMonth(10);
+		birthDate.setYear(1997);
+		System.out.printf("%02d/%02d/%04d%n", birthDate.getDay(), birthDate.getMonth(), birthDate.getYear());
+
+	}
+}
+
+class Date{
+	private int m_day, m_month, m_year;
+
+	public Date(int day, int month, int year)
+	{
+		m_day = day;
+		m_month = month;
+		m_year = year;
+	}
+
+	public int getDay()
+	{
+		return m_day;
+	}
+
+	public  void setDay(int day)
+	{
+		m_day = day;
+	}
+
+	public int getMonth()
+	{
+		return m_month;
+	}
+
+	public void setMonth(int month)
+	{
+		m_month = month;
+	}
+
+	public int getYear()
+	{
+		return m_year;
+	}
+
+	public void setYear(int year)
+	{
+		m_year = year;
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte Device sınıfının m_open veri elemanı için get metodu "is" ile başlatılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class Device{
+	private String m_name;
+	private String m_host;
+	private boolean m_open;
+
+	public String getName()
+	{
+		return m_name;
+	}
+
+	public  void setName(String name)
+	{
+		m_name = name;
+	}
+
+	public  String getHost()
+	{
+		return m_host;
+	}
+
+	public void setHost(String host)
+	{
+		m_host = host;
+	}
+
+	public boolean isOpen()
+	{
+		return  m_open;
+	}
+
+	public void  setOpen(boolean open)
+	{
+		m_open = open;
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte Date sınıfının içsel tasarımı ve algoritması değişmesine rağmen daha önce yazılmış müşteri kodlar
+	bundan etkilenmemiştir. Datayları gözardı ederek sadece değiştikten sonra müşteri kodların etkilenmemesine odaklanınız
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Date birthDate = new Date(11, 7, 1985);
+		System.out.printf("%02d/%02d/%04d%n", birthDate.getDay(), birthDate.getMonth(), birthDate.getYear());
+
+		birthDate.setDay(24);
+		birthDate.setMonth(10);
+		birthDate.setYear(1997);
+		System.out.printf("%02d/%02d/%04d%n", birthDate.getDay(), birthDate.getMonth(), birthDate.getYear());
+	}
+}
+
+class Date{
+	private  String m_dateStr;
+	private  int m_dayOfWeek;
+
+	public Date(int day, int month, int  year)
+	{
+		m_dateStr = String.format("%02d/%02d/%04d", day, month, year);
+	}
+
+	public int getDay()
+	{
+		return Integer.parseInt(m_dateStr.substring(0, 2));
+	}
+
+	public void setDay(int day)
+	{
+		m_dateStr = String.format("%02d/%02d/%04d", day, getMonth(), getYear());
+	}
+
+	public int getMonth()
+	{
+		return Integer.parseInt(m_dateStr.substring(3,5));
+	}
+
+	public void setMonth(int month)
+	{
+		m_dateStr = String.format("%02d/%02d/%04d", getDay(), month, getYear());
+	}
+
+	public int getYear()
+	{
+		return Integer.parseInt(m_dateStr.substring(6));
+	}
+
+	public void setYear(int year)
+	{
+		m_dateStr = String.format("%02d/%02d/%04d", getDay(), getMonth(), year);
+	}
+
+	public int getDayOfWeek()
+	{
+		return m_dayOfWeek;
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Circle sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.math.geometry.Circle;
+
+class App {
+	public static void main(String [] args)
+	{
+		Circle c = new Circle(-3.2);
+
+		System.out.printf("Radius : %f%n", c.getRadius());
+		System.out.printf("Area : %f%n", c.getArea());
+		System.out.printf("Circumference : %f%n", c.getCircumference());
+
+		c.setRadius(6.7);
+		System.out.printf("Radius : %f%n", c.getRadius());
+		System.out.printf("Area : %f%n", c.getArea());
+		System.out.printf("Circumference : %f%n", c.getCircumference());
+	}
+}
 
 -----------------------------------------------------------
 -----------------------------------------------------------
