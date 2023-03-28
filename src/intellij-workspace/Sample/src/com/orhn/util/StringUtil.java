@@ -16,7 +16,12 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class StringUtil {
-	
+
+	private StringUtil()
+	{
+
+	}
+
 	/*----------------------------------------------------------------------------------------------------------------------	 
 	Sınıf Çalışması: Parametresi ile aldığı bir yazının ilk harfi büyük geri kalan harfleri küçük olacak şekilde ve
  	harf dışı karakterler de aynı kalacak şekilde bir yazı döndüren capitalizeWS isimli metodu StringUtil sınıfı 

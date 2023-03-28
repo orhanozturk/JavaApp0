@@ -24518,6 +24518,331 @@ class App {
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+28.03.2023 Salı - 33.Ders
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte Line sınıfının noktalarının değişimi engellenmemiştir. Çünkü sınıf içerisinde tutulan Point
+    	nesnelerinin referansları getPoint1 ve getPoint2 metotları dışarıya verilmiştir. Bu durumda gizlenen m_p1 ve m_p2
+    	referanslarıdır. Bu referansların gösterdiği nesnelerin içeriği client kodlar tarafından dolaylı da olsa değiştirilebilir.
+    	Bu durumda Line sınıfı noktaları değiştirilemeyecek şekilde yani immutable olarak yazılmamıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.math.geometry.Point;
+
+class App {
+	public static void main(String [] args)
+	{
+		Line line = new Line(10, 45, 100, 75);
+
+		System.out.println(line.toString());
+
+		Point p1 = line.getPoint1();
+
+		p1.setX(222);
+		p1.setY(555);
+
+		//line.getPoint1().setX(553);
+		//line.getPoint1().setY(1233);
+
+		System.out.println(line.toString());
+	}
+}
+
+class Line{
+
+	private  Point m_p1;
+	private  Point m_p2;
+
+
+	public Line(int x1, int y1, int x2, int y2)
+	{
+		m_p1 = new Point(x1, y1);
+		m_p2 = new Point(x2, y2);
+	}
+
+	public Point getPoint1()
+	{
+		return m_p1;
+	}
+
+	public Point getPoint2()
+	{
+		return m_p2;
+	}
+
+	public int getX1()
+	{
+		return m_p1.getX();
+	}
+
+	public int getY1()
+	{
+		return m_p1.getY();
+	}
+
+	public int getX2()
+	{
+		return m_p2.getX();
+	}
+
+	public int getY2()
+	{
+		return m_p2.getY();
+	}
+
+	public  String toString()
+	{
+		return String.format("%s, %s", m_p1.toString(), m_p2.toString());
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	 Yukarıdaki örnekte noktaların değişimini engellemek için ya referanslar dışarıya verilmemelidir. Ya da verilecekse bile
+    Point nesnelerinin kopyaları yani yeni Point nesnelerinin referansları verilmelidir. Şüphesiz bu sınıfın dökumantasyonunda
+    belirtilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.math.geometry.Point;
+
+class App {
+	public static void main(String [] args)
+	{
+		Line line = new Line(10, 45, 100, 75);
+
+		System.out.println(line.toString());
+
+		Point p1 = line.getPoint1();
+
+		p1.setX(222);
+		p1.setY(555);
+
+		System.out.println(line.toString());
+
+		System.out.println(p1.getX());
+		System.out.println(p1.getY());
+	}
+}
+
+class Line{
+
+	private  Point m_p1;
+	private  Point m_p2;
+
+
+	public Line(int x1, int y1, int x2, int y2)
+	{
+		m_p1 = new Point(x1, y1);
+		m_p2 = new Point(x2, y2);
+	}
+
+	public Point getPoint1()
+	{
+		return new Point(m_p1.getX(), m_p1.getY());
+	}
+
+	public Point getPoint2()
+	{
+		return new Point(m_p2.getX(), m_p2.getY());
+	}
+
+	public int getX1()
+	{
+		return m_p1.getX();
+	}
+
+	public int getY1()
+	{
+		return m_p1.getY();
+	}
+
+	public int getX2()
+	{
+		return m_p2.getX();
+	}
+
+	public int getY2()
+	{
+		return m_p2.getY();
+	}
+
+	public  String toString()
+	{
+		return String.format("%s, %s", m_p1.toString(), m_p2.toString());
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	 Aşağıdaki örnekte getNumbers metodu içsel olarak tutulan dizinin elemanlarından oluşan yeni bir dizi döndürmektedir.
+    Bu durumda içsel olarak dizinin elemanları dışarıdan değpiştirilemez.
+
+    Anahtar Notlar: java.util.Arrays sınıfının copyOf metotları birinci parametresi ile aldığı dizinin, ikinci parametresi
+    ile aldığı uzunluk kadar elemanlarından oluşan yeni bir dizinin referansına geri döner. Bu durumda ikinci parametre
+    için dizinin uzunluğu argüman olarak geçilirse, dizinin tamamının kopyası çıkartılmış olur
+ ----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.util.array.ArrayUtil;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		RandomIntArrayGenerator randomIntArrayGenerator = new RandomIntArrayGenerator(new Random(), 10, 0, 101);
+		int [] a = randomIntArrayGenerator.getNumbers();
+
+		ArrayUtil.print(a);
+		ArrayUtil.print(2,a);
+
+
+		ArrayUtil.addBy(a, 5);
+
+		ArrayUtil.print(randomIntArrayGenerator.getNumbers());
+	}
+}
+
+class RandomIntArrayGenerator{
+	private int[] m_numbers;
+
+	public RandomIntArrayGenerator(Random random, int count, int min, int max)
+	{
+		m_numbers = ArrayUtil.getRandomArray(random, count, min, max);
+	}
+
+	public int[] getNumbers()
+	{
+		return m_numbers;
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Tüm elemanları static olarak bildirilmiş sınıflar türünden nesnelerin anlamı yoktur. Bu tarz sınıflara genel olarak
+	"utility class" denir. Utility class'ların ctor'ları okunabilirlik açısından private yapılır. Bu şekildeki sınıflar
+	için bu tasarıma kesinlikle uyulmalıdır
+ ----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.util.array.ArrayUtil;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Math n = new Math(); //error
+		ArrayUtil aUtil = new ArrayUtil(); //error
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	BallFall Sınıfı
+ ----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.app.game.ballfall.BallFallGameApp;
+import com.orhn.util.ArrayUtil;
+
+class App {
+	public static void main(String [] args)
+	{
+		BallFallGameApp.run();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	CrapsSimulation Sınıfı
+ ----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.app.simulation.craps.CrapsSimulationApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		CrapsSimulationApp.run();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Anahtar Notlar: Özellikle Nesne yönelimli programlama tekniğine ilişkin bazı ilkeler söz konusudur. Bu ilkelere
+	bir programcı özel bir durum yoksa mutlaka uyar. Bu ilkelere genel olarak "Object Oriented Design Principles" denir.
+	Bu ilkeler kısaca "SOLID" olarak bilinir:
+	Single Responsibility Principle (SRP)
+	Open Closed Principle (OCP)
+	Liskov Substitution Principle (LSP)
+	Interface Segregation Principle (ISP)
+	Dependency Inversion Principle (DIP)
+
+	Bu ilkeler bu kurs ve uygulama kurslarında zaman içerisinde anlaşılacaktır.
+	Bu ilkeler birbirlerinden ayrı düşünülmemelidir.
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+	Anahtar Notlar: Nesne yönelimli programlama tekniği ilerledikçe bir takım genel problemlere yine bir takım genel
+	çözümleri öneren ve 4 kişi tarafından hazırlanan kalıplar vardır. Bu problemlere ve çözümlerine  "design patterns"
+	denir. Bu anlamnda bu 4 kişiyi temsil etmek amacıyla bu kalıplara "Gof (Gang of Four) patterns" de denir. Gof kalıplarından
+	önce ve sonra da bir çok kalıp önerilmiştir. Ancak Gof kalıpları bu anlamda en çok kullanları biçiminde düşünülebilir.
+
+	Anahtar Notlar: Tasarım kalıplarının hepsi heme öğrenilmeli midir? Bu anlamda tasarım kalıplarını çalışmak belli
+	bir uygulama geliştirme becerisine sahip olduktan sonra daha verimli olur. Biz bu kursta ve uygulama kurslarında
+	bu kalıpların bir çoğunu öğreneceğiz.
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+	Anahtar Notlar: Programlamada çalışma zamanında herhangi bir nesne ya da değişken için ayrılmayan genel olarak 1 byte'lık
+	bölgenin adresine "null address" denir. Java'da bu adres "null" sabiti ile temsil edilir. Bir referansa null atanabilir.
+	Bu durumda referansın içerisinde bir adres vardır ancak bu adreste bir nesne yoktur. Ya da daha genel anlatımla null
+	adres çalışma zamnında yer ayırma anlamında kullanılmayan bir adrestir. Modern sistemlerde heme hepsinde "null adress"
+	sıfır numaralı gözeneğin adresidir. Ancak böyle olmak zorunda değildir. Java programcısı açısından bu adresin sayısal
+	değerinin ne olduğunun bir önemi yoktur. Zaten "null" sabiti bu adresi temsil eder. Bir refansın default değeri null'dır.
+	null adres (referans) kavramı daha detaylı olarak ileride ele alınacaktır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Singleton: Öyle bir sınıf olsun ki bu sınıf türünden program boyunca yalnızca bir tane nesne yaratılabilsin ve
+	bu nesnenin referansı elde edilebilsin
+
+	Anahtar Notlar: Singleton sınıfı'ın bir çok "gerçekleştirimi (implementation)" yapılabilir.
+
+	Anahtar Notlar: Bu kursta Singleton kalıbının hangi durumlarda kullanılacağı ele alınmayacaktır. Yalnızca çeşitli
+	implementasyonları yapılacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Singleton s1 = Singleton.getInstance();
+		Singleton s2 = Singleton.getInstance();
+
+		System.out.println(s1 == s2 ? "Aynı nesne " : "Farklı nesneler");
+	}
+}
+
+class Singleton{
+	private static Singleton ms_instance;
+
+	private int m_valeu;
+
+	private Singleton()
+	{}
+
+	public static Singleton getInstance()
+	{
+		if(ms_instance == null)
+			ms_instance = new Singleton();
+
+		return ms_instance;
+	}
+
+	public int getValue()
+	{
+		return m_valeu;
+	}
+
+	public void setValue(int value)
+	{
+		m_valeu = value;
+	}
+}
 
 -----------------------------------------------------------
 -----------------------------------------------------------

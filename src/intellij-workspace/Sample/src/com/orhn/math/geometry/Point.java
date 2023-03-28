@@ -16,8 +16,25 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 public class Point{
-	public int x;
-	public int y;
+
+	public int m_x;
+	public int m_y;
+
+	public int getX() {
+		return m_x;
+	}
+
+	public void setX(int x) {
+		this.m_x = x;
+	}
+
+	public int getY() {
+		return m_y;
+	}
+
+	public void setY(int y) {
+		this.m_y = y;
+	}
 	
 	public Point()
 	{
@@ -25,13 +42,13 @@ public class Point{
 	
 	public Point(int a)
 	{
-		x = a;
+		m_x = a;
 	}
 	
 	public Point(int a, int b)
 	{
-		x = a;
-		y = b;
+		m_x = a;
+		m_y = b;
 	}
 	
 	public double distance() 
@@ -47,27 +64,27 @@ public class Point{
 	
 	public double distance(Point other) 
 	{
-		return distance(other.x, other.y);
+		return distance(other.m_x, other.m_y);
 	}
 	
 	public double distance(int a, int b) 
 	{
-		return sqrt(pow(x - a, 2) + pow(y - b, 2));
+		return sqrt(pow(m_x - a, 2) + pow(m_y - b, 2));
 	}
 	
 	public void offset(int dx, int dy)
 	{
-		x += dx;
-		y += dy;
+		m_x += dx;
+		m_y += dy;
 	}
 	
 	public void print()
 	{
-		System.out.printf("(%d, %d)%n", x, y);
+		System.out.printf("(%d, %d)%n", m_x, m_y);
 	}
 	
 	public String toString()
 	{
-		return String.format("(%d, %d)", x, y);
+		return String.format("(%d, %d)", m_x, m_y);
 	}
 }

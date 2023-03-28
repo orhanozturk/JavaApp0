@@ -1,5 +1,5 @@
 package com.orhn.app.lottery;
-import com.orhn.util.array.ArrayUtil;
+import com.orhn.util.ArrayUtil;
 
 import java.util.Scanner;
 

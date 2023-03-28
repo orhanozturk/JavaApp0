@@ -1,9 +1,9 @@
-package com.orhn.util.array;
+package com.orhn.util;
 
 import java.util.Random;
 
 public class ArrayUtil {
-    public ArrayUtil()
+    private ArrayUtil()
     {}
 
     public static void swap(int [] a, int i, int k)
@@ -61,6 +61,12 @@ public class ArrayUtil {
     public static int[][] getRandomSquareMatrix(Random r, int n, int min, int max)
     {
         return getRandomMatrix(r, n, n, min, max);
+    }
+
+    public static void addBy(int [] a, int val)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] += val;
     }
 
     public  static int sumDiagonal(int [][] a)

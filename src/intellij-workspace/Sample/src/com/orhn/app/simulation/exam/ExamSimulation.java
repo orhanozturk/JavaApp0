@@ -1,6 +1,6 @@
 package com.orhn.app.simulation.exam;
 
-import com.orhn.util.array.ArrayUtil;
+import com.orhn.util.ArrayUtil;
 
 import java.util.Random;
 import java.util.Scanner;

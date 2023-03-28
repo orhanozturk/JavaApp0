@@ -1,5 +1,4 @@
 package com.orhn.app.lottery;
-import com.orhn.util.array.ArrayUtil;
 import java.util.Random;
 
 public class NumericLottery {
