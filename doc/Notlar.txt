@@ -24804,6 +24804,9 @@ class App {
 	Anahtar Notlar: Bu kursta Singleton kalıbının hangi durumlarda kullanılacağı ele alınmayacaktır. Yalnızca çeşitli
 	implementasyonları yapılacaktır
 ----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+	Singleton kalıbının "lazy" implementasyonu
+----------------------------------------------------------------------------------------------------------------------*/
 
 package com.orhn.app;
 
@@ -24846,7 +24849,315 @@ class Singleton{
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+30.03.2023 Perşem - 34.Ders
 
+/*----------------------------------------------------------------------------------------------------------------------
+	final değişkenler:
+	Bir değişkenin final olarak bildirilmesi durumunda o değişken bir kez değer alır ve bir daha değeri değiştirilemez.
+	Değiştirilmeye çalışılması error oluşturur. Java 8'den itibaren yerel değişkenlerin ve parametre değişkenlerinin final
+	olması durumununb artık bir anlamı kalmamıştır. Java 8 öncesinde yerel değişkenlerin ve parametre değişkenlerinin
+	final olarak bildirilmesinin zorunlu olduğu durumlar vardı. Fakat veri elemanları için bu durum söz konusu değildir.
+	Yani veri elemanları final yapılabiliyor ise yapılması iyi bir tekniktir.
+
+	final veri elemanları için genel olarak şu kural iyi bir programlama açısından benimsenmelidir:
+	"Veri elemanın final yapılması algoritmik olarak geçerliyse kesinlikle final yapılmalıdır"
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+	final bir yerel değişkene faaliyet alanı (scope) boyunca bir kez değer verilebilir. Genel olarak ilkdeğer verilse de (initialization)
+	faaliyet alanı boyunca bir kez olması koşunuyla istenildiği yerde atama yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		final double pi = 3.14;
+		final double e;
+
+		//pi = 3.15; //error
+		e = 2.71; //gecerli
+		++e; //error artık
+
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir metodun parametre değişkenleri olabilir. Bu durumda metodun final olan parametre değişkenlerinin değerleri
+	metot içerisinde değiştirilemez
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+
+	}
+}
+
+class Sample{
+	public  static void foo(final int x, int y)
+	{
+		++y;
+		--x; //error
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın non-static ve final olarak bildirilmiş veri elemanlarına default değerler atanmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+
+	}
+}
+
+class Sample{
+	public final int x; //error
+	//public final int x = 34;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın non-static ve final bir veri elemanına üç yerden birinde değer verilebilir:
+	1. Bildirim noktasında (initialization)
+	2. Sınıfın tüm ctor'ları içerisinde
+	3. Sınıfın "non-static bloğu (non-static initializer)" içerisinde: Bu konu ileride ele alınacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+
+	}
+}
+
+class Sample{
+	public final int x;
+
+	public Sample()
+	{
+		x = 0;
+	}
+
+	public Sample(int a)
+	{
+		x = a;
+	}
+}
+
+class Mample{
+	public final int x = 10;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın non-static ve final veri elemanınının sabit ifadesi ile ilkdeğerlenmesi gerekmez
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+			Sample s = new Sample();
+			Sample k = new Sample();
+
+		System.out.printf("s.x = %d%n", s.x);
+		System.out.printf("k.x = %d%n", k.x);
+	}
+}
+
+class Sample{
+	private int randValue()
+	{
+		return new Random().nextInt();
+	}
+
+	public final int x = randValue();
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın static ve final veri elemanlarına default değer atanmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class Sample{
+	public static final int DEFAULT_VALUE; //error
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anahtar Notlar: Sınıcın static ve final ve özellikle public veri elemanlarının isimlendirilmesinde tamamen büyük
+    harfler ve birden fazla kelimeden oluşuyorsa kelimeleri alttire karakteri ile ayırma biçimi kullanılır. Bu durum
+    private veri elemanları esnek olarak düşünülebilir. Ancak özellikle public veri elemanları için bu "convention"'a
+    uyulmalıdır
+---------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+		Sınıfın static ve final veri elemanlarına iki yerden birinde değer atanabilir:
+	1. Bildirim noktasında (initialization)
+	2. Sınıfın "static bloğu (static initializer)" içerisinde: Bu konu ileride ele alınacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class Sample{
+	public static final int DEFAULT_VALUE = 20;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Singleton kalıbının "eager" implementasyonu
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Singleton s1 = Singleton.INSTANCE;
+		Singleton s2 = Singleton.INSTANCE;
+
+		System.out.println(s1 == s2 ? "Aynı nesne" : "Farklı nesneler");
+	}
+}
+
+class Singleton{
+	public static final Singleton INSTANCE = new Singleton();
+
+	private int m_value;
+	private Singleton()
+	{}
+
+	public int getValue()
+	{
+		return m_value;
+	}
+
+	public void setValue(int value)
+	{
+		m_value = value;
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	final ve static veri elemanlarının bir kullanımı
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		System.out.println(Sample.AVOGADRO_NUMBER);
+	}
+}
+
+class Sample{
+	public static final double AVOGADRO_NUMBER = 6.02E23;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte DEBUG veri elemanı final yapılırsa derleyici false olduğundan ** ile belirtilen if deyimini
+	arakoda eklemez. Eğer final yapılmazsa ekler, dolayısıyla gereksiz bir kod eklenmiş olur. Yani derleyici optimizasyon
+	yapma imkanına sahip olur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = new Sample();
+
+		s.bar(-10);
+	}
+}
+class Sample{
+	public static final boolean DEBUG = false;
+
+	private void foo(int a)
+	{
+		if(DEBUG){ //**
+			if(a < 0)
+				System.out.printf("%d can not be negative!...%n", a);
+
+			System.out.println("girdi");
+		}
+
+		System.out.println("foo");
+	}
+
+	public void bar(int a)
+	{
+		System.out.println("bar");
+		a = Math.abs(a);
+		foo(a);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte y veri elemanı x veri elemanından önce yaratılacağından error oluşur. Bu veri elemanları final
+	olmasa durum aynıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+	}
+}
+class Sample{
+	public static final int y = x + 1; //error
+	public static final int x = 10;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki örnek aşağıdaki gibi yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+	}
+}
+class Sample{
+	public static final int x = 10;
+	public static final int y = x + 1; //error
+
+}
 
 -----------------------------------------------------------
 -----------------------------------------------------------

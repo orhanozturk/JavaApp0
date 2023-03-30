@@ -3,7 +3,7 @@ package com.orhn.app.school;
 import com.orhn.app.samples.dateapp.DateUtil;
 
 public class LectureInfoParser {
-    public LectureInfo lectureInfo;
+    private final LectureInfo m_lectureInfo;
 
     /*
     <ad soyad>:<ders adı>:<gg-aa-yyyy>:<gg-aa-yyyy>:<arasınav>:<final>
@@ -13,7 +13,7 @@ public class LectureInfoParser {
     */
 
 
-    public static String getDateStr(String str)
+    private static String getDateStr(String str)
     {
         String []dateInfo = str.split("[/]");
         int day = Integer.parseInt(dateInfo[0]);
@@ -27,12 +27,17 @@ public class LectureInfoParser {
     {
         String [] lectureInfoStr = str.split("[:]+");
 
-        lectureInfo = new LectureInfo();
-        lectureInfo.studentName = lectureInfoStr[0];
-        lectureInfo.lectureName = lectureInfoStr[1];
-        lectureInfo.midtermDate = getDateStr(lectureInfoStr[2]);
-        lectureInfo.finalDate = getDateStr(lectureInfoStr[3]);
-        lectureInfo.midtermGrade = Integer.parseInt(lectureInfoStr[4]);
-        lectureInfo.finalGrade = Integer.parseInt(lectureInfoStr[5]);
+        m_lectureInfo = new LectureInfo();
+        m_lectureInfo.setStudentName(lectureInfoStr[0]);
+        m_lectureInfo.setLectureName(lectureInfoStr[1]);
+        m_lectureInfo.setMidtermDate(getDateStr(lectureInfoStr[2]));
+        m_lectureInfo.setFinalDate(getDateStr(lectureInfoStr[3]));
+        m_lectureInfo.setMidtermGrade(Integer.parseInt(lectureInfoStr[4]));
+        m_lectureInfo.setFinalGrade(Integer.parseInt(lectureInfoStr[5]));
+    }
+
+    public LectureInfo getLectureInfo()
+    {
+        return m_lectureInfo;
     }
 }

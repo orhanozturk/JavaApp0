@@ -2,7 +2,7 @@ package com.orhn.app.lottery;
 import java.util.Random;
 
 public class NumericLottery {
-    public Random random;
+    private final Random random;
 
     public  NumericLottery()
     {
@@ -18,7 +18,7 @@ public class NumericLottery {
         return getNumbers(getFlags());
     }
 
-    public static int [] getNumbers(boolean [] flags)
+    private static int [] getNumbers(boolean [] flags)
     {
         int []numbers = new int[6];
 
@@ -41,7 +41,7 @@ public class NumericLottery {
         return numbers;
     }
 
-    public boolean [] getFlags()
+    private boolean [] getFlags()
     {
         boolean [] flags = new boolean[50];
 

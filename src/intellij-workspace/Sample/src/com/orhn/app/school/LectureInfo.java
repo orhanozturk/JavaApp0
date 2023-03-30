@@ -1,15 +1,62 @@
 package com.orhn.app.school;
 
 public class LectureInfo {
-    public String studentName;
-    public String lectureName;
-    public String midtermDate;
-    public String finalDate;
-    public int midtermGrade;
-    public int finalGrade;
+    private String m_studentName;
+    private String m_lectureName;
+    private String m_midtermDate;
+    private String m_finalDate;
+    private int m_midtermGrade;
+    private int m_finalGrade;
+    public String getStudentName() {
+        return m_studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.m_studentName = studentName;
+    }
+
+    public String getLectureName() {
+        return m_lectureName;
+    }
+
+    public void setLectureName(String lectureName) {
+        this.m_lectureName = lectureName;
+    }
+
+    public String getMidtermDate() {
+        return m_midtermDate;
+    }
+
+    public void setMidtermDate(String midtermDate) {
+        this.m_midtermDate = midtermDate;
+    }
+
+    public String getFinalDate() {
+        return m_finalDate;
+    }
+
+    public void setFinalDate(String finalDate) {
+        this.m_finalDate = finalDate;
+    }
+
+    public int getMidtermGrade() {
+        return m_midtermGrade;
+    }
+
+    public void setMidtermGrade(int midtermGrade) {
+        this.m_midtermGrade = midtermGrade;
+    }
+
+    public int getFinalGrade() {
+        return m_finalGrade;
+    }
+
+    public void setFinalGrade(int finalGrade) {
+        this.m_finalGrade = finalGrade;
+    }
 
     public int getGrade()
     {
-        return (int)Math.round(midtermGrade* 0.4 + finalGrade * 0.6);
+        return (int)Math.round(m_midtermGrade* 0.4 + m_finalGrade * 0.6);
     }
 }
