@@ -1,10 +1,12 @@
 package com.orhn.app.school;
 
+import com.orhn.util.datetime.Date;
+
 public class LectureInfo {
     private String m_studentName;
     private String m_lectureName;
-    private String m_midtermDate;
-    private String m_finalDate;
+    private Date m_midtermDate;
+    private Date m_finalDate;
     private int m_midtermGrade;
     private int m_finalGrade;
     public String getStudentName() {
@@ -23,19 +25,19 @@ public class LectureInfo {
         this.m_lectureName = lectureName;
     }
 
-    public String getMidtermDate() {
+    public Date getMidtermDate() {
         return m_midtermDate;
     }
 
-    public void setMidtermDate(String midtermDate) {
+    public void setMidtermDate(Date midtermDate) {
         this.m_midtermDate = midtermDate;
     }
 
-    public String getFinalDate() {
+    public Date getFinalDate() {
         return m_finalDate;
     }
 
-    public void setFinalDate(String finalDate) {
+    public void setFinalDate(Date finalDate) {
         this.m_finalDate = finalDate;
     }
 

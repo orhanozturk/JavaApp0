@@ -25162,10 +25162,865 @@ class Sample{
 -----------------------------------------------------------
 -----------------------------------------------------------
 
+18.05.2023 Perşembe - 35.Ders
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Bir okulda Matematik sınavı ortak olarak yapılıyor olsun. Kaç şube ve herbir şubede kaç öğrenci olduğu
+	bilgisi klavyeden alınsın: Öğrencilerin notları rasgele belirlensin. Tüm bu işlemlerden sonra Matamatik sınavı için
+	herbir şubenin ayrı ayrı not ortalamaları ile okulun not ortalamasını bulan simülasyonu yazınız.
+	Açıklamalar:
+		- Notlar int türü ile tutulacaktır
+		- Programı mümkün olduğunca nesne yönelimli ve genel düşünerek yazınız
+	Not: İleride daha iyisi yazılacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.school.LectureInfoParserTest;
+import com.orhn.app.simulation.lotto.LottoProbabilitySimulationApp;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		LectureInfoParserTest.run();
+	}
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir referansın final olması o referansa bir daha değer atanamayacağını belirtir. Referansın gösterdiği nesnenin
+	içeriğinin değiştirilip değiştirilemeyeceği o nesneye ilişkin sınıfın immutable olup olmamsı ile ilgilidir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.school.LectureInfoParserTest;
+class App {
+	public static void main(String [] args)
+	{
+		final Sample s = new Sample();
+
+		s.x  = 10;
+
+		s = new Sample(); //error
+	}
+}
+
+class Sample{
+	public int x;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Soru: Aşağıda açıklanan sınıfı yazınız
+	Açıklamalar:
+		- Sınıfın ismi IntValue olacaktır
+		- Sınıfı immutable olarak yazılacaktır.
+		- Sınıf int türden bir değeri sarmalayacaktır (wrapper). Yani int türden bir değeri tutacaktır.
+		- Sınıf [-128, 127] aralığındaki değerlere ilişkin sarmalanan nesneleri ilk kez istendiğinde yaratacak sonraki
+		isteklerde aynı nesnenin referansını verecektir. Bu kavrama önbellek (cache) denir
+	Not: Java'da böyle bir sınıf vardır ve çok sık kuıllanılır. Burada böyle bir sınıfın nasıl yazılması gerektiğine
+	odaklanmalısınız
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.util.wrapper.IntValue;
+class App {
+	public static void main(String [] args)
+	{
+		IntValue iVal1 = IntValue.of(100);
+		IntValue iVal2 = IntValue.of(100);
+		IntValue iVal3 = IntValue.of(145);
+		IntValue iVal4 = IntValue.of(145);
+
+		System.out.println(iVal1 == iVal2 ? "Aynı nesne" : "Farklı Nesne");
+		System.out.println(iVal3 == iVal4 ? "Aynı nesne" : "Farklı Nesne");
+
+		System.out.println(iVal1.getValue());
+		System.out.println(iVal2.getValue());
+		System.out.println(iVal3.getValue());
+		System.out.println(iVal4.getValue());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	IntValue
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.util.wrapper.IntValue;
+class App {
+	public static void main(String [] args)
+	{
+		IntValue hundred = IntValue.of(100);
+
+		for (IntValue i = IntValue.ZERO; i.compareTo(hundred) < 0; i = i.add(2))
+			System.out.printf("%s ", i.toString());
+
+		System.out.println();
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	IntValue
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.util.wrapper.IntValue;
+class App {
+	public static void main(String [] args)
+	{
+		IntValue hundred = IntValue.of(100);
+
+		for (IntValue i = IntValue.ZERO; i.compareTo(hundred) < 0; i = i.inc())
+			System.out.printf("%s ", i.toString());
+
+		System.out.println();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	IntValue
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.util.wrapper.IntValue;
+class App {
+	public static void main(String [] args)
+	{
+		IntValue hundred = IntValue.of(100);
+
+		for (IntValue i = IntValue.TEN; i.compareTo(IntValue.ZERO) >= 0; i = i.dec())
+			System.out.printf("%s ", i.toString());
+
+		System.out.println();
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	IntValue
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.util.wrapper.IntValue;
+class App {
+	public static void main(String [] args)
+	{
+		IntValue ten = IntValue.TEN;
+		IntValue result;
+
+		result = ten.divide(IntValue.of(3));
+
+		System.out.println(result.toString());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	IntValue
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+import com.orhn.util.wrapper.IntValue;
+class App {
+	public static void main(String [] args)
+	{
+		IntValue ten = IntValue.TEN;
+		IntValue [] result;
+
+		result = ten.divideAndRemainder(3);
+
+		System.out.printf("Result:%d%n", result[0].getValue());
+		System.out.printf("Remainder:%d%n", result[1].getValue());
+	}
+}
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+19.05.2023 - 36.Ders
 
+/*----------------------------------------------------------------------------------------------------------------------
+	Date sınıfı
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+
+import com.orhn.util.datetime.Date;
+
+class App {
+	public static void main(String [] args)
+	{
+		Date d = new Date(18, 5, 2023);
+		System.out.println(d.toLongDateStringEN());
+		System.out.println(d.toLongDateStringTR());
+
+		d.setDay(19);
+		System.out.println(d.toLongDateStringEN());
+		System.out.println(d.toLongDateStringTR());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Date sınıfı
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+
+import com.orhn.util.datetime.Date;
+
+class App {
+	public static void main(String [] args)
+	{
+		Date d = new Date(18, 5, 2023);
+		System.out.println(d.toString());
+		System.out.println(d.toString('.'));
+
+		d.setDay(19);
+
+		System.out.println(d.toString());
+		System.out.println(d.toString('.'));
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı int türden gün, ay ve yıl bilgilerine ilişkin tarihin aşağıdaki açıklamalara
+	göre haftanın hangi gününe geldiğini döndüren getDayOfWeek isimli metodu yazınız ve aşağıdaki kod ile test ediniz.
+	Açıklamalar:
+		- Metot geçersiz bir tarih durumunda -1 değerine geri dönecektir
+		- Haftanın günü 1.1.1900 ile verilen tarih arasındaki (verilen tarih dahil) gün sayısının 7(yedi) ile bölümünden
+		elde edilen kalan ile belirlenebilir. Buna göre değer sıfır ise "pazar", 1 ise "pazartesi", ..., 6 ise "cumartesi"
+		günlerine karşılık gelir
+
+		- 1.1.1900 öncesindeki tarihler geçersiz sayılacaktır
+		- getDayOfWeek metodu ile birlikte
+
+		- İleride daha iyisi yazılacaktır parametresi ile aldığı int türden gün, ay ve yıl bilgilerine ilişkin tarihin
+		hafta sonu olup olmadığınıu test eden isWeekend ve hafta içi olup olmadığını test eden isWeekday metotlarını yazınız.
+		Bu iki metot tarih geçerlilik kontrolü yapmayacaktır
+
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+
+import com.orhn.util.datetime.Date;
+import com.orhn.util.datetime.DateApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		DateApp.run();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Klavyeden aşağıdaki formatta girilen bilgiyi ayrıştırarak ekrana sonuçları yazdıran programı
+	yazınız:
+	<ad soyad>:<ders adı>:<gg-aa-yyyy>:<gg-aa-yyyy>:<arasınav>:<final>
+	Oğuz Karan:Matematik:04/04/2022:01/07/2022:78:67
+	Barış Er:Radyo Haberleşmesi:03/04/2022:02/07/2022:89:100
+	Ziya ÇAYLAN:PLC Programlama:10/04/2022:13/06/2022:90:98
+	Emirhan Kabal:Fizik:07/03/2022:03/07/2022:85:75
+	Ozan Yiğit:İstatistik:07/04/2017:19/06/2017:90:100
+	Yunus Emre Uslu:Yazlım Geliştirme:28/04/2022:28/06/2022:60:70
+
+	Açıklamalar:
+		- Format geçerlilik kontrolü yapılmayacaktır
+		- Formatta vize ve final notlarına göre vize * 0.4 + final * 0.6 formülü ile geçme notu hesaplanacak ve sınav
+		tarihleri hangi güne geldiği de belirlenerek ekrana yazdırılacaktır
+		- Ekran çıktısında "Geçti" ya da "Kaldı" bilgisi de olacaktır. Geçme notu 50 ve üstünde ise öğrenci geçmiş
+		sayılacaktır.
+		- Geçme notu round işlemi ile tamsayı olarak elde edilecektir
+		- İleride daha iyisi yazılacaktır
+
+		Örnek çıktı:
+		-------------------------------------------
+		Ad Soyad: Oğuz Karan
+		Ders Adı: Matematik
+		Arasınav Tarihi: 4 Nisan 2022 Pazartesi
+		Final Tarihi: 1 Temmuz 2022 Cuma
+		Arasınav Notu: 78
+		Final Notu: 67
+		Geçme Notu: 71
+		Sonuç: Geçti
+		-------------------------------------------
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+
+import com.orhn.app.school.LectureInfoParserTest;
+import com.orhn.util.datetime.Date;
+import com.orhn.util.datetime.DateApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		LectureInfoParserTest.run();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte move metodunun parametresi int türden olduğundan parametre değişken ismi ne olduğu hakkında bilgi
+	verse de ona geçilebilecek argümanlar anlaşılamamaktadır. Ayrıca çağırma sırasında geçilen argümanlar da ne anlama
+	geldikleri hakkında bilgi vermemektedir. Yani bu yaklaşım okunabilir/algılanabilir değildir. Şüphesiz metotlar
+	argüman kontrolü yapacaktır. Ancak yine programcının yanlış argüman geçme olasılığı da vardır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.samples.dateapp.test.PrintRandomDateTest;
+
+class App {
+	public static void main(String [] args)
+	{
+		GameApp.run();
+	}
+}
+
+class GameApp{
+	public static void run()
+	{
+		GameObject go = new GameObject();
+
+		go.move(0);//right
+		go.move(1);//top
+		go.move(2);//left
+		go.move(3);//bottom
+	}
+}
+
+class GameObject{
+	public void move(int direction)
+	{
+		//...
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte move metodunun parametresi yine bir fikir vermemektedir. Argümanlar açısından okunabilirlik/algılanabilirlik
+	artırılmıştır. ASncak programcının çağırma sırasında argümanı yanlış olasılığı vardır. Üstelik String karşılaştırması
+	göreceli olarak tamsayı karşılaştırmasına göre yavaştır. Dolayısıyla bu yaklaşım da iyi sayılmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.samples.dateapp.test.PrintRandomDateTest;
+
+class App {
+	public static void main(String [] args)
+	{
+		GameApp.run();
+	}
+}
+
+class GameApp{
+	public static void run()
+	{
+		GameObject go = new GameObject();
+
+		go.move("right");//right
+		go.move("top");//top
+		go.move("left");//left
+		go.move("bottom");//bottom
+	}
+}
+
+class GameObject{
+	public void move(String direction)
+	{
+		//...
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki örnek için aşağıdaki yaklaşım programcının yanlış yazma olasılığını gidermiştir. Ancak diğer problemler
+	hala devam etmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.samples.dateapp.test.PrintRandomDateTest;
+
+class App {
+	public static void main(String [] args)
+	{
+		GameApp.run();
+	}
+}
+
+class GameApp{
+	public static void run()
+	{
+		GameObject go = new GameObject();
+
+		go.move(GameObject.RIGHT);//right
+		go.move(GameObject.TOP);//top
+		go.move(GameObject.LEFT);//left
+		go.move(GameObject.BOTTOM);//bottom
+	}
+}
+
+class GameObject{
+
+	public static final String RIGHT = "right";
+	public static final String TOP = "top";
+	public static final String LEFT = "left";
+	public static final String BOTTOM = "bottom";
+	public void move(String direction)
+	{
+		//...
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte metot çağrısında okunabilirlik/algılanabilirlik artırılmıştır ve int kullanıldığı için de görece
+	yazı karşılaştırma maliyeti ortadan kaldırılmıştır. Ancak hala metodun parametresi geçilebilecek argümanlarla ilgili
+	bir fikir vermemektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.samples.dateapp.test.PrintRandomDateTest;
+
+class App {
+	public static void main(String [] args)
+	{
+		GameApp.run();
+	}
+}
+
+class GameApp{
+	public static void run()
+	{
+		GameObject go = new GameObject();
+
+		go.move(GameObject.RIGHT);//right
+		go.move(GameObject.TOP);//top
+		go.move(GameObject.LEFT);//left
+		go.move(GameObject.BOTTOM);//bottom
+	}
+}
+
+class GameObject{
+
+	public static final int RIGHT = 0;
+	public static final int TOP = 1;
+	public static final int LEFT = 2;
+	public static final int BOTTOM = 3;
+	public void move(int direction)
+	{
+		//...
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıda anlatılan problemlerin hepsi aşağıdaki gibi bir yaklaşılma çözülebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.samples.dateapp.test.PrintRandomDateTest;
+
+class App {
+	public static void main(String [] args)
+	{
+		GameApp.run();
+	}
+}
+
+class GameApp{
+	public static void run()
+	{
+		GameObject go = new GameObject();
+
+		go.move(Direction.RIGHT);//right
+		go.move(Direction.TOP);//top
+		go.move(Direction.LEFT);//left
+		go.move(Direction.BOTTOM);//bottom
+	}
+}
+
+class Direction{
+	private Direction(){}
+	public static final Direction RIGHT = new Direction();
+	public static final Direction TOP = new Direction();
+	public static final Direction LEFT = new Direction();
+	public static final Direction BOTTOM = new Direction();
+}
+
+class GameObject{
+	public void move(Direction direction)
+	{
+		//...
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki problemlere ilişkin sınıflar Java 5 ile eklenen ve detayları ileride açıklanacak olan "enum sınıflar (enum classes)"
+	kullanılarak daha yalın hale getirilebilir. Üstelik enum class'lar yukarıdaki Direction gibi sınıflardan daha fazla
+	özelliğe sahiptir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.samples.dateapp.test.PrintRandomDateTest;
+
+class App {
+	public static void main(String [] args)
+	{
+		GameApp.run();
+	}
+}
+
+class GameApp{
+	public static void run()
+	{
+		GameObject go = new GameObject();
+
+		go.move(Direction.RIGHT);//right
+		go.move(Direction.TOP);//top
+		go.move(Direction.LEFT);//left
+		go.move(Direction.BOTTOM);//bottom
+	}
+}
+
+enum Direction{
+	RIGHT, TOP, LEFT, BOTTOM
+}
+
+class GameObject{
+	public void move(Direction direction)
+	{
+		//...
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum anahtar sözcüğü ile bir enum sınıf (enum class) bildirilebilir. enum sınıfı içerisinde ilk noktalı virgülden
+	önce (noktalı virgülü zorunlu olmadıkça koymayacağız) bildirilen isimlere "enum sabitler (enum constants)" denir.
+	Bu isimler public static olarak bildirilmiş o enum sınıfı türünden referanslardır. Bu referansların herbiri ilgili
+	enum türünden yaratılmış olan bir nesnenin adresini tutar. enum sabitleri için public static, final ve tür bilgisi
+	yazılması error oluşturur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.samples.dateapp.test.PrintRandomDateTest;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+enum Color{
+	RED, GREEN, BLUE
+}
+
+enum MaritalStatus{
+	SINGLE, MARRIED, DIVORCED
+}
+
+enum DayOfWeek{
+	SUN, MON, TUE, WED, THU, FRU, SAT
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum sınıfının ordinal isimli non-static metodu referansa ilişkin nesnenin adresini tutan enum sabitinin ordinal
+	numarasını döndürür. Ordinal numarası sabitin sıfır değerinden başlamak üzere enum bildirimindeki sıra numarasıdır.
+	enum sınıfının static values() isimli metodu ile enum sabitlerine ilişkin referansları sırasyıla tutan ilgili enum
+	türünden bir dizi yaratılıp referansı elde edilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		DayOfWeek dow = DayOfWeek.MON;
+
+		System.out.println(dow.toString());
+		System.out.printf("Ordinal : %d%n", dow.ordinal());
+
+		DayOfWeek [] dayOfWeeks = DayOfWeek.values();
+
+		int ordinal = 4;
+
+		System.out.println(dayOfWeeks[ordinal].toString());
+		System.out.println("---------------");
+
+		for (DayOfWeek dayOfWeek: dayOfWeeks) {
+			System.out.printf("%s ", dayOfWeek.toString());
+		}
+
+		System.out.println();
+	}
+}
+enum DayOfWeek{
+	SUN, MON, TUE, WED, THU, FRU, SAT
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum sınıfının static valueOf metodu parametresi ile aldığı yazıya ilişkin sabit ilgili enum sınıfında varsa o sabite
+	ilişkin refernsa geri döner. Yoksa exception oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+
+		System.out.print("Gün bilgisini giriniz -> [SUN, MON, TUE, WED, THU, FRI, SAT]: ");
+		String s = kb.nextLine().toUpperCase();
+
+		DayOfWeek dow = DayOfWeek.valueOf(s);
+
+		System.out.println(dow.toString());
+	}
+}
+enum DayOfWeek{
+	SUN, MON, TUE, WED, THU, FRI, SAT
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum sınıfı türünden nesne new opertörü ile hiçbir yerde (sınıf içinde bile) yaratılamaz. Yani bir enum türünden
+	nesne sayısı program boyunca enum sabitinin sayısı kadardır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		DayOfWeek dow = new DayOfWeek(); /* error */
+	}
+}
+enum DayOfWeek{
+	SUN, MON, TUE, WED, THU, FRI, SAT
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir enum sınıfına sabitler dışında metot, veri elemanı, ctor vb. eklenebilir. Bunun için son bildirilen sabitten
+	sonra noktalı virgül konması gerekir. Eğer enum sınıfının hiçbir sabit elemanı yoksa bile (bu durum enum kullanmanın
+	hedefine aykırıdır yani anlamsızdır) eklenecek diğer elemanlardab önce yine noktalı virgül konmalıdır. ctor ayrıca
+	incelenecektir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+enum Sample{
+	;
+	private int m_a;
+
+	public void foo()
+	{
+		//
+	}
+
+	static void bar()
+	{
+		//
+	}
+}
+
+enum DayOfWeek{
+	SUN, MON, TUE, WED, THU, FRI, SAT;
+
+	private int m_a;
+	public void foo()
+	{
+		//
+	}
+
+	static void bar()
+	{
+		//
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki durumda içi boş parantezler geçerlidir. Hiç parantez konmaması ile aynı anlamdadır. Aslında aşapıdaki
+	kullanım ya da parantezsiz kullanım, sabitlere ilişkin nesneler yaratılırken "default ctor" çağrılsın anlamındadır.
+	Anımsanacağı gibi bir sınıfa hiçbir ctor yazılmamışsa, derleyici default ctor'u içi boş ve public olarak yazar.
+	enum için içi boş ve erişilemez olarak yazar. Buradaki erişlemez, private anlamında değildir. Daha ötesidir. enum
+	sınıfı içerisinde de ctor'lar erişilemez durumdadır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+enum Color{
+	RED(), GREEN(), BLUE(), WHITE(), BLACK()
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir enum sınıfında ctor'lar yazılabilir. Ancak bu ctor'lar ya private ya da hiçbir erişim belirleyici olmadan
+	bildirilmelidir. Aksi durumda error oluşur. Erişim belirleyici yazılmaması enum sınıfların ctor'ları için klasik
+	no-modifier anlamına gelmez. Bu durum yalnızca enum sınıfının ctor'u için geçerlidir. enum sınıfının ctor'ları public
+	ya da protected olarak bildirilemez. enum sınıfı türünden bir nesne sınıf içerisinde de yaratılamaz. Yani enum sınıfının
+	ctor'ları özeldir. Erişim anlamında private'ın da ötesindedir. Biz bir ctor için erişim belirleyecisi yazmayacağız
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Color c = new Color(); //error
+	}
+}
+
+enum Color{
+	RED(), GREEN(), BLUE(), WHITE(), BLACK();
+	Color()
+	{
+		System.out.println("I am a default ctor");
+	}
+
+	public static Color foo()
+	{
+		return new Color(); //error
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Anımsanacağı gibi bir sınıfın static veri elemanları sınıfın bir elemanı (member) ilk kez kullanıldığında hepsi
+	birden olmak üzere yaratılır ve program sonlanana kadar yaşarlar. Aşağıdaki örnekte 5 tane "I am a default ctor"
+	yazısı ekrana basılacaktır. Bu yazılar ilk foo çağrısıyla birlikte foo'nun kodlarından önce ekrana basılacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Color.foo();
+		System.out.println("------------------------");
+		Color.foo();
+	}
+}
+
+class Color{
+	public static final Color RED = new Color();
+	public static final Color GREEN = new Color();
+	public static final Color BLUE = new Color();
+	public static final Color WHITE = new Color();
+	public static final Color BLACK = new Color();
+	Color()
+	{
+		System.out.println("I am a default ctor");
+	}
+
+	public static Color foo()
+	{
+		return new Color(); //error
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki örneğin enum class ile yapılışı durumunda yine aynı şekilde olacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Color.foo();
+		System.out.println("------------------------");
+		Color.foo();
+	}
+}
+
+enum Color{
+	RED(), GREEN(), BLUE(), WHITE(), BLACK();
+	Color()
+	{
+		System.out.println("I am a default ctor");
+	}
+
+	public static void foo()
+	{
+		System.out.println("Color foo");
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte Color enum sınıfına eklenem ctor ile her bir sabite ilişkin nesne için bilgiler iliştirilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb =new Scanner(System.in);
+		RandomColorFactory factory = new RandomColorFactory(new Random());
+
+		System.out.println("Bir sayi giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; i++){
+			Color color = factory.getColor();
+
+			System.out.println("-------------------------------");
+			System.out.printf("%s:{r: %d, g: %d, b: %d}%n", color.toString(), color.r, color.g, color.b);
+		}
+	}
+}
+
+class RandomColorFactory{
+	private static final Color [] COLORS = Color.values();
+	private final Random m_random;
+
+	public RandomColorFactory(Random m_random)
+	{
+		this.m_random = m_random;
+	}
+
+	public Color getColor()
+	{
+		return COLORS[m_random.nextInt(COLORS.length)];
+	}
+}
+
+enum Color{
+	RED(255, 0, 0), GREEN(0, 255, 0), BLUE(0, 0, 255), WHITE(255, 255, 255), BLACK(0, 0, 0);
+
+	public final int r, g, b;
+	Color(int x, int y, int z)
+	{
+		r = x;
+		g = y;
+		b = z;
+	}
+
+}
 
 -----------------------------------------------------------
 -----------------------------------------------------------

@@ -18,11 +18,6 @@ import static java.lang.Math.log10;
 import static java.lang.Math.abs;
 
 public class NumberUtil{
-
-    private NumberUtil()
-    {
-
-    }
     private static String [] ONES;
     private static String [] TENS;
 

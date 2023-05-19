@@ -17,12 +17,14 @@ import java.util.Random;
 
 public class StringUtil {
 
-	private StringUtil()
-	{
+	private static final String ALPHABET_TR = "abcçdefgğhıijklmnoöprsştuüvyz";
+	private static final String ALPHABET_EN = "abcdefghijklmnopqrstuwxvyz";
+	private static final String ALPHABET_CAPITAL_TR = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+	private static final String ALPHABET_CAPITAL_EN = "ABCDEFGHIJKLMNOPQRSTUWXVYZ";
+	private static final String ALPHABET_ALL_TR = ALPHABET_TR + ALPHABET_CAPITAL_TR;
+	private static final String ALPHABET_ALL_EN = ALPHABET_EN + ALPHABET_CAPITAL_EN;
 
-	}
-
-	/*----------------------------------------------------------------------------------------------------------------------	 
+	/*----------------------------------------------------------------------------------------------------------------------
 	Sınıf Çalışması: Parametresi ile aldığı bir yazının ilk harfi büyük geri kalan harfleri küçük olacak şekilde ve
  	harf dışı karakterler de aynı kalacak şekilde bir yazı döndüren capitalizeWS isimli metodu StringUtil sınıfı 
  	içerisinde yazınız ve aşağıdaki kod ile test ediniz. Metot yazının başında boşluk karakterleri olsa bile ilk 
@@ -96,7 +98,7 @@ public class StringUtil {
 	
 	public static String getRandomTextTR(Random r, int n)
 	{
-		return getRandomText(r, n, "abcçdefgğhıijklmnoöprsştuüvyzABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ");	
+		return getRandomText(r, n, ALPHABET_ALL_TR);
 	}
 	
 	public static String getRandomTextTR(int n)
@@ -106,7 +108,7 @@ public class StringUtil {
 	
 	public static String getRandomTextEN(Random r, int n)
 	{
-		return getRandomText(r, n, "abcdefghijklmnopqrstuwxvyzABCDEFGHIJKLMNOPQRSTUWXVYZ");
+		return getRandomText(r, n, ALPHABET_ALL_EN);
 	}
 
 	public static String [] getRandomTextsTR(int count, int min, int max)
@@ -114,6 +116,17 @@ public class StringUtil {
 		return getRandomTextsTR(new Random(), count, min, max);
 	}
 
+	/**
+	 * Açıklama test
+	 *
+	 * @param r
+	 * @param count
+	 * @param min
+	 * @param max
+	 * @return
+	 *
+	 * Example Usega :
+	 */
 	public static String [] getRandomTextsTR(Random r, int count, int min, int max)
 	{
 		String [] result = new String[count];
@@ -222,12 +235,12 @@ public class StringUtil {
 	
 	public static boolean isPangramTR(String s)
 	{
-		return isPangram(s.toLowerCase(), "abcçdefgğhıijklmnoöprsştuüvyz");
+		return isPangram(s.toLowerCase(), ALPHABET_TR);
 	}
 	
 	public static boolean isPangramEN(String s)
 	{
-		return isPangram(s.toLowerCase(), "abcdefghijklmnopqrstuwxvyz");
+		return isPangram(s.toLowerCase(), ALPHABET_EN);
 	}
 	
 	public static boolean isPangram(String s, String alphabet)
