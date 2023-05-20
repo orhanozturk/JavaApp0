@@ -12,14 +12,9 @@ package com.orhn.util.datetime;
 
 import java.time.LocalDate;
 
+import static com.orhn.util.datetime.DateUtil.MONTHS;
+
 public class Date {
-
-    private int m_day;
-    private int m_month;
-    private int m_year;
-    private int m_dayOfWeek;
-
-
     private static final String [] MONTHS_TR = {"", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"};
     private static final String [] DAYS_OF_WEEK_TR = {"Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"};
     private static final String [] MONTHS_EN = {"", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -33,7 +28,7 @@ public class Date {
         int totalDays = day;
 
         for(int m = month - 1; m >= 1; --m)
-            totalDays += DateUtil.getDays(m, year);
+            totalDays += MONTHS[m - 1].getDays(year);
 
         return totalDays;
 
@@ -46,7 +41,7 @@ public class Date {
             return -1;*/
 
         for (int y = 1900; y < year; ++y)
-            totalDays += DateUtil.isLeapYear(y) ? 366 : 365;
+            totalDays += Month.isLeapYear(y) ? 366 : 365;
 
         return totalDays % 7;
     }
@@ -62,7 +57,7 @@ public class Date {
     }
     private static boolean isValidDate(int day, int month, int year)
     {
-        return  1 <= day && day <= 31 && 1 <= month && month <= 12 && day <= DateUtil.getDays(month, year);
+        return  1 <= day && day <= 31 && 1 <= month && month <= 12 && day <= MONTHS[month - 1].getDays(year);
     }
 
     private static void doWorkForException(String message)
@@ -91,6 +86,12 @@ public class Date {
     {
         checkDate(m_day, m_month, year, message);
     }
+
+
+    private int m_day;
+    private int m_month;
+    private int m_year;
+    private int m_dayOfWeek;
 
     private void set(int day, int month, int year)
     {
@@ -172,7 +173,7 @@ public class Date {
 
     public boolean isLeapYear()
     {
-        return DateUtil.isLeapYear(m_year);
+        return Month.isLeapYear(m_year);
     }
 
     public boolean isWeekend()

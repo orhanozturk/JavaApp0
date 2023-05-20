@@ -26022,8 +26022,643 @@ enum Color{
 
 }
 
+
+
+
 -----------------------------------------------------------
 -----------------------------------------------------------
+20.05.2023 Cumartesi - 37.Ders
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum class ile Singleton sınıf bildirimi. Lazy implementation gerekmedikçe ve özel bir durum yoksa Singleton
+	için en iyi implementasyon enum ile yapılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Singleton s1 = Singleton.INSTANCE;
+		Singleton s2 = Singleton.INSTANCE;
+
+		System.out.println(s1 == s2 ? "Aynı nesne" : "Farklı nesneler");
+	}
+}
+
+enum Singleton{
+	INSTANCE;
+
+	private int m_value;
+
+	private Singleton(){}
+
+	public int getValue()
+	{
+		return m_value;
+	}
+
+	public void setValue(int value)
+	{
+		m_value = value;
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum türlerinde eşitlik karşılaştırması yani aynı enum sabitine ilişkin referansın tutulup tutulmadığı == ve !=
+    	operatörleri ile test edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb =new Scanner(System.in);
+		RandomColorFactory factory = new RandomColorFactory(new Random());
+
+		System.out.println("Bir sayi giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; i++){
+			Color color1 = factory.getColor();
+			Color color2 = factory.getColor();
+
+			System.out.println("-------------------------------");
+			System.out.printf("%s, %s%n", color1.toString(), color2.toString());
+			System.out.println(color1 == color2 ? "Ayni nesne": "Farklı nesneler");
+			System.out.println(color1 != color2 ? "Farklı nesneler": "Aynı nesneler");
+		}
+	}
+}
+
+class RandomColorFactory{
+	private static final Color [] COLORS = Color.values();
+	private final Random m_random;
+
+	public RandomColorFactory(Random m_random)
+	{
+		this.m_random = m_random;
+	}
+
+	public Color getColor()
+	{
+		return COLORS[m_random.nextInt(COLORS.length)];
+	}
+}
+
+enum Color{
+	RED(255, 0, 0), GREEN(0, 255, 0), BLUE(0, 0, 255), WHITE(255, 255, 255), BLACK(0, 0, 0);
+
+	public final int r, g, b;
+	Color(int x, int y, int z)
+	{
+		r = x;
+		g = y;
+		b = z;
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum türlerinde eşitlik karşılaştırması yani aynı enum sabitine ilişkin referansın tutulup tutulmadığı == ve !=
+	operatörleri ile test edilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb =new Scanner(System.in);
+		RandomColorFactory factory = new RandomColorFactory(new Random());
+
+		System.out.println("Bir sayi giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; i++){
+			Color color1 = factory.getColor();
+			Color color2 = factory.getColor();
+
+			System.out.println("-------------------------------");
+			System.out.printf("%s, %s%n", color1.toString(), color2.toString());
+			System.out.println(color1.equals(color2) ? "Ayni nesne": "Farklı nesneler");
+		}
+	}
+}
+
+class RandomColorFactory{
+	private static final Color [] COLORS = Color.values();
+	private final Random m_random;
+
+	public RandomColorFactory(Random m_random)
+	{
+		this.m_random = m_random;
+	}
+
+	public Color getColor()
+	{
+		return COLORS[m_random.nextInt(COLORS.length)];
+	}
+}
+
+enum Color{
+	RED(255, 0, 0), GREEN(0, 255, 0), BLUE(0, 0, 255), WHITE(255, 255, 255), BLACK(0, 0, 0);
+
+	public final int r, g, b;
+	Color(int x, int y, int z)
+	{
+		r = x;
+		g = y;
+		b = z;
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum türlerinin compareTo metodu:
+		a.compareTo(b);
+	çağrısı için
+		a.ordinal() - b.ordinal()
+	sonucunu döndürür
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		RandomDayOfWeekFactory factory = new RandomDayOfWeekFactory(new Random());
+
+		System.out.print("Kac tane uretilsin : ");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; i++) {
+			DayOfWeek dow1 = factory.getDayOfWeek();
+			DayOfWeek dow2 = factory.getDayOfWeek();
+
+			int diff = dow1.compareTo(dow2);
+
+			System.out.println("-----------------------------");
+			if(diff < 0)
+				System.out.printf("%s ile %s arasında %d gün var%n", dow1.toString(), dow2.toString(), -diff);
+			else if(diff > 0)
+				System.out.printf("%s ile %s arasında %d gün var%n", dow2.toString(), dow1.toString(), diff);
+			else
+				System.out.printf("Ayni gün:%s%n", dow1.toString());
+			System.out.println("-----------------------------");
+		}
+	}
+}
+
+class RandomDayOfWeekFactory{
+	private  static final DayOfWeek [] DAY_OF_WEEKS = DayOfWeek.values();
+	private final Random m_random;
+
+	public RandomDayOfWeekFactory(Random m_random)
+	{
+		this.m_random = m_random;
+	}
+
+	public DayOfWeek getDayOfWeek()
+	{
+		return DAY_OF_WEEKS[m_random.nextInt(DAY_OF_WEEKS.length)];
+	}
+}
+
+
+enum DayOfWeek{
+	SUN, MON, TUE, WED, THU, FRI, SAT;
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	values her çağrıldığında yeni bir dizi yaratılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		DayOfWeek [] dayOfWeeks1 = DayOfWeek.values();
+		DayOfWeek [] dayOfWeeks2 = DayOfWeek.values();
+
+		System.out.println(dayOfWeeks1 == dayOfWeeks2 ? "Ayni dizi":"Farklı diziler");
+	}
+}
+
+enum DayOfWeek{
+	SUN, MON, TUE, WED, THU, FRI, SAT;
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum ornek inceleme
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		DayOfWeek [] dayOfWeeks = DayOfWeek.values();
+
+		dayOfWeeks[0] = DayOfWeek.THU;
+
+		for (DayOfWeek dow:dayOfWeeks) {
+			System.out.printf("%s ", dow.toString());
+		}
+
+		System.out.println();
+
+		for (DayOfWeek dow : DayOfWeek.values()) {
+			System.out.printf("%s ", dow.toString());
+		}
+
+		System.out.println();
+	}
+}
+
+enum DayOfWeek{
+	SUN, MON, TUE, WED, THU, FRI, SAT;
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum türleri switch deyimi ile kullanılabilmektedir. Bu durumda case bölümlerinin enum sabitlerinden olması gerekir.
+    	Karşılaştırma işlemi == operatörü ile yapılır. case bölümlerine ilişkin sabitlerde enum ismi kullanımı geçersizdir.
+    	Sabit ismi doğrudan kullanılır. Zaten switch deyime ilişkin ifade enum türünden olduğu için case bölümleri için
+    	sabit isminin doğrudan kullanımında bir sorun oluşmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		System.out.print("Input a marital status text as SINGLE, MARRIED or DIVORCED:");
+		String maritalStatusStr = kb.nextLine();
+		MaritalStatus maritalStatus = MaritalStatus.valueOf(maritalStatusStr.toUpperCase());
+
+		switch (maritalStatus){
+			case SINGLE -> System.out.println("Single person");
+			case MARRIED -> System.out.println("Married person");
+			case DIVORCED -> System.out.println("Divorced person");
+		}
+
+		System.out.println();
+	}
+}
+
+enum MaritalStatus{
+	SINGLE, MARRIED, DIVORCED;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	yukarıdaki ornegin breaklli switch
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		System.out.print("Input a marital status text as SINGLE, MARRIED or DIVORCED:");
+		String maritalStatusStr = kb.nextLine();
+		MaritalStatus maritalStatus = MaritalStatus.valueOf(maritalStatusStr.toUpperCase());
+
+		switch (maritalStatus){
+			case SINGLE : System.out.println("Single person"); break;
+			case MARRIED : System.out.println("Married person"); break;
+			case DIVORCED : System.out.println("Divorced person"); break;
+		}
+
+		System.out.println();
+	}
+}
+
+enum MaritalStatus{
+	SINGLE, MARRIED, DIVORCED;
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Date sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.datetime.DateApp;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		DateApp.run();
+	}
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki Color sınıfına enum'la birlikte default olarak gelen bazı yetenekler eklenmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.datetime.DateApp;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class Color{
+	private static final Color[] COLORS = {new Color(0), new Color(1), new Color(2), new Color(3), new Color(4)};
+
+	public static final Color RED = COLORS[0];
+	public static final Color GREEN = COLORS[1];
+	public static final Color BLUE = COLORS[2];
+	public static final Color WHITE = COLORS[3];
+	public static final Color BLACK = COLORS[4];
+	private  final int m_ordinal;
+	private Color(int ordinal)
+	{
+		m_ordinal = ordinal;
+	}
+
+	public int ordinal()
+	{
+		return m_ordinal;
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Homework-15 iskeleti
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.app.game.card.Card;
+import com.orhn.util.datetime.DateApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		Card [] deck;
+
+		deck = Card.getShuffledDeck();
+		for (Card c : deck) {
+			System.out.println(c.toString());
+		}
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıflar arası ilişkiler: Sınıflar arası ilişkiler aslında nesneler arasındaki ilişkiler olarak düşünülmeldir. Örneğin,
+	uçak ile pilotları arasında bir ilişki vardır. Ya da araba ile motoru arasında da bir ilişki vardır. Burada uçak
+	nesnesinin pilot nesneleri arasındaki ilişkiden bahsedilir. Benzer şekilde araba nesnesinin motor nesnesi olan
+	ilişkiden bahsedilmiş olur. Ancak şüphesiz bu ilişkilere uygun olarak sınıflar yazılmalıdır.
+
+	Nesne yönelimli programlama tekniği kullanılarak geliştirilecek bir projenin kodlama aşamasına gelindiğinde önce sınıflar
+	ve aralarındaki ilişkiler belirlenir. Sonra kodlamaya geçilir. Sınıflar ve aralarındaki ilişkiler belirlenirken, sınıfların
+	ve nesnelerin konuya (domain) ilişkin durumları düşünülür.
+
+	Anahtar Notlar: Bir projenin müşteri ile görüşülmesinden (ihtiyaçların belirlenmesi için) teslime (deployment) kadar
+	geçen sürecin çeşitli şemalar ile anlatılmasını sağlayan UML (Unified Modeling Language) denilen bir araç bazı
+	durumlarda kullanılabilmektedir. Bu aracın önemli ve geliştiriciler ilgilendiren şemalarından birisi
+	"sınıf şeması (class diagram)"'dır. Bu şema, kodlamaya yönelik ve kodlamaya başlamadan önce yapılır. Bu şemada sınıfların
+	detayları ve aralarındaki ilişkiler çizilir.
+
+	Anahtar Notlar: UML her zaman ve her detayı ile kullanılmalı mıdır? Bunun için verilecek cevap nettir: Hayır.
+	Gerektiğinde ve gerektiği kadar kullanılmalıdır.
+
+ 	Anahtar Notlar: Kavram ya da kavramlar modellenirken genel durumlar düşünülür. İstisna niteliğinde olabilecek durumlar
+ 	modelleme yapılırken - genel olarak - göz önünde bulundurulmaz. Aksi durumda hiçbir şey modellenemez. Örneğin,
+ 	araba ile motoru arasındaki "X" ilişki için şu koşullar olsun ya da tersine aşağıdaki koşullar gerçeklendiğinde araba
+ 	ile motoru arasındaki ilişki "X" olsun:
+ 		1. Araba nesnesine ait motor nesnesi başka bir araba nesnesi veya başka bir nesne tarafından kullanılamaz
+ 		2. Araba nesnesine ait motor nesnesinin ömrü hemen hemen araba ile başlayıp, araba ile son bulacak
+	Burada, ikinci madde bazı durumlarda gerçeklenmeyebilir. Ama bu ilişkin genel durumunu bozmaz.
+
+	Bir sınıfın derlenebilmesi için başka bir sınıfın varolması gerektiği duruma "bağımlılık (dependency)" denir. Aslında bu
+	kavram sadece sınıflara özgü değildir. Örneğin bir metodun içerisinde başka bir metodun çağrılması durumunda çağrılan
+	metodun var olması gerekir. Bu anlamda çağıran metot çağrılan metoda bağımlıdır. Burada bağımlılık terimi sınıflar
+	arasında ele alacağız.
+
+	İki sınıf arasında aşağıdaki ilişkilerden ya hiçbirisi yoktur ya da bir tanesi vardır:
+	1. İçerme (composition) (has a): A ve B arasındaki "A has a B" ilişkisi için aşağıdaki iki koşulun da gerçeklenmesi
+	gerekir, ya da tersine aşağıdaki iki koşulun da gerçeklendiği ilişkidir:
+		- A nesnesine ait B nesnesi başka bir nesne tarafından kullanılmayacak
+		- A nesnesine ait B nesnesi ömrüne hemen hemen A ile başlayacak ve hemen hemen A ile ömrü son bulacak.
+	Bu ilişkide A nesnesi kendisine ait B nesnesini istediği bir durumda (birçok durumda ya da hemen her durumda)
+	kullanabilmektedir.
+
+	2. Birleşme (aggregation) (holds a):  A ve B arasındaki "A holds a B" ilişkisi, composition ilişkisinin kurallarının
+	en az bir tanesinin gerçeklenmediği bütünsel kullanım ilişkisidir.
+
+	3. Çağrışım (association): A nesnesinin B nesnesini ihtiyacı olduğunda kullanması, saklamaması ilişkisidir. Yani
+	bütünsel bir kullanım yoktur. Bu kullanıma "parçalı (partial)" da denir
+
+	4. Türetme/Kalıtım (inheritance) (is a): Biyoloji'den programlamaya aktarılmıştır. Biyoloji'de kalıtım ebeveynin (parent)
+	özelliklerinin çocuğuna (child) aktarılmasıdır. Programlamaya ilişkin detayları ileride ele alınacaktır
+
+	Anahtar Notlar: Yukarıdaki ilişkilerden "inheritance dışında kalan ilişkiler için Java'da doğrudan sentaks ve semantic
+	kurallar yoktur. Dilin genel sentaks kuralları ve semantik kuralları ile ilişkin kuralları doğrultusunda
+	gerçekleştirilebilir (implementation). Ancak "inheritance" için Java'da ayrı sentaks ve semantik kurallar vardır.
+
+	Anahtar Notlar: Bazı sınıfların implementasyonları gereği yukarıdaki ilişkilerden hiçbirisi olmayabilir. Ya da
+	bazı özel durumlar dolayısıyla da iki sınıf arasında yukarıdaki ilişkilerden biri olmayabilir. Ama ortada yine bir
+	bağımlılık (dependency) söz konusudur. Bu da yine genel durumu bozmaz. Böylesi durumlar ileride ele alınacaktır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	A ile B arasındaki "composition" ilişkisinin genel bir implementasyonu
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+        A a;
+
+        a = new A();
+
+        a.doWork1();
+        a.doWork2();
+	}
+}
+
+class A{
+	private B m_b;
+
+	public A()
+	{
+		m_b = new B();
+	}
+
+	public void doWork1()
+	{
+		//..
+		m_b.doSomething();;
+	}
+
+	public void doWork2()
+	{
+		//..
+		m_b.doSomething();;
+	}
+}
+
+class B {
+	//..
+	public void doSomething()
+	{
+		//..
+	}
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	A ile B arasındaki "aggregation" ilişkisinin genel bir implementasyonu
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A a;
+		a = new A();
+
+		a.doWork1();
+		a.doWork2();
+	}
+}
+
+class A{
+	private B m_b;
+
+	public A()
+	{
+		m_b = new B();
+	}
+
+	public void doWork1()
+	{
+		//..
+		m_b.doSomething();
+	}
+
+	public void doWork2()
+	{
+		//..
+		m_b.doSomething();
+	}
+}
+
+class B {
+	//..
+	public void doSomething()
+	{
+		//..
+	}
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	A ile B arasındaki "aggregation" ilişkisinin genel bir implementasyonu
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A a;
+		B b1, b2;
+
+		b1 = new B();
+		a = new A(b1);
+
+		a.doWork1();
+		a.doWork2();
+
+		b2 = new B();
+		a.setB(b2);
+
+		a.doWork1();
+		a.doWork2();
+
+	}
+}
+
+class A{
+	private B m_b;
+
+	public A(B b)
+	{
+		m_b = b;
+	}
+
+	public B getB()
+	{
+		return m_b;
+	}
+
+	public void setB(B b)
+	{
+		m_b = b;
+	}
+
+	public void doWork1()
+	{
+		//..
+		m_b.doSomething();
+	}
+
+	public void doWork2()
+	{
+		//..
+		m_b.doSomething();
+	}
+}
+
+class B {
+	//..
+	public void doSomething()
+	{
+		//..
+	}
+}
 
 -----------------------------------------------------------
 -----------------------------------------------------------

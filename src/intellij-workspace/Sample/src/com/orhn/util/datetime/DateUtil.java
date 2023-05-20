@@ -13,16 +13,8 @@ package com.orhn.util.datetime;
 import java.util.Random;
 
 public class DateUtil {
-	private static final int [] DAYS_OF_MONTHS = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-	public static int getDays(int month, int year)
-	{
-		return month == 2 && isLeapYear(year) ? 29 : DAYS_OF_MONTHS[month];
-	}
-	public static boolean isLeapYear(int year)
-	{
-		return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
-	}
+	static final DayOfWeek [] DAY_OF_WEEKS = DayOfWeek.values();
+	static final Month []MONTHS = Month.values();
 	public static Date randomDate()
 	{
 		return randomDate(new Random());
@@ -47,7 +39,7 @@ public class DateUtil {
 	{
 		int year = r.nextInt(minYear, maxYear + 1);
 		int month = r.nextInt(1, 13);
-		int day = r.nextInt(1, getDays(month, year) + 1);
+		int day = r.nextInt(1, MONTHS[month -1].getDays(year) + 1);
 
 		return new Date(day, month, year);
 	}
