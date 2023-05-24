@@ -17,32 +17,17 @@ import static java.lang.Math.sqrt;
 
 public class Point{
 
-	public int m_x;
-	public int m_y;
+	private final int m_x;
+	private final int m_y;
 
-	public int getX() {
-		return m_x;
-	}
-
-	public void setX(int x) {
-		this.m_x = x;
-	}
-
-	public int getY() {
-		return m_y;
-	}
-
-	public void setY(int y) {
-		this.m_y = y;
-	}
-	
 	public Point()
 	{
+		this(0);
 	}
 	
 	public Point(int a)
 	{
-		m_x = a;
+		this(a, 0);
 	}
 	
 	public Point(int a, int b)
@@ -50,18 +35,28 @@ public class Point{
 		m_x = a;
 		m_y = b;
 	}
-	
+
+	public int getX() {
+		return m_x;
+	}
+	/*public void setX(int x) {
+		this.m_x = x;
+	}*/
+
+	public int getY() {
+		return m_y;
+	}
+
+	/*public void setY(int y) {
+		this.m_y = y;
+	}*/
+
+
 	public double distance() 
 	{
 		return distance(0, 0);
 	}
-	
-	/**
-	 * 
-	 * @param other
-	 * @return
-	 */
-	
+
 	public double distance(Point other) 
 	{
 		return distance(other.m_x, other.m_y);
@@ -69,15 +64,24 @@ public class Point{
 	
 	public double distance(int a, int b) 
 	{
-		return sqrt(pow(m_x - a, 2) + pow(m_y - b, 2));
+		return  PointCommonUtil.distance(m_x, m_y, a, b);
 	}
 	
-	public void offset(int dx, int dy)
+	public Point offset(int dxy)
 	{
-		m_x += dx;
-		m_y += dy;
+		return offset(dxy, dxy);
 	}
-	
+
+	public Point offset(int dx, int dy)
+	{
+		return new Point(m_x + dx, m_y + dy);
+	}
+
+	public MutablePoint toMutablePoint()
+	{
+		return MutablePoint(m_x, m_y);
+	}
+
 	public void print()
 	{
 		System.out.printf("(%d, %d)%n", m_x, m_y);
@@ -85,6 +89,6 @@ public class Point{
 	
 	public String toString()
 	{
-		return String.format("(%d, %d)", m_x, m_y);
+		return PointCommonUtil.toString(m_x, m_y);
 	}
 }

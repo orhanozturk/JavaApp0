@@ -114,6 +114,10 @@ public class Date {
         set(day, month, year);
     }
 
+    public Date(int day, Month month, int year)
+    {
+        this(day, month.ordinal() + 1, year);
+    }
     public int getDay()
     {
         return m_day;

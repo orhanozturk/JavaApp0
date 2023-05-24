@@ -26662,6 +26662,1099 @@ class B {
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+24.05.2023 Çarşamba - 38.Ders
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Car, Plane, Driver, Pilot, Engine sınıfları ve aralarındaki ilişkiler. Örnekte detaylar göz ardı edilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Driver driver;
+		driver = new Driver();
+
+		driver.setUsername("AMehmet");
+		driver.setName("Ali Mehmet Cetinkol");
+		driver.setRating(100);
+
+		Car car = new Car(driver);
+
+		car.run();
+
+		System.out.println("**************************************");
+
+		Pilot[] pilots = {new Pilot(1, "Ali Cetinkol", 10000), new Pilot(2, "Orhan ozturk",
+				7000), new Pilot(3, "Mahmut Tuncer", 5000)};
+		Plane p = new Plane(4, pilots);
+
+		p.fly();
+	}
+}
+
+class  Plane{
+	private Engine[] m_engines;
+	private Pilot[] m_pilots;
+
+	private void startEngines()
+	{
+		for (Engine engine : m_engines) {
+			engine.startEngine();
+		}
+	}
+	private void accelerateEngines()
+	{
+		for (Engine engine : m_engines) {
+			engine.acclerateEngine();
+		}
+	}
+	private void slowEngines()
+	{
+		for (Engine engine : m_engines) {
+			engine.slowEngine();
+		}
+	}
+	private void stopEngines()
+	{
+		for (Engine engine : m_engines) {
+			engine.stopEngine();
+		}
+	}
+
+	public Plane(int engineCount, Pilot [] pilots)
+	{
+		m_pilots = pilots;
+		m_engines = new Engine[engineCount];
+
+		for (int i = 0; i < engineCount; ++i)
+			m_engines[i] = new Engine();
+	}
+
+	public void fly()
+	{
+		System.out.println("Pilots:");
+		for (Pilot p: m_pilots) {
+			System.out.printf("%d. %s, %d%n", p.getTitle(), p.getName(), p.getFlightDuration());
+		}
+
+		startEngines();
+		accelerateEngines();
+		//..
+
+		System.out.println("Flying...");
+		//..
+
+		slowEngines();
+
+		//..
+		stopEngines();
+
+	}
+}
+
+class Pilot{
+	private int m_title;
+	private String m_name;
+	private int m_flightDuration;
+
+	public Pilot(int title, String name, int flightDuration)
+	{
+		m_title = title;
+		m_name = name;
+		m_flightDuration = flightDuration;
+	}
+
+	public int getTitle() {
+		return m_title;
+	}
+
+	public void setTitle(int m_title) {
+		this.m_title = m_title;
+	}
+
+	public String getName() {
+		return m_name;
+	}
+
+	public void setName(String m_name) {
+		this.m_name = m_name;
+	}
+
+	public int getFlightDuration() {
+		return m_flightDuration;
+	}
+
+	public void setFlightDuration(int m_flightDuration) {
+		this.m_flightDuration = m_flightDuration;
+	}
+}
+
+class Car{
+	private Engine m_engine;
+	private Driver m_driver;
+
+	public Car(Driver driver)
+	{
+		m_driver = driver;
+		m_engine = new Engine();
+	}
+
+	public void brake()
+	{
+		System.out.println("brake");
+		m_engine.slowEngine();
+	}
+
+	public void run()
+	{
+		System.out.printf("Driver : %s, %d%n", m_driver.getName(), m_driver.getRating());
+
+		m_engine.startEngine();
+		m_engine.acclerateEngine();
+
+		System.out.println("running...");
+
+		brake();
+		m_engine.stopEngine();
+	}
+}
+
+class Driver{
+	private String m_username;
+	private String m_name;
+	private int m_rating;
+
+	public String getUsername() {
+		return m_username;
+	}
+
+	public void setUsername(String m_username) {
+		this.m_username = m_username;
+	}
+
+	public String getName() {
+		return m_name;
+	}
+
+	public void setName(String m_name) {
+		this.m_name = m_name;
+	}
+
+	public int getRating() {
+		return m_rating;
+	}
+
+	public void setRating(int m_rating) {
+		this.m_rating = m_rating;
+	}
+}
+
+class Engine{
+	//...
+	public void startEngine()
+	{
+		System.out.println("Start Engine");
+	}
+
+	public void acclerateEngine()
+	{
+		System.out.println("Accelerate Engine");
+	}
+
+	public void slowEngine()
+	{
+		System.out.println("Slow Engine");
+	}
+	public void stopEngine()
+	{
+		System.out.println("Stop Engine");
+	}
+
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	A ile B arasındaki "association" ilişkisi
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B b1 =new B();
+		B b2 =new B();
+
+		A a = new A();
+
+		a.doWork(b1);
+		a.doWork(b2);
+	}
+}
+
+class A{
+	public void doWork(B b)
+	{
+		b.doSomething();;
+	}
+}
+
+class B{
+	public void doSomething()
+	{
+		//..
+		System.out.println("B class doSomething");
+	}
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Taxi, Driver, Client sınıfları ve aralarındaki ilişkiler. Örnekte detaylar göz ardı edilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Driver driver = new Driver();
+
+		driver.setName("Ali Mehmet Cetinkol");
+		driver.setUsername("AMC");
+		driver.setRating(100);
+
+		Taxi taxi = new Taxi(driver);
+		Client client1 = new Client();
+
+		client1.setName("Orhan");
+		client1.setUsername("ozturk");
+
+		taxi.takeClient(client1);
+
+		Client client2 = new Client();
+
+		client2.setUsername("mahmutTT");
+		client2.setName("mahmut");
+
+		taxi.takeClient(client2);
+	}
+}
+
+class Taxi{
+	private Driver m_driver;
+
+	public Taxi(Driver driver)
+	{
+		m_driver = driver;
+	}
+
+	public Driver getDriver()
+	{
+		return m_driver;
+	}
+
+	public void setDriver(Driver driver)
+	{
+		m_driver = driver;
+	}
+
+	public void takeClient(Client client)
+	{
+		System.out.printf("Client: %s%n", client.getUsername());
+		System.out.printf("Driver: %s, %d%n", m_driver.getUsername(), m_driver.getRating());
+	}
+}
+
+class Client {
+	private String m_username;
+	private String m_name;
+
+	public String getUsername() {
+		return m_username;
+	}
+
+	public void setUsername(String m_username) {
+		this.m_username = m_username;
+	}
+
+	public String getName() {
+		return m_name;
+	}
+
+	public void setName(String m_name) {
+		this.m_name = m_name;
+	}
+}
+
+class Driver{
+	private String m_username;
+	private String m_name;
+	private int m_rating;
+
+	public String getUsername() {
+		return m_username;
+	}
+
+	public void setUsername(String m_username) {
+		this.m_username = m_username;
+	}
+
+	public String getName() {
+		return m_name;
+	}
+
+	public void setName(String m_name) {
+		this.m_name = m_name;
+	}
+
+	public int getRating() {
+		return m_rating;
+	}
+
+	public void setRating(int m_rating) {
+		this.m_rating = m_rating;
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Türetme/kalıtım (inheritance) kavramı ile programlamada bir sınıf kodlarına dokunmadan veya kodları kopyalanmadan
+	genişletilebilir (extension). Burada genişletme var olan özelliklere ekleme olarak düşünülebilir. Bu ilişkide B
+	sınıfı A sınıfından türetilmiş ise "B is a A" cümlesi geçerli olur.
+
+	B sınıfı A sınıfından türetilmiş olsun. B sınıfına A sınıfının "türemiş sınıfı (derived class)" denir. A sınıfına da
+	B sınıfının "taban sınıfı (base class)" denir. Bu iki terim nesne yönelimli programlama tekniğine ilişkin genel
+	terimlerdir. Java'da "base class" yerine "super class", "derived class" yerine de "sub class" terimleri daha çok
+	kullanılır.
+
+	Anahtar Notlar: Nesne yönelimli programlamada "base class" yerine Biyoloji'den gelen "parent class", "derived class"
+	yerine yine Biyoloji'den gelen "child class" terimleri de kullanılır.
+
+	Bir dizi türetme söz konusu olabilir. Örneğin C sınıfı B sınıfından, B sınıfı da A sınıfından türetilmiş olsun. Bu
+	durumda C'nin taban sınıfı (super class) dendiğinde doğrudan taban sınıfı (direct super class) olan B sınıfı anlaşılır.
+	Bu hiyerarşide A sınıfı C'nin dolaylı taban sınıfıdır (indirect super class). Örnekte, "C'nin taban sınıfı B ve A'dır"
+	cümlesi teknik olarak doğru değildir. Doğrusu "C'nin taban sınıfı B'dir, dolaylı taban sınıflarından biri A'dı"
+	şeklinde söylenebilir.
+
+	Java'da bir sınıf birden fazla taban sınıfa sahip olamaz. Yani Java'da "çoklu türetme/kalıtım (multiple inheritance)"
+	yoktur. Java'da bir sınıf yalnızca tek bir sınıftan türetilebilir.
+
+	Anahtar Notlar: Java'da çoklu türetmenin gerektiği yerlerde kısmi (parçalı) olarak desteklenmesini sağlayan "interface"
+	denilen bir "user defined type" bulunmaktadır. Çok türetmenin pratikteki gerekliliği "interface"'ler ile
+	karşılanabilmektedir. "interface" konusu ileride ele alınacaktır.
+
+	Türetme kavramı programlamada "bir sınıfın kodlarına dokunmadan o sınıfı genişletmek" anlamına geldiğinden, nesne
+	yönelimli programlama tekiniğine ilişkin ilkelerden "Open Closed Principle (OCP)"'a örnek olabilir. Bu ilkenin
+	mottosu "open for extension closed for modification"'dır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Java'da türetme extends anahtar sözcüğü ile yapılır
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class E extends B {
+
+}
+
+class D extends  A{
+	//..
+}
+class C extends B{
+	//..
+}
+
+class B extends A{
+	//..
+}
+
+class A{
+	//..
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Taban sınıfın metotları türemiş sınıfa aktarılır. Aşağıdaki örnekte foo metodu B sınıfına A'dan, foo ve bar metodu da
+	C sınıfına B'den aktarılmıştır. Bu kavrama "davranışsal genişletme (behavioral extension)" de denir. "extension"
+	terimi tek başına kullanıldığında genel olarak veri elemanı ekleyerek genişletme anlamına gelir. Şüphesiz metot
+	eklemek de bir genişletmedir
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		C c = new C();
+
+		c.foo();
+		c.bar();
+		c.tar();
+
+
+	}
+}
+
+class C extends B{
+	public void tar()
+	{
+		System.out.println("C.tar");
+	}
+}
+
+class B extends A{
+	public void bar()
+	{
+		System.out.println("B.bar");
+	}
+}
+class  A{
+	public void foo()
+	{
+		System.out.println("A. foo");
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Türemiş sınıf nesnesi içerisinde taban sınıf nesnesi kadar alan da bulunur. Yabi türemiş sınıf nesnesi içerisinbde
+	taban sınıflın non-static veri elemanları da vardır. Bu durumda bir nesnesel kapsama vardır. Bu durumda türemiş
+	sınıf nesnesinin uzunluğu "en az, taban sınıf nesnesinin bellekte kapladığı alan + türemiş sınıfa eklenen non-static
+	veri elemanlarının toplam uzunluğu" kadardır
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		C x = new C();
+
+		x.a = 10;
+		x.b = 20;
+		x.c = 30;
+
+		System.out.printf("x.a : %d%n", x.a);
+		System.out.printf("x.b : %d%n", x.b);
+		System.out.printf("x.c : %d%n", x.c);
+	}
+}
+
+class C extends B{
+	public int c;
+}
+
+class B extends A{
+	public int b;
+}
+class  A{
+	public int a;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Anımsanacağı gibi bir nesnenin yaratılmış olması için geçilen 3 adımdan sonuncusu olan ctor'un da çağrılıp düzgün
+	bir biçimde (exception oluşmadan) sonlanmış olması gerekir. Yani, 3 adımın da düzgün bir biçimde tamamlanmış olması
+	gerekir
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+	Türemiş sınıf nesnesinin yaratılması aşamasında ctor çağrısından önce, taban sınıfın ctor'u çağrılır. Herhangi bir
+	ctor belirtilmemişse taban sınıfın default ctor'u çağrılır. Yani derleyici türemiş sınıfın ctor'unun başına gizlice
+	taban sınıfın default ctor'unun çağrılmasını sağlayan kodu yazar
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B x = new B();
+		System.out.println("----------------------------------");
+		B y = new B(15);
+		System.out.println("----------------------------------");
+		C z = new C();
+		System.out.println("----------------------------------");
+		C t = new C(22);
+		System.out.println("----------------------------------");
+	}
+}
+
+class C extends B{
+	public C()
+	{
+		System.out.println("I am a default ctor of C");
+	}
+	public C(int x)
+	{
+		System.out.println("I am a ctor of C with parameter int");
+	}
+}
+
+class B extends A{
+	public B()
+	{
+		System.out.println("I am a default ctor of B");
+	}
+	public B(int x)
+	{
+		System.out.println("I am a ctor of B with parameter int");
+	}
+}
+class  A{
+	public A()
+	{
+		System.out.println("I am a default ctor of A");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Türemiş sınıfı yazan programcı "super ctor sentaksı" ile taban sınıfın istenilen ctor'unun çağrılmasını sağlayabilir.
+	super ctor sentaksında taban sınıfın hangi ctor'unun çağrılacağı derleyici tarafından "method overload resolution"
+	kuralları ile belirlenir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B x = new B();
+		System.out.println("----------------------------------");
+		B y = new B(15);
+		System.out.println("----------------------------------");
+		C z = new C();
+		System.out.println("----------------------------------");
+		C t = new C(22);
+		System.out.println("----------------------------------");
+	}
+}
+
+class C extends B{
+	public C()
+	{
+		System.out.println("I am a default ctor of C");
+	}
+	public C(int x)
+	{
+		super(x);
+		System.out.println("I am a ctor of C with parameter int");
+	}
+}
+
+class B extends A{
+	public B()
+	{
+		System.out.println("I am a default ctor of B");
+	}
+	public B(int x)
+	{
+		super(x);
+		System.out.println("I am a ctor of B with parameter int");
+	}
+}
+class  A{
+	public A()
+	{
+		System.out.println("I am a default ctor of A");
+	}
+	public A(int x)
+	{
+		System.out.println("I am a ctor of A with parameter int");
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte ** ve *** ile belirtilen deyim yazılsa da yazılmasa da aynı anlamdadır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B x = new B();
+		System.out.println("----------------------------------");
+		B y = new B(15);
+		System.out.println("----------------------------------");
+		C z = new C();
+		System.out.println("----------------------------------");
+		C t = new C(22);
+		System.out.println("----------------------------------");
+	}
+}
+
+class C extends B{
+	public C()
+	{
+		super();//**
+		System.out.println("I am a default ctor of C");
+	}
+	public C(int x)
+	{
+		super(x);
+		System.out.println("I am a ctor of C with parameter int");
+	}
+}
+
+class B extends A{
+	public B()
+	{
+		super();//**
+		System.out.println("I am a default ctor of B");
+	}
+	public B(int x)
+	{
+		super(x);
+		System.out.println("I am a ctor of B with parameter int");
+	}
+}
+class  A{
+	public A()
+	{
+		System.out.println("I am a default ctor of A");
+	}
+	public A(int x)
+	{
+		System.out.println("I am a ctor of A with parameter int");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	super ctor sentaksı ctor'un ilk deyimi olmak zorundadır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+
+class B extends A{
+	public B()
+	{
+		System.out.println("I am a default ctor of B");
+	}
+	public B(int x)
+	{
+		System.out.println("I am a ctor of B with parameter int");
+		super(x); //error
+	}
+}
+class  A{
+	public A()
+	{
+		System.out.println("I am a default ctor of A");
+	}
+	public A(int x)
+	{
+		System.out.println("I am a ctor of A with parameter int");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	super ctor sentaksı adından da anlaşılacağı gibi yalnızca ctor içerisinde kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+
+class B extends A{
+	public B()
+	{
+		System.out.println("I am a default ctor of B");
+	}
+	public B(int x)
+	{
+		super(x);
+		System.out.println("I am a ctor of B with parameter int");
+	}
+
+	public void foo(int x)
+	{
+		super(x); //error
+	}
+
+}
+class  A{
+	public A()
+	{
+		System.out.println("I am a default ctor of A");
+	}
+	public A(int x)
+	{
+		System.out.println("I am a ctor of A with parameter int");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bazı durumlarda sınıfın bir ctor'u içerisinde sınıfın başka bir ctor'unun çağrılması istenebilir. Bu durumda
+	"this ctor sentaksı" kullanılır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A x = new A();
+		System.out.println("-----------------------------------");
+		A y = new A(4.5, "istanbul");
+		System.out.println("-----------------------------------");
+		A z = new A(4.5);
+		System.out.println("-----------------------------------");
+	}
+}
+
+class  A{
+	public A()
+	{
+		System.out.println("I am a default ctor of A");
+	}
+	public A(double a)
+	{
+		this();
+		System.out.println("I am a ctor of A with parameter double");
+	}
+	public A(String s)
+	{
+		System.out.println("I am a ctor of A with parameter Stirng");
+	}
+	public A(double a, String s)
+	{
+		this(a);
+		System.out.println("I am a ctor of A with parameter double, String");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	this ctor sentaksı da ctor'un ilk deyimi olmak zorundadır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A x = new A();
+		System.out.println("-----------------------------------");
+		A y = new A(4.5, "istanbul");
+		System.out.println("-----------------------------------");
+		A z = new A(4.5);
+		System.out.println("-----------------------------------");
+	}
+}
+
+class  A{
+	public A()
+	{
+		System.out.println("I am a default ctor of A");
+	}
+	public A(double a)
+	{
+		System.out.println("I am a ctor of A with parameter double");
+		this(); //error
+	}
+	public A(String s)
+	{
+		System.out.println("I am a ctor of A with parameter Stirng");
+	}
+	public A(double a, String s)
+	{
+		this(a);
+		System.out.println("I am a ctor of A with parameter double, String");
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	this ctor sentaksında döngüsel durum geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A z = new A(4.5);
+		System.out.println("-----------------------------------");
+	}
+}
+
+class  A{
+
+	public A(double a)
+	{
+		this(a + "");
+		System.out.println("I am a ctor of A with parameter double");
+	}
+	public A(String s)
+	{
+		this(3.3);
+		System.out.println("I am a ctor of A with parameter Stirng");
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte yine döngüsel durum oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A z = new A(4.5);
+		System.out.println("-----------------------------------");
+	}
+}
+
+class  A{
+
+	public A(double a)
+	{
+		System.out.println("I am a ctor of A with parameter double");
+	}
+	public A(int a) //error
+	{
+		this(a);
+		System.out.println("I am a ctor of A with parameter Stirng");
+	}
+
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte int parametreli ctor'dan önce double parametreli ctor'un çağrılabilmesi için tür dönüştürme
+	operatörü kullanılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A z = new A(10);
+		System.out.println("-----------------------------------");
+	}
+}
+
+class  A{
+
+	public A(double a)
+	{
+		System.out.println("I am a ctor of A with parameter double");
+	}
+	public A(int a)
+	{
+		this((double) a);
+		System.out.println("I am a ctor of A with parameter int");
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	this ve super ctor sentaksları aynı anda bulunamazlar. Çünkü ikisi de ctor'un ilk deyimi olmak zorundadır. Böyle bir
+	durumla karşılaşan programcının yazdığı koda ve tasarımına bakması gerekir. Çünkü doğru bir tasarım (yaklaşım) ve
+	doğru bir kodlama programcıyı böyle bir noktaya getirmez
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class B extends A{
+	public B()
+	{
+		this(0);
+		super(10); //error
+		System.out.println("I am a default ctor of B");
+	}
+
+	public B(int a)
+	{
+		super(a);
+		System.out.println("I am a ctor of B with parameter int");
+	}
+}
+
+class  A{
+
+	public A()
+	{
+		System.out.println("I am a default ctor of A");
+	}
+	public A(int a)
+	{
+		System.out.println("I am a ctor of A with parameter int");
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Java'da bir sınıf bildiriminde extends anahtar sözcüğü kullanılmasa bile (yani sınıfı yazan programcı taban sınıf
+	ismi belirtmediğinde) java.lang paketi içerisinde bulunan Object isimli bir sınıftan türetilmiş olur. Yani Java'da
+	Object sınıfı tüm sınıfların doğrudan ya da dolaylı olarak taban sınıftır. Object sınıfından türetme açıkça yazılabilir.
+	Yazılmasa da aynı anlamdadır. Biz yazmamayı tercih edeceğiz. Bu şekildeki yaklaşımın gerekliliği ve önemi ileride
+	ele alınacaktır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class B extends Object{
+	//...
+}
+
+class A{
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Nitelikli ve niteliksiz isim arama genel kurallarına göre bir isim ilgili sınıfta bulunamazsa taban sınıfa ve dolaylı taban
+	sınıflara da sırasıyla bulununcaya ya da bulanamayıncaya kadar bakılır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		C x = new C();
+		x.bar(12);
+
+		System.out.printf("x.a = %d%n", x.a);
+		System.out.printf("x.b = %d%n", x.b);
+	}
+}
+
+class C extends B{
+	public void bar(int val)
+	{
+		foo();
+		b = val;
+		a = -b;
+	}
+}
+
+class B extends A{
+	public int b;
+	public void foo()
+	{
+		System.out.println("B.foo");
+	}
+}
+
+class A{
+	public int a;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıfın protected bölümün türemiş sınıf içerisinde aşağıdaki gibi erişilemez
+---------------------------------------------------------------------------------------------------------------------*/
+package orhn;
+
+public class A {
+    protected int x;
+    protected A()
+    {
+        //
+    }
+    protected void foo()
+    {
+
+    }
+}
+
+package ozturk;
+
+import orhn.A;
+
+public class B extends A {
+    public void bar()
+    {
+       A a = new A(); //error
+       a.foo(); //error
+       a.x = 10; //error
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	 Türemiş sınıf içerisinde kendisine ait olan, taban sınıfın protected bölümüne erişilebilir. Bu durumda protected
+    elemanlara doğrudan erişim mümkündür. ctor için ise istenirse super ctor sentaksı kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package orhn;
+
+public class A {
+    protected int x;
+    protected A()
+    {
+        //
+    }
+    protected void foo()
+    {
+
+    }
+}
+
+package ozturk;
+
+import orhn.A;
+
+public class B extends A {
+   public B(int a)
+   {
+
+   }
+
+   public void bar()
+   {
+       x = 10;
+       foo();
+   }
+}
+
 
 -----------------------------------------------------------
 -----------------------------------------------------------

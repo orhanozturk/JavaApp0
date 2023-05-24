@@ -2,11 +2,15 @@ package ozturk;
 
 import orhn.A;
 
-public class B {
-    public void bar()
-    {
-       // A a = new A(); //error
-       // a.foo(); //error
-       // a.x = 10; //error
-    }
+public class B extends A {
+   public B(int a)
+   {
+
+   }
+
+   public void bar()
+   {
+       x = 10;
+       foo();
+   }
 }
