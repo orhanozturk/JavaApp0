@@ -79,7 +79,7 @@ public class Point{
 
 	public MutablePoint toMutablePoint()
 	{
-		return MutablePoint(m_x, m_y);
+		return new MutablePoint(m_x, m_y);
 	}
 
 	public void print()
