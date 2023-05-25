@@ -27760,6 +27760,142 @@ public class B extends A {
 -----------------------------------------------------------
 25.05.2023 Perşembe - 39.Ders
 
+/*----------------------------------------------------------------------------------------------------------------------
+	 Sınıf Çalışması: com.orhn.util.datetime paketi içerisindeki Time ve TimeUtil sınıflarını yazınız
+	 Açıklamalar:
+		- Sınıfın public bölümünü değiştirmeden diledğiniz kadar metot ya da veri ekleyebilirsiniz
+		- Zaman geçerlilik kontrolü yapılacaktır. Geçersiz olması durumunda program uygun mesaj verip sonlandırılacaktır
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.Time;
+
+class App {
+	public static void main(String [] args)
+	{
+		Time now = new Time();
+
+		System.out.println(now.toLongTimeString());
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	 Aşağıdaki örnekte basit bir dijital saat yapılmıştır. Aslında örnek efektif yazılmamıştır. Sadece durumu göstermek
+	için bu şekilde yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.Time;
+
+class App {
+	public static void main(String [] args)
+	{
+		for (;;) {
+			Time now = new Time();
+			System.out.printf("%s\r", now.toString());
+		}
+	}
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte basit bir dijital saat yapılmıştır. Aslında örnek efektif yazılmamıştır. Sadece durumu göstermek
+	için bu şekilde yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.Time;
+
+class App {
+	public static void main(String [] args)
+	{
+		Time time = new Time(9, 23, 15, 234);
+
+		System.out.println(time.toLongTimeString());
+
+		time.setHour(33);
+
+		System.out.println(time.toShortTimeString());
+	}
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte basit bir dijital saat yapılmıştır. Aslında örnek efektif yazılmamıştır. Sadece durumu göstermek
+	için bu şekilde yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.Time;
+
+class App {
+	public static void main(String [] args)
+	{
+		Time time = new Time(9, 60, 15, 234);
+
+		System.out.println(time.toLongTimeString());
+
+		time.setHour(33);
+
+		System.out.println(time.toShortTimeString());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte basit bir dijital saat yapılmıştır. Aslında örnek efektif yazılmamıştır. Sadece durumu göstermek
+	için bu şekilde yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.Time;
+
+class App {
+	public static void main(String [] args)
+	{
+		Time time = new Time(10, 15);
+
+		System.out.println(time.toLongTimeString());
+
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte basit bir dijital saat yapılmıştır. Aslında örnek efektif yazılmamıştır. Sadece durumu göstermek
+	için bu şekilde yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.Time;
+import com.orhn.util.datetime.TimeUtil;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Random r = new Random();
+		Scanner kb = new Scanner(System.in);
+
+		System.out.print("Bir sayi giriniz : ");
+		int count = kb.nextInt();
+
+		while (count-- > 0){
+			System.out.println(TimeUtil.randomTime(r).toLongTimeString());
+		}
+	}
+}
+
 
 -----------------------------------------------------------
 -----------------------------------------------------------
