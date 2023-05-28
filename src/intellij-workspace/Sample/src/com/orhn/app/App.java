@@ -1,58 +1,60 @@
 /*----------------------------------------------------------------------------------------------------------------------
-	Sınıf Çalışması: Bir kesri temsil eden MutableFraction isimli sınıfı aşağıdaki açıklamalara göre yazınız
-	Açıklamalar:
-	- Sınıf Matematikteki bir kesri temsil ettiğinden pay ve payda değerleri tutulacaktır
-
-	- Sınıfın ilgili set ve get metotları yazılacaktır
-
-	- Pay'ın sıfırdan farklı, paydanın sıfır olması durumunda tanımsızlığa ilişkin bir mesaj verilecektir, pay ve paydanın
-	her ikisinin birden sıfır olması durumunda belirsizliğe ilişkin mesaj verilecektir. Her iki durumda da program
-	sonlandırılacaktır
-
-	- Kesir her durumda sadeleşmiş bir biçimde tutulacaktır. Örneğin kesrin pay ve paydası sırasıyla 4 ve 18 olarak
-	verildiğinde kesir 2 / 9 olarak tutulacaktır.
-
-	- Kesir negatif ise işaret payda bulunacaktır. Örneğin kesrin pay ve paydası sırasıyla 3 ve -4 olarak verilmişse
-	kesir -3 / 4 biçiminde tutulacaktır
-
-	- Kesrin pay ve paydasının ikisinin birden negatif olması durumunda kesir pozitif olarak tutulacaktır
-
-	- Kesrin payının sıfır olması durumunda payda ne olursa olsun 1(bir) yapılacaktır
-
-	- Sınıfın iki kesri toplayan, bir kesir ile bir tamsayıyı toplayan aşağıdaki gibi metotları olacaktır. Aynı işlemler
-	 çıkarma, çarpma ve bölme için de yapılacaktır
-
-	- Sınıfın kesri 1(bir) artıran ve bir azaltan inc ve dec metotları yazılacaktır
-
-	- Sınıfın toString metodu şu formatta yazı döndürecektir:
-	    3 / 10 kesri için -> 3 / 10 = 3.333333
-	    10 / 1 kesri için -> 10
-
-	 - Sınıfın public bölümünü değiştirmeden istediğiniz değişikliği ve eklemeleri yapabilirsiniz
-
-	 21:50
+		Aşağıdaki örnekte doWork metodu yalnızca A sınıfına bağlı (dependency) olarak yazılmıştır. Bu metot A sınıfından
+	doğrudan ya da dolaylı olarak türetilen her sınıf türünden referans ile çağrılabilir. Yani, doWork metodu için derleme
+	zamanından yalnızca A türünün bulunması yeterlidir. Hatta daha sonra A'dan doğrudan ya da dolaylı olarak türetilmiş
+	yani A'dan türeyen sınıflar hiyerarşisine eklenmiş sınıflar için de doWork metodu çağrılabilir. Yani doWork metodunu
+	ayrıca değiştirmeye gerek yoktur. Burada doWork metodu "türden bağımsız" yazılmıştır. Türden bağımsız kod yazma kavramı
+	detaylı olarak ele alınacaktır
 ----------------------------------------------------------------------------------------------------------------------*/
 
 package com.orhn.app;
 
-import com.orhn.util.datetime.Time;
-import com.orhn.util.datetime.TimeUtil;
-
-import java.util.Random;
-import java.util.Scanner;
-
 class App {
 	public static void main(String [] args)
 	{
-		Random r = new Random();
-		Scanner kb = new Scanner(System.in);
+		A a = new A();
+		B b = new B();
+		C c = new C();
+		D d = new D();
+		E e = new E();
+		F f = new F();
 
-		System.out.print("Bir sayi giriniz : ");
-		int count = kb.nextInt();
-
-		while (count-- > 0){
-			System.out.println(TimeUtil.randomTime(r).toLongTimeString());
-		}
+		Sample.doWork(a);
+		Sample.doWork(b); //upcasting
+		Sample.doWork(c); //upcasting
+		Sample.doWork(d); //upcasting
+		Sample.doWork(e); //upcasting
+		Sample.doWork(f); //upcasting
 	}
+}
+
+class Sample{
+	public static void doWork(A a)
+	{
+		++a.x;
+	}
+}
+
+class F extends C{
+
+}
+class E extends B{
+
+}
+class D extends A{
+
+}
+
+class C extends B{
+
+}
+
+class B extends A{
+
+	// ..
+}
+class A {
+	public int x;
+	//..
 }
 

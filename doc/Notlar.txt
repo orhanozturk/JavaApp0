@@ -27899,6 +27899,580 @@ class App {
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+28.05.2023 Pazar Cumhurbaşkanlığı 2. Tur Seçimleri - 40.Ders
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Bir kesri temsil eden MutableFraction isimli sınıfı aşağıdaki açıklamalara göre yazınız
+	Açıklamalar:
+	- Sınıf Matematikteki bir kesri temsil ettiğinden pay ve payda değerleri tutulacaktır
+
+	- Sınıfın ilgili set ve get metotları yazılacaktır
+
+	- Pay'ın sıfırdan farklı, paydanın sıfır olması durumunda tanımsızlığa ilişkin bir mesaj verilecektir, pay ve paydanın
+	her ikisinin birden sıfır olması durumunda belirsizliğe ilişkin mesaj verilecektir. Her iki durumda da program
+	sonlandırılacaktır
+
+	- Kesir her durumda sadeleşmiş bir biçimde tutulacaktır. Örneğin kesrin pay ve paydası sırasıyla 4 ve 18 olarak
+	verildiğinde kesir 2 / 9 olarak tutulacaktır.
+
+	- Kesir negatif ise işaret payda bulunacaktır. Örneğin kesrin pay ve paydası sırasıyla 3 ve -4 olarak verilmişse
+	kesir -3 / 4 biçiminde tutulacaktır
+
+	- Kesrin pay ve paydasının ikisinin birden negatif olması durumunda kesir pozitif olarak tutulacaktır
+
+	- Kesrin payının sıfır olması durumunda payda ne olursa olsun 1(bir) yapılacaktır
+
+	- Sınıfın iki kesri toplayan, bir kesir ile bir tamsayıyı toplayan aşağıdaki gibi metotları olacaktır. Aynı işlemler
+	 çıkarma, çarpma ve bölme için de yapılacaktır
+
+	- Sınıfın kesri 1(bir) artıran ve bir azaltan inc ve dec metotları yazılacaktır
+
+	- Sınıfın toString metodu şu formatta yazı döndürecektir:
+	    3 / 10 kesri için -> 3 / 10 = 3.333333
+	    10 / 1 kesri için -> 10
+
+	 - Sınıfın public bölümünü değiştirmeden istediğiniz değişikliği ve eklemeleri yapabilirsiniz
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf = new MutableFraction(16, 56);
+
+		System.out.println(mf.toString());
+	}
+}
+
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf = new MutableFraction(16, 8);
+
+		System.out.println(mf.toString());
+	}
+}
+
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf = new MutableFraction(16, 0);
+
+		System.out.println(mf.toString());
+	}
+}
+
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf = new MutableFraction(0, 0);
+
+		System.out.println(mf.toString());
+	}
+}
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf = new MutableFraction(18, 27);
+
+		System.out.println(mf.toString());
+
+		mf.setDenominator(0);
+		System.out.println(mf.toString());
+	}
+}
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf1 = new MutableFraction(18, 27);
+		MutableFraction mf2 = new MutableFraction(3, 4);
+
+		MutableFraction result = mf1.add(mf2);
+
+		System.out.println(result.toString());
+	}
+}
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf1 = new MutableFraction(18, 27);
+		MutableFraction mf2 = new MutableFraction(3, 4);
+
+		MutableFraction result = mf1.subtract(mf2);
+
+		System.out.println(result.toString());
+	}
+}
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf1 = new MutableFraction(18, 27);
+		MutableFraction mf2 = new MutableFraction(3, 4);
+
+		MutableFraction result = mf1.multiply(mf2);
+
+		System.out.println(result.toString());
+	}
+}
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf1 = new MutableFraction(18, 27);
+		MutableFraction mf2 = new MutableFraction(3, 4);
+
+		MutableFraction result = mf1.divide(mf2);
+
+		System.out.println(result.toString());
+	}
+}
+
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf = new MutableFraction(18, 27);
+
+		System.out.println(mf.toString());
+
+		mf.inc(5);
+
+		System.out.println(mf.toString());
+
+
+		mf.dec(5);
+
+		System.out.println(mf.toString());
+	}
+}
+
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableFraction mf = new MutableFraction(18, 27);
+
+		System.out.println(mf.toString());
+
+		mf.inc();
+
+		System.out.println(mf.toString());
+
+
+		mf.dec();
+
+		System.out.println(mf.toString());
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	DateTime Sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.DateTime;
+import com.orhn.util.datetime.Month;
+
+class App {
+	public static void main(String [] args)
+	{
+		DateTime dateTime = new DateTime(28, Month.MAY, 2023, 14, 55, 45, 445);
+
+		System.out.println(dateTime.toShortDateTimeStringTR());
+		System.out.println(dateTime.toShortDateTimeStringEN());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	DateTime Sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.DateTime;
+import com.orhn.util.datetime.Month;
+
+class App {
+	public static void main(String [] args)
+	{
+		DateTime dateTime = new DateTime(28, Month.MAY, 2023, 14, 55, 45, 445);
+
+		System.out.println(dateTime.toLongDateTimeStringTR());
+		System.out.println(dateTime.toLongDateTimeStringEN());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	DateTime Sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.datetime.DateTime;
+import com.orhn.util.datetime.Month;
+
+class App {
+	public static void main(String [] args)
+	{
+		DateTime dateTime = new DateTime(28, Month.MAY, 2023, 14, 55, 45, 445);
+
+		System.out.println(dateTime.toLongDateTimeStringEN());
+
+		dateTime.setDay(29);
+		dateTime.setMonth(Month.AUG);
+		System.out.println(dateTime.toLongDateTimeStringEN());
+
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Anahtar Notlar: Bir sınıf içerisinde gizlenmiş tutulan bir başka referansa ilişkin sınıfın bir metodunun
+	genel olarak aynı isimde (ve aynı parametik yapıda) sınıf dışından da kullanılacak şekilde yazılan metoduna
+	"delegate/forwarding/pass through method" denir. Java'da daha çok "delegate" terimi kullanılır
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	AnalyticalCircle Sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+
+import com.orhn.math.geometry.AnalyticalCircle;
+
+class App {
+	public static void main(String [] args)
+	{
+		AnalyticalCircle ac = new AnalyticalCircle(-4.5, 100, 200);
+
+		System.out.printf("Radius:%f%n", ac.getRadius());
+		System.out.printf("Circumference:%f%n", ac.getCircumference());
+		System.out.printf("Area:%f%n", ac.getArea());
+		System.out.printf("Center:(%d, %d)%n", ac.getX(), ac.getY());
+
+		ac.setX(-200);
+		ac.setRadius(5.6);
+
+		System.out.printf("Radius:%f%n", ac.getRadius());
+		System.out.printf("Circumference:%f%n", ac.getCircumference());
+		System.out.printf("Area:%f%n", ac.getArea());
+		System.out.printf("Center:(%d, %d)%n", ac.getX(), ac.getY());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	String sınıfı immutable olduğundan WeatherInfo sınıfı ile  String sınıfı ilişki ne aggregation, ne de composition
+	ilişkisidir. İkisine de belirli ölçüde yakın olsa da tam olarak uymamaktadır. Bu özel bir durumdur ve genel ilişkileri
+	etkilemez. Bu ilişkiye isim verilmesi de gerekmez
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		String name = "Any place";
+		double lat = 32.5;
+		double lng = 34.5;
+
+		WeatherInfo wi = new WeatherInfo(name, lat, lng);
+
+		System.out.println(wi.toString());
+
+		name = "other place";
+		System.out.println(wi.toString());
+
+	}
+}
+
+class WeatherInfo{
+	private String m_place;
+	private double m_latitude;
+	private double m_longitude;
+
+	public WeatherInfo(String place, double latitude, double longitude)
+	{
+		m_place = place;
+		m_latitude = latitude;
+		m_longitude = longitude;
+	}
+
+	public String toString()
+	{
+		return String.format("%s:(%f, %f)", m_place, m_latitude, m_longitude);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki NumericLottery sınıfı ile Random sınıfı arasında 4 ilişkiden hiçbirisi yoktur. Özel durumdur. Random sınıfı,
+    içerisinde tuttuğu verilerin değil, davranışlarının yani metotlarının daha anlamlı olduğu bir sınıftır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app.lottery;
+import java.util.Random;
+
+public class NumericLottery {
+    private final Random random;
+
+    public  NumericLottery()
+    {
+        random = new Random();
+    }
+
+    public NumericLottery(Random r)
+    {
+        random = r;
+    }
+
+    public int[] getNumbers() {
+        return getNumbers(getFlags());
+    }
+
+    private static int [] getNumbers(boolean [] flags)
+    {
+        int []numbers = new int[6];
+
+        int idx = 0;
+
+        for (int i = 1; i < 50; ++i)
+            if(flags[i])
+                numbers[idx++] = i;
+
+        return numbers;
+    }
+
+    public int [][] getNumbers(int count)
+    {
+        int [][] numbers = new int[count][];
+
+        for (int i = 0; i < count; ++i)
+            numbers[i] = getNumbers();
+
+        return numbers;
+    }
+
+    private boolean [] getFlags()
+    {
+        boolean [] flags = new boolean[50];
+
+        for (int i = 0; i < 6; ++i){
+            int a;
+
+            for (;;){
+                a = random.nextInt(1, 49);
+                if(!flags[a])
+                    break;
+            }
+            flags[a] = true;
+        }
+        return flags;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aralarında türetme ilişkisi olmayan iki sınıf türünden referans birbirinie tür dönüştürme operatörü (explicit) ile
+	bile dönüştürülemez (atanamaz)
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		X x;
+		Y y;
+
+		x = new X();
+		y = (Y) x; //error
+	}
+}
+
+class X{
+	//..
+}
+
+class Y{
+	//..
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Taban sınıf türünden bir referans, türemiş sınıf türünden bir referansa doğrudan (implicit) atanamaz
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		X x;
+		Y y;
+
+		x = new X();
+		y = x;  //error
+	}
+}
+
+class Y extends X{
+	//..
+}
+class X {
+	//..
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Taban sınıf türünden bir referans, türemiş sınıf türünden bir referansa doğrudan (implicit) atanamaz
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B x;
+		A y;
+
+		x = new B();
+
+		x.a = 20;
+		x.b = 30;
+
+		y = x; //upcasting
+
+		System.out.printf("x.a = %d%n", x.a);
+		System.out.printf("x.b = %d%n", x.b);
+		System.out.printf("y.a = %d%n", y.a);
+		System.out.println("----------------------------------");
+
+		++y.a;
+
+		System.out.printf("x.a = %d%n", x.a);
+		System.out.printf("x.b = %d%n", x.b);
+		System.out.printf("y.a = %d%n", y.a);
+	}
+}
+
+class B extends A{
+	public int b;
+	// ..
+}
+class A {
+	public int a;
+	//..
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+		Aşağıdaki örnekte doWork metodu yalnızca A sınıfına bağlı (dependency) olarak yazılmıştır. Bu metot A sınıfından
+	doğrudan ya da dolaylı olarak türetilen her sınıf türünden referans ile çağrılabilir. Yani, doWork metodu için derleme
+	zamanından yalnızca A türünün bulunması yeterlidir. Hatta daha sonra A'dan doğrudan ya da dolaylı olarak türetilmiş
+	yani A'dan türeyen sınıflar hiyerarşisine eklenmiş sınıflar için de doWork metodu çağrılabilir. Yani doWork metodunu
+	ayrıca değiştirmeye gerek yoktur. Burada doWork metodu "türden bağımsız" yazılmıştır. Türden bağımsız kod yazma kavramı
+	detaylı olarak ele alınacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A a = new A();
+		B b = new B();
+		C c = new C();
+		D d = new D();
+		E e = new E();
+		F f = new F();
+
+		Sample.doWork(a);
+		Sample.doWork(b); //upcasting
+		Sample.doWork(c); //upcasting
+		Sample.doWork(d); //upcasting
+		Sample.doWork(e); //upcasting
+		Sample.doWork(f); //upcasting
+	}
+}
+
+class Sample{
+	public static void doWork(A a)
+	{
+		++a.x;
+	}
+}
+
+class F extends C{
+
+}
+class E extends B{
+
+}
+class D extends A{
+
+}
+
+class C extends B{
+
+}
+
+class B extends A{
+
+	// ..
+}
+class A {
+	public int x;
+	//..
+}
+
 
 -----------------------------------------------------------
 -----------------------------------------------------------

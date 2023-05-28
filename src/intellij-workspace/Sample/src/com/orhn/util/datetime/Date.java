@@ -12,6 +12,7 @@ package com.orhn.util.datetime;
 
 import java.time.LocalDate;
 
+import static com.orhn.util.datetime.DateUtil.DAY_OF_WEEKS;
 import static com.orhn.util.datetime.DateUtil.MONTHS;
 
 public class Date {
@@ -137,6 +138,11 @@ public class Date {
         return m_month;
     }
 
+    public Month getMonth()
+    {
+        return DateUtil.MONTHS[m_month - 1];
+    }
+
     public void setMonthValue(int month)
     {
         if(m_month == month)
@@ -144,6 +150,11 @@ public class Date {
 
         checkMonth(month, "Invalid month value:" + month);
         set(m_day, month, m_year);
+    }
+
+    public void setMonth(Month month)
+    {
+        setMonthValue(month.ordinal() + 1);
     }
 
     public int getYear()
@@ -160,6 +171,10 @@ public class Date {
         set(m_day, m_month, year);
     }
 
+    public DayOfWeek getDayOfWeek()
+    {
+        return DAY_OF_WEEKS[m_dayOfWeek];
+    }
     public int getDayOfWeekValue()
     {
         return m_dayOfWeek;

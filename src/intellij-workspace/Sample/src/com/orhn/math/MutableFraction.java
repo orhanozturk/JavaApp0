@@ -91,4 +91,119 @@ public class MutableFraction {
         check(a, b);
         set(a, b);
     }
+
+    public int getNumerator()
+    {
+        return m_a;
+    }
+
+    public void setNumerator(int value)
+    {
+        if(value == m_a)
+            return;
+        set(value, m_b);
+    }
+
+    public int getDenominator()
+    {
+        return m_b;
+    }
+
+    public void setDenominator(int value)
+    {
+        if(value == m_b)
+            return;
+        check(m_a, value);
+        set(m_a, value);
+    }
+
+    public double getRealValue()
+    {
+        return (double) m_a/m_b;
+    }
+
+    public static MutableFraction add(int value, MutableFraction fraction)
+    {
+        return add(value, 1, fraction.m_a, fraction.m_b);
+    }
+
+    //MutableFraction f1, f2
+    //f1.add(f2)
+    public MutableFraction add(MutableFraction other)
+    {
+        return add(m_a, m_b, other.m_a, other.m_b);
+    }
+    //MutableFraction f1
+    //f1.add(5)
+    public MutableFraction add(int value)
+    {
+        return add(m_a, m_b, value, 1);
+    }
+
+    public static MutableFraction subtract(int value, MutableFraction fraction)
+    {
+        return subtract(value, 1, fraction.m_a, fraction.m_b);
+    }
+
+    public MutableFraction subtract(MutableFraction other)
+    {
+        return subtract(m_a, m_b, other.m_a, other.m_b);
+    }
+    public MutableFraction subtract(int value)
+    {
+        return subtract(m_a, m_b, value, 1);
+    }
+
+    public static MutableFraction multiply(int value, MutableFraction fraction)
+    {
+        return multiply(value, 1, fraction.m_a, fraction.m_b);
+    }
+
+    public MutableFraction multiply(MutableFraction other)
+    {
+        return multiply(m_a, m_b, other.m_a, other.m_b);
+    }
+    public MutableFraction multiply(int value)
+    {
+        return multiply(m_a, m_b, value, 1);
+    }
+
+    public static MutableFraction divide(int value, MutableFraction fraction)
+    {
+        return divide(value, 1, fraction.m_a, fraction.m_b);
+    }
+
+    public MutableFraction divide(MutableFraction other)
+    {
+        return divide(m_a, m_b, other.m_a, other.m_b);
+    }
+    public MutableFraction divide(int value)
+    {
+        return divide(m_a, m_b, value, 1);
+    }
+
+    public void inc(int value)
+    {
+        m_a += m_b * value;
+    }
+
+    public void inc()
+    {
+        inc(1);
+    }
+
+    public void dec(int value)
+    {
+      inc(-value);
+    }
+
+    public void dec()
+    {
+        dec(1);
+    }
+
+    public String toString()
+    {
+        return String.format("%d%s", m_a, m_b == 1 ? "" : " / " + m_b + " = " + getRealValue());
+    }
 }
