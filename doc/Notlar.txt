@@ -28476,6 +28476,503 @@ class A {
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+13.06.2023 Salı - 41.Ders
+
+/*----------------------------------------------------------------------------------------------------------------------
+	CompanyApp uygulaması
+	Not: CompanyApp sınıfındaki getManager, getWorker, getSalesManaber ve getProjectWorker metotları tamamen konuyu
+	anlatmak için yazılmıştır
+
+	20:09
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.app.company.CompanyApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		CompanyApp.run();
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+		Bir referans değişkenin iki tane türü vardır: static, dynamic
+
+	- static type: Referansın bildirildiği türdür. "Referansın türü" dendiğinde static tür anlaşılır. Derleme zamanına
+	ilişkin bir bilgidir ve değişmez.
+
+	- dynamic type: Referansın gösterdiği nesnenin gerçek türüdür. Çalışma zamanına ilişkindir ve değişebilir
+
+	Anahtar Notlar: Bir referansın dinamik türü String olarak aşağıdaki genel biçimi biçimi verilen çağrı ile elde
+	edilebilir.
+		<referans>.getClass().getName();
+	Buna göre x bir referans olmak üzere x referansının dinamik türü şu şekilde ekrana yazdırılabilir:
+		System.out.println(x.getClass().getName());
+
+	Aşağıdaki örnekte x'in dinamik türünün değişimi basit bir şekilde gösterilmiştir. Örnekte dikkat edilirse App sınıfının
+	main metodu A sınıfının türetme hiyerarşisi içerisinde yalnızca A sınıfına bağlı olarak yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		SampleFactory factory = new SampleFactory();
+
+		A a;
+
+		System.out.print("Bir sayi giriniz:");
+		int count = kb.nextInt();
+
+		while (count-- > 0){
+			a = factory.getRandomA();
+			System.out.println(a.getClass().getName());
+		}
+	}
+}
+
+class SampleFactory{
+	private final Random m_random = new Random();
+
+	public A getRandomA()
+	{
+		int val = m_random.nextInt(5);
+
+		return switch (val){
+			case 0 -> new B();
+			case 1 -> new C();
+			case 2 -> new D();
+			case 3 -> new E();
+			default -> new F();
+		};
+	}
+
+}
+
+class F extends E{
+
+}
+
+
+class E extends A{
+
+}
+
+class D extends B{
+
+}
+
+class C extends B{
+
+}
+
+class B extends A{
+
+}
+class A{
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+		Bir referans değişkenin iki tane türü vardır: static, dynamic
+
+	- static type: Referansın bildirildiği türdür. "Referansın türü" dendiğinde static tür anlaşılır. Derleme zamanına
+	ilişkin bir bilgidir ve değişmez.
+
+	- dynamic type: Referansın gösterdiği nesnenin gerçek türüdür. Çalışma zamanına ilişkindir ve değişebilir
+
+	Anahtar Notlar: Bir referansın dinamik türü String olarak aşağıdaki genel biçimi biçimi verilen çağrı ile elde
+	edilebilir.
+		<referans>.getClass().getName();
+	Buna göre x bir referans olmak üzere x referansının dinamik türü şu şekilde ekrana yazdırılabilir:
+		System.out.println(x.getClass().getName());
+
+	Aşağıdaki örnekte x'in dinamik türünün değişimi basit bir şekilde gösterilmiştir. Örnekte dikkat edilirse App sınıfının
+	main metodu A sınıfının türetme hiyerarşisi içerisinde yalnızca A sınıfına bağlı olarak yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+
+class App {
+	public static void main(String [] args)
+	{
+		C c = new C();
+		B b;
+		A a;
+
+		b = c;
+
+		System.out.println(b.getClass().getName());
+
+		a = b;
+
+		System.out.println(a.getClass().getName());
+
+		System.out.println(b.getClass().getName());
+	}
+}
+
+
+class C extends B{
+
+}
+
+class B extends A{
+
+}
+class A{
+
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Anahtar Notlar: Bir dizi referansının dinamik türüne ilişkin ismi JNI (Java Native Interface) tür ismi olarak
+	elde edilir. Bu isim aslında arakoddakiş isimdir. Detaylar burada ele alınmayacaktır. Aşağıdaki örneğin ekran
+	çıktısı şu şekildedir:
+	[I
+    [D
+    [C
+    [Z
+    [Ljava.lang.String;
+    [Lcom.orhn.util.math.geometry.Point;
+    [[I
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+
+import com.orhn.math.geometry.Point;
+
+class App {
+	public static void main(String [] args)
+	{
+		int [] a = new int[10];
+		double [] b = new double[10];
+		char [] c = new char[20];
+		boolean [] d = new boolean[20];
+		String [] e = new String[5];
+		Point [] f = new Point[10];
+		int [][] g = new int[10][];
+
+		System.out.println(a.getClass().getName());
+		System.out.println(b.getClass().getName());
+		System.out.println(c.getClass().getName());
+		System.out.println(d.getClass().getName());
+		System.out.println(e.getClass().getName());
+		System.out.println(f.getClass().getName());
+		System.out.println(g.getClass().getName());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Taban sınıf türünden bir referans türemiş sınıf türünden bir referansa doğrudan atanamaz. Bu işlem tür dönüştürme
+	operatörü ile yapılabilir. Bu işleme "downcasting" denir. Burada tür dönüştürme operatörü derlemeden geçmek için
+	kullanılır. Çalışma zamanında kaynak referansın dinamik türünün tür dönüştürme operatörüne yazılan türü (hedef tür)
+	kapsayıp kapsamadığına bakılır. Kapsıyorsa haklı dönüşümdür, akış devam eder. Kapsamıyorsa haksız dönüşümdür exception
+	oluşur. Buradaki kapsama nesneseldir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		SampleFactory factory = new SampleFactory();
+
+		A a;
+
+		System.out.print("Bir sayi giriniz:");
+		int count = kb.nextInt();
+
+		B b;
+		while (count-- > 0){
+			a = factory.getRandomA();
+			System.out.println(a.getClass().getName());
+			b = (B)a;
+			b.y = 20;
+		}
+	}
+}
+
+class SampleFactory{
+	private final Random m_random = new Random();
+
+	public A getRandomA()
+	{
+		int val = m_random.nextInt(5);
+
+		return switch (val){
+			case 0 -> new B();
+			case 1 -> new C();
+			default -> new A();
+		};
+	}
+
+}
+
+class C extends B{
+	public int z;
+}
+
+class B extends A{
+	public int y;
+}
+class A{
+	public int x;
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Object sınıfı doğrudan ya da dolaylı olarak her sınıfın taban sınıfı olduğuna göre her türden referans Object türünden
+	referansa atanabilir. Aşağıdaki örnekte çeşitli referans türleri için Object referansları kullanılarak upcasting yapılmış
+	downcasting yapılarak dinamik türlere ilişkin referanslar elde edilmiştir. Şüphesiz downcasting işleminin dinamik
+	tür bilinmeden yapılması exception oluşumuna yol açabilir. Bilinmiyorsa bu dönüşüm nasıl yapılacaktır?
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.math.MutableFraction;
+import com.orhn.math.geometry.Circle;
+import com.orhn.util.ArrayUtil;
+import com.orhn.util.datetime.Date;
+
+class App {
+	public static void main(String [] args)
+	{
+		Object os = "istanbul";
+		Object oc = new Circle(2.4);
+		Object od = new Date();
+		Object oia = new int[10];
+		Object of = new MutableFraction(10, -5);
+
+		System.out.println(os.getClass().getName());
+		System.out.println(oc.getClass().getName());
+		System.out.println(od.getClass().getName());
+		System.out.println(oia.getClass().getName());
+		System.out.println(of.getClass().getName());
+
+		String s = (String) os;
+		Circle c = (Circle) oc;
+		Date d = (Date) od;
+		int [] a = (int [])oia;
+		MutableFraction mf = (MutableFraction) of;
+
+		System.out.println(s.toUpperCase());
+		System.out.println(c.getArea());
+		System.out.println(d.toLongDateStringEN());
+		ArrayUtil.print(a);
+		System.out.println(mf.getRealValue());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte Object dizisinin elemanları olan referansların dinamik türleri çalışma zamnında tespit edilerek
+	downcasting yapılmıştır. Dinamik tür bilgisi tespiti için tür ismi kullanılmıştır. Programcının tür ismini yanlış
+	yazma olsılığı vardır. Ayrıca yazı karşılaştırması uygulamayı göreceli yavaşlatabilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.app.randomgenerator.RandomObjectArrayGeneratorApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		RandomObjectArrayGeneratorApp.run();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	instanceof operatörü iki operandlı (binary), araek (infix) ve özel amaçlı (special purpose) bir operatördür. Operatörün
+	birinci operandı bir referans olmalıdır. İkinci operandı ise bir referans tür ismi olmalıdır. Operatörün ürettiği
+	değer boolean türdendir. Operatör birinci operandı olan referansın dinamik türü, ikinci operandı olanb türü kapsıyorsa
+	true, kapsamıyorsa false değerini üretir. Operatör özellikle "downcasting" işleminin güvenli yapılması (haklı dönüşüm)
+	için kullanılır
+
+	Aşağıdaki örnekte instanceof operatörü kullanılarak hem okunabilirlik/algılanabilirlik artırılmış, ham hata yapma
+	olasılığı ortadan kaldırılmış hem de karşılaştırma işlemi data etkin hale getirilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.app.randomgenerator.RandomObjectArrayGeneratorApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		RandomObjectArrayGeneratorApp.run();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Java 16 ile birlikte eklenen "Pattern matching" kurallarında instanceof için olanı ile dowcasting işlemi programcı
+	tarafından	değil derleyici tarafından üretilen kod ile yapılabilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.app.randomgenerator.RandomObjectArrayGeneratorApp;
+
+class App {
+	public static void main(String [] args)
+	{
+		RandomObjectArrayGeneratorApp.run();
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	instanceof operatörü birinci operandına ilişkin referansın dinamik türünün ikinci operandına ilişkin türü kapsayıp
+	kapsamadığına bakar. Buradaki kapsama şüphesiz nesnesel kapsamadır. Aşağıdaki programı çalıştırıp durumu gözlemleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.app.randomgenerator.RandomObjectArrayGeneratorApp;
+
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		SampleFactory factory = new SampleFactory();
+
+		A a;
+
+		System.out.print("Bir sayi giriniz:");
+		int count = kb.nextInt();
+
+		while (count-- > 0){
+			System.out.println("-------------------------------------------");
+			a = factory.getRandomA();
+			System.out.println(a.getClass().getName());
+			if(a instanceof B b)
+				b.foo();
+			else System.out.println("B veya B den türemiş bir tür değildir");
+			System.out.println("---------------------------------------------");
+		}
+	}
+}
+
+class SampleFactory{
+	private final Random m_random = new Random();
+
+	public A getRandomA()
+	{
+		int val = m_random.nextInt(5);
+
+		return switch (val){
+			case 0 -> new B();
+			case 1 -> new C();
+			case 2 -> new D();
+			case 3 -> new E();
+			default -> new F();
+		};
+	}
+
+}
+
+class F extends E{
+
+}
+
+
+class E extends A{
+
+}
+
+class D extends B{
+
+}
+
+class C extends B{
+
+}
+
+class B extends A{
+	public void foo()
+	{
+		System.out.println("B.foo");
+	}
+}
+class A{
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sarmalayan Sınıflar (Wrapper Classes): Java'da her temel türe karşılık gelen bir sınıf vardır. Bu sınıflara
+	sarmalayan sınıflar denir. Böyle bir tasarımın nedeni sınıfları tanıdıkça anlaşılacaktır. Bu sınıflar sarmalamanın
+	dışında ilgili temel türe ilişkin bazı yararlı işlemlerin de yapılmasına yönelik metotlar. Örneğin Integer sarmalayan
+	sınıfının parseInt metodu bir yazıyı int türden bir değere çevirmek için kullanılır. Temel türlere ilişkin
+	sarmalayan sınıflar şunlardır:
+
+	Temel Tür							Sarmalayan Sınıf
+	----------------------------------------------------
+	short									Short
+	int										Integer
+	long									Long
+	byte									Byte
+	double									Double
+	float									Float
+	char									Character
+	boolean									Boolean
+
+	Bu sınıflardan tanmsayı ve gerçek sayı türlerine ilişkin olanlarına (Short, Integer, Long, Byte, Double ve Float)
+	numerik sarmalayan sınıflar da denebilir.
+
+	Sarmalayan sınıfların temel özellikleri:
+	- Sarmalayan sınıfların hepsi java.lang paraketi içerisinde bildirilmiştir
+
+	- Tamsayı ve gerçek sayı türlerine ilişkin sınıflar java.lang paketinde bulunan Number sınıfından türetilmiştir. Number
+	sınıfının birçok yararlı metodu vardır. Bu metotlar ileride ele alınacaktır.
+
+	- Sarmalayan sınıfların hepsi "immutable"'dır.
+
+	- Bu sınıflar temel türden değerlerin heap'de tutulması için kullanılır. Bu kavrama "kutulama (boxing)" denir. Bu
+	konu ileride ele alınacaktır.
+
+	- Java 9 ile birlikte sarmalayan sınıfların ctor'ları "deprecated" olmuştur. Zaten Java 5'den itibaren bu ctor'ların
+	kullanılması iyi bir teknbik değildi, artık deprecated olduğu için hiç kullanılmamalıdır. Bunun ileride anlaşılacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Tamsayı, gerçek sayı ve char türüne ilişkin sarmalayan sınıfların MIN_VALUE ve MAX_VALUE isimli final ve static veri
+	elemanları vardır. Bu elemanlar ilişkin oldukları temel türdendir. Double ve Float sınıflarının MIN_VALUE değerlerinin
+	pozitif olduğuan dikkat ediniz. Bu durum IEEE 754 formatına ilişkindir. double ve float türleri için sınır değerlerin
+	"-+" biçiminde olduğunu anımsayınız
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+
+class App {
+	public static void main(String [] args)
+	{
+        System.out.printf("byte:[%d, %d]%n", Byte.MIN_VALUE, Byte.MAX_VALUE);
+        System.out.printf("short:[%d, %d]%n", Short.MIN_VALUE, Short.MAX_VALUE);
+        System.out.printf("int:[%d, %d]%n", Integer.MIN_VALUE, Integer.MAX_VALUE);
+        System.out.printf("long:[%d, %d]%n", Long.MIN_VALUE, Long.MAX_VALUE);
+        System.out.println("double:[-+" +  Double.MIN_VALUE + ", -+" + Double.MAX_VALUE + "]");
+        System.out.println("float:[-+" +  Float.MIN_VALUE + ", -+" + Float.MAX_VALUE + "]");
+        System.out.printf("char:[%d, %d]%n", (int)Character.MIN_VALUE, (int)Character.MAX_VALUE);
+
+	}
+}
 
 -----------------------------------------------------------
 -----------------------------------------------------------
