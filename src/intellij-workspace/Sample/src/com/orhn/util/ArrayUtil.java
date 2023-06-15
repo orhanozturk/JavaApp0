@@ -3,6 +3,11 @@ package com.orhn.util;
 import java.util.Random;
 
 public class ArrayUtil {
+
+    private ArrayUtil()
+    {
+
+    }
     public static void swap(int [] a, int i, int k)
     {
         int temp = a[i];

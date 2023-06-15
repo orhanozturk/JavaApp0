@@ -23,7 +23,7 @@ public class LongValue {
     public static final LongValue TWO = of(2);
     public static final LongValue TEN = of(10);
 
-    public LongValue(int mValue) {
+    private LongValue(int mValue) {
         m_value = mValue;
     }
 

@@ -17,6 +17,9 @@ import java.util.Random;
 
 public class StringUtil {
 
+	private StringUtil()
+	{}
+
 	private static final String ALPHABET_TR = "abcçdefgğhıijklmnoöprsştuüvyz";
 	private static final String ALPHABET_EN = "abcdefghijklmnopqrstuwxvyz";
 	private static final String ALPHABET_CAPITAL_TR = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";

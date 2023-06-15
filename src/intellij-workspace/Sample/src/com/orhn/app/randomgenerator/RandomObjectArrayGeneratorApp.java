@@ -27,6 +27,15 @@ public class RandomObjectArrayGeneratorApp {
                 System.out.printf("Alan: %f%n", c.getArea());
             } else if (o instanceof  int [] a) {
                 ArrayUtil.print(a);
+            } else if (o instanceof Integer) {
+                int a = (int)o;
+                System.out.printf("%d * %d = %d%n", a, a, a * a);
+            } else if (o instanceof Character) {
+                char ch = (char)o;
+                System.out.printf("ch = %c%n", ch);
+            } else if (o instanceof Boolean) {
+                boolean flag = (boolean)o;
+                System.out.printf("flag = %b%n", flag);
             } else if (o instanceof MutableFraction f){
                 System.out.printf("Real Value : %f%n", f.getRealValue());
             }

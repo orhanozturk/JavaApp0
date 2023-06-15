@@ -1,58 +1,38 @@
 /*----------------------------------------------------------------------------------------------------------------------
-	Sarmalayan Sınıflar (Wrapper Classes): Java'da her temel türe karşılık gelen bir sınıf vardır. Bu sınıflara
-	sarmalayan sınıflar denir. Böyle bir tasarımın nedeni sınıfları tanıdıkça anlaşılacaktır. Bu sınıflar sarmalamanın
-	dışında ilgili temel türe ilişkin bazı yararlı işlemlerin de yapılmasına yönelik metotlar. Örneğin Integer sarmalayan
-	sınıfının parseInt metodu bir yazıyı int türden bir değere çevirmek için kullanılır. Temel türlere ilişkin
-	sarmalayan sınıflar şunlardır:
+    Aşağı seviyede heap'de tahsis edilen nesnelere "dinamik ömürlü" nesneler denir. Bu nesnelerin yok edilmesi Java'da
+	"çöp toplayıcı (garbage collector)" denilen ve arka planda çalışan bir akış tarafından yapılır. Çöp toplayıcı
+	"artık kullanılmayan (garbage collected, eligible)" yani çöp diyebileceğimiz nesneleri yok eder. Burada 3 tane temel
+	soru sorulabilir:
+	1. Programcı bir nesneyi yok edebilir mi?
+	2. Çöp olan yani artık kullanılmayan bir nesne çöp olur olmaz yok edilir mi?
+	3. Çöp toplayıcı yok edilmesi gereken bir nesneyi nasıl anlar?
 
-	Temel Tür							Sarmalayan Sınıf
-	----------------------------------------------------
-	short									Short
-	int										Integer
-	long									Long
-	byte									Byte
-	double									Double
-	float									Float
-	char									Character
-	boolean									Boolean
+Cevap 1: Java'da programcı bir nesneyi yok edemez. Yani tahsis edilmiş bir alanı geri bırakamaz (free/delete). Programcı
+	kod kışı içerisinde nesneyi "garbage collected" duruma getirebilir.
 
-	Bu sınıflardan tanmsayı ve gerçek sayı türlerine ilişkin olanlarına (Short, Integer, Long, Byte, Double ve Float)
-	numerik sarmalayan sınıflar da denebilir.
+Cevap 2: Çöp toplayıcının ne zaman devreye gireceği standartlarda belirtilmemiştir. Bu çöp toplayıcı ile birlikte,
+	JVM ve JRE yazanlara bırakılmıştır (implementation defined/dependent). Hemen devreye gireceği garanti değildir. Programcı
+	bu bilinçle ve çöp toplayıcının etkinliğine güvenerek kod yazar.
 
-	Sarmalayan sınıfların temel özellikleri:
-	- Sarmalayan sınıfların hepsi java.lang paraketi içerisinde bildirilmiştir
-
-	- Tamsayı ve gerçek sayı türlerine ilişkin sınıflar java.lang paketinde bulunan Number sınıfından türetilmiştir. Number
-	sınıfının birçok yararlı metodu vardır. Bu metotlar ileride ele alınacaktır.
-
-	- Sarmalayan sınıfların hepsi "immutable"'dır.
-
-	- Bu sınıflar temel türden değerlerin heap'de tutulması için kullanılır. Bu kavrama "kutulama (boxing)" denir. Bu
-	konu ileride ele alınacaktır.
-
-	- Java 9 ile birlikte sarmalayan sınıfların ctor'ları "deprecated" olmuştur. Zaten Java 5'den itibaren bu ctor'ların
-	kullanılması iyi bir teknbik değildi, artık deprecated olduğu için hiç kullanılmamalıdır. Bunun ileride anlaşılacaktır
-----------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------------
-	Tamsayı, gerçek sayı ve char türüne ilişkin sarmalayan sınıfların MIN_VALUE ve MAX_VALUE isimli final ve static veri
-	elemanları vardır. Bu elemanlar ilişkin oldukları temel türdendir. Double ve Float sınıflarının MIN_VALUE değerlerinin
-	pozitif olduğuan dikkat ediniz. Bu durum IEEE 754 formatına ilişkindir. double ve float türleri için sınır değerlerin
-	"-+" biçiminde olduğunu anımsayınız
-----------------------------------------------------------------------------------------------------------------------*/
+Cevap 3: Bir nesnenin yok edilebilir yani çöp duruma gelmesi o nesneyi gösteren hiçbir referansın kalmaması demektir.
+	Yani nesnenin adresinin hiçbir referans tarafından gösterilmiyor duruma gelmesidir. Bir nesnenin adresinin hangi
+	referanslar	tarafından tutulduğu ve özellikle kaç tane referans tarafından tutulduğunun takibi için çeşitli algoritmalar
+	kullanılmaktadır. Bu algoritmanın ne ve nasıl olacağı  da yazanlara bırakılmıştır. Biz burada "referans sayma (reference counting)"
+	algoritması kullanılıyor varsayımıyla açıklama yapacağız. Referans sayma yönteminde her yaratılan nesne için bir
+	referans sayacı tutulur. Bu sayaç genelde nesnenin içerisinde tutulur. Bu yöntemde nesnenin adfresi yeni bir referansa
+	atandığında sayaç 1(bir) artırılır. Nesne bir referanstan kopartıldığında sayaç 1(bir) azaltılır. Sayacı sıfır olan
+	yani hiçbir referans tarafından gösterilmeyen bir nesne artık "garbage collected" duruma gelmiş olur. Bir program
+	sonlandığında tüm nesneler yok edilir
+---------------------------------------------------------------------------------------------------------------------*/
 
 package com.orhn.app;
+
+import com.orhn.util.ArrayUtil;
 
 class App {
 	public static void main(String [] args)
 	{
-        System.out.printf("byte:[%d, %d]%n", Byte.MIN_VALUE, Byte.MAX_VALUE);
-        System.out.printf("short:[%d, %d]%n", Short.MIN_VALUE, Short.MAX_VALUE);
-        System.out.printf("int:[%d, %d]%n", Integer.MIN_VALUE, Integer.MAX_VALUE);
-        System.out.printf("long:[%d, %d]%n", Long.MIN_VALUE, Long.MAX_VALUE);
-        System.out.println("double:[-+" +  Double.MIN_VALUE + ", -+" + Double.MAX_VALUE + "]");
-        System.out.println("float:[-+" +  Float.MIN_VALUE + ", -+" + Float.MAX_VALUE + "]");
-        System.out.printf("char:[%d, %d]%n", (int)Character.MIN_VALUE, (int)Character.MAX_VALUE);
-
 	}
 }
+
+

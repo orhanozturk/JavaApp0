@@ -23,7 +23,7 @@ public class IntValue {
     public static final IntValue TWO = of(2);
     public static final IntValue TEN = of(10);
 
-    public IntValue(int mValue) {
+    private IntValue(int mValue) {
         m_value = mValue;
     }
 

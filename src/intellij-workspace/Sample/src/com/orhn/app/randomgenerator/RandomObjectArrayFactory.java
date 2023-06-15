@@ -17,6 +17,9 @@ public class RandomObjectArrayFactory {
             case 0 -> StringUtil.getRandomTextTR(m_random, m_random.nextInt(10, 15));
             case 1 -> new Circle(m_random.nextDouble(-10, 10));
             case 2 -> ArrayUtil.getRandomArray(m_random, m_random.nextInt(5, 10), 0, 99);
+            case 3 -> Integer.valueOf(m_random.nextInt(-128, 127));
+            case 4 -> Character.valueOf((char)(m_random.nextInt(26) + (m_random.nextBoolean() ? 'A' : 'a')));
+            case 5 -> Boolean.valueOf(m_random.nextBoolean());
             default -> new MutableFraction(m_random.nextInt(-10, 10), m_random.nextInt(-10, 10));
         };
     }
