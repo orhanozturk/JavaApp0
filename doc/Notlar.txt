@@ -29526,8 +29526,708 @@ class A {
 
 -----------------------------------------------------------
 -----------------------------------------------------------
+20.06.2023 Salı - 43.Ders
 
 
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağı seviyede heap'de tahsis edilen nesnelere "dinamik ömürlü" nesneler denir. Bu nesnelerin yok edilmesi Java'da
+	"çöp toplayıcı (garbage collector)" denilen ve arka planda çalışan bir akış tarafından yapılır. Çöp toplayıcı
+	"artık kullanılmayan (garbage collected, eligible)" yani çöp diyebileceğimiz nesneleri yok eder. Burada 3 tane temel
+	soru sorulabilir:
+	1. Programcı bir nesneyi yok edebilir mi?
+	2. Çöp olan yani artık kullanılmayan bir nesne çöp olur olmaz yok edilir mi?
+	3. Çöp toplayıcı yok edilmesi gereken bir nesneyi nasıl anlar?
+
+Cevap 1: Java'da programcı bir nesneyi yok edemez. Yani tahsis edilmiş bir alanı geri bırakamaz (free/delete). Programcı
+	kod kışı içerisinde nesneyi "garbage collected" duruma getirebilir.
+
+Cevap 2: Çöp toplayıcının ne zaman devreye gireceği standartlarda belirtilmemiştir. Bu çöp toplayıcı ile birlikte,
+	JVM ve JRE yazanlara bırakılmıştır (implementation defined/dependent). Hemen devreye gireceği garanti değildir. Programcı
+	bu bilinçle ve çöp toplayıcının etkinliğine güvenerek kod yazar.
+
+Cevap 3: Bir nesnenin yok edilebilir yani çöp duruma gelmesi o nesneyi gösteren hiçbir referansın kalmaması demektir.
+	Yani nesnenin adresinin hiçbir referans tarafından gösterilmiyor duruma gelmesidir. Bir nesnenin adresinin hangi
+	referanslar	tarafından tutulduğu ve özellikle kaç tane referans tarafından tutulduğunun takibi için çeşitli algoritmalar
+	kullanılmaktadır. Bu algoritmanın ne ve nasıl olacağı  da yazanlara bırakılmıştır. Biz burada "referans sayma (reference counting)"
+	algoritması kullanılıyor varsayımıyla açıklama yapacağız. Referans sayma yönteminde her yaratılan nesne için bir
+	referans sayacı tutulur. Bu sayaç genelde nesnenin içerisinde tutulur. Bu yöntemde nesnenin adfresi yeni bir referansa
+	atandığında sayaç 1(bir) artırılır. Nesne bir referanstan kopartıldığında sayaç 1(bir) azaltılır. Sayacı sıfır olan
+	yani hiçbir referans tarafından gösterilmeyen bir nesne artık "garbage collected" duruma gelmiş olur. Bir program
+	sonlandığında tüm nesneler yok edilir
+
+---------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s;
+
+		s = new Sample(); //rc1:1
+
+		{
+			Sample k;
+
+			k = s; //rc1:2
+
+			Mample.foo(k); //rc1:3 --> rc1:4
+		}//rc1:1
+
+		s = new Sample(); //rc1:0 (garbage collected), rc2:1
+		//..
+		//..
+	}
+}
+
+
+class Mample{
+	public static void foo(Sample s)
+	{
+		Sample k;
+
+		k = s;
+	}
+}
+
+class Sample{
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Programcı isterse çöp toplayıcının o an devreye girmesini sağlayabilir. Bunun için System sınıfının gc isimli static
+	metodu veya Runtime sınıfının non-static gc metodu çağrılabilir. Ancak bu çoğunlukla hatta neredeyse hiçbir zaman
+	yapılmaması gereken bir yaklaşımdır. Programcı çöp toplayıcının devreye girmesi konusunda etkin çalışmasına
+	güvenmelidir. Çünkü çöp toplayıcının gereksiz yere arkaplanda çaşlıştırılması da programın performansını göreceli
+	olarak olumsuz yönde etkileyecektir
+---------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s;
+
+		s = new Sample(); //rc1:1
+
+		{
+			Sample k;
+
+			k = s; //rc1:2
+
+			Mample.foo(k); //rc1:3 --> rc1:4
+		}//rc1:1
+
+		s = new Sample(); //rc1:0 (garbage collected), rc2:1
+		System.gc(); //Runtime.getRuntime().gc();
+		//..
+		//..
+	}
+}
+
+
+class Mample{
+	public static void foo(Sample s)
+	{
+		Sample k;
+
+		k = s;
+	}
+}
+
+class Sample{
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağı seviyede non-static metot kavramıo yoktur. Bundan dolayı derleyici non-static metotları byte code'a adeta
+	static metot biçiminde yazar. Metodun non-stic olduğu bilgisi arakodda vardır. Non-static bir metodu arakoda yazarken
+	metoda ilgili sınıf türünden +1 tane referans parametresi ekler. non-static bir metodun çağrısı da o metot çağrılırken
+	kullanılan referansın, metodun arakoddaki karşılığı olan static metoda argüman olaraak geçirilmesiyle yapılır
+	Aşağıdaki örnekte non-static bir metodun bildirimi ve çağrılmasının yaklaşık karşılıklarık gösterilmiştir. ctor'lar da
+	arakoda metot olarak yazılır (init).
+	Yani başka mbir bakış açısıyla non-static metotlara aşağı seviyede gizlice adres geçirilmiş olur
+---------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = new Sample();
+
+		s.setA(20);
+
+		//Yukarıdaki setA cagrısını arakoddaki yaklasık karsılıgı
+		Sample.setA(s, 20);
+
+		s.print();
+
+		//Yukarıdaki print cagrısını arakoddaki yaklasık karsılıgı
+		Sample.print(s);
+	}
+}
+
+
+class Sample{
+	private int m_a;
+
+	public void setA(int a)
+	{
+		m_a = a;
+	}
+
+	//setA metodunu arakoddaki yaklaşık karşıklığı
+	public static void setA(Sample s, int a)
+	{
+		s.m_a = a;
+	}
+
+
+	public void print()
+	{
+		System.out.printf("m_a = %d%n", m_a);
+	}
+
+	//print metodunun arakoddaki yaklasık karsılıgı
+	public static void print(final Sample s)
+	{
+		System.out.printf("m_a = %d%n", s.m_a);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    non-static metotlara gizlice geçirilen adrese (referansaI metot bildiriminde "this referansı" ile erişilebilir. this
+	referansı o metodu çağıran referansa yani arakoddaki static metodun parametresine karşılık gelir. Bu durumda metot
+	çağrılırken this referansı nesnenin adresi olur. this referansının türü, hangi sınıfın non-static metot bildirimi
+	içerisinde kullanılmışsa o sınıf türündendir. Bu kavram "non-static bir metoda this geçirilir" şeklinde de söylenir.
+	ctor'lara da this geçirilir
+---------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = new Sample();
+
+		s.setA(20);
+		s.print();
+
+	}
+}
+
+
+class Sample{
+	private int m_a;
+
+	public void setA(int a)
+	{
+		this.m_a = a;
+	}
+
+	public void print()
+	{
+		System.out.printf("m_a = %d%n", this.m_a);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    this referansı bir sabittir. Yani this referansına atama yapılamaz
+---------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = new Sample();
+
+		s.setA(20);
+		s.print();
+
+	}
+}
+
+
+class Sample{
+	private int m_a;
+
+	public void setA(int a)
+	{
+		this = new Sample(); //error
+		this.m_a = a;
+	}
+
+	public void print()
+	{
+		System.out.printf("m_a = %d%n", this.m_a);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    static metotlara this geçirilmez. Dolayısıyla this referansının static metotlar içinde kullanımı geçersizdir+
+---------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = new Sample();
+
+		s.setA(20);
+
+	}
+}
+
+
+class Sample{
+	private int m_a;
+
+	public static void setA(int a)
+	{
+		this.m_a = a; //error
+	}
+
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Programcı this referansını ne zaman kullanacaktır? Aslında bunun cevabı programcıya göre değişebilir. Biz genel olarak
+	this referansını gerekmedikçe kullanmayacağız. Ancak bazı programcılar sınıfın bir non-static metodu içerisinde
+	non-static başka bir metodu çağırıdıklarında, static metotları ayırt etmek açısından yaniş okunabilirlik açısından
+	this referansını kullanırlar
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki Vector2 sınıfında veri elamanlarının isimleri cgtor'un parametrelerinin isimleri aynı olduğundan atama
+	durumunda this referansı zorunludur. Bazı programcılar sınıfın veri elemanı private bile olsa isimlendirmede bir ek
+	kullanmazlar. Bu durumda veri elemanları aynı isimde prametrelere sahip tüm metotlarda this referansı kullanmaları
+	gerekir. Bu iyi ya da kötü teknik biçiminde anlaşılmamalıdır. Sonuçta bu da bir convention'dır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+
+	}
+}
+
+class Vector2{
+	public double x, y;
+
+	public Vector2(int x, int y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir sınıfın metotlarının aynı referans üzerinden zincir biçiminde aşağıdaki gibi çağrılabilmesi için implementasyonda
+	ilgili metotların this referansına geri dönmesi gerekir (fluent). Şüphesiz bu tarz yazılıp yazılmayacağı yine sınıfın
+	ne olduğuna bağlıdır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.wrapper.MutableIntValue;
+
+class App {
+	public static void main(String [] args)
+	{
+		MutableIntValue intValue = new MutableIntValue();
+
+		int val = intValue.setValue(20).multiply(2).add(4).divide(1).subtract(5).getValue();
+
+		System.out.printf("val = %d%n", val);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Anımsanacağı gibi programlamada kullanılmayan bir byte'lık adresi temsil eden "null adres" denilen bir adres vardır.
+	Yani bu adres herhangi bir değişken ya da bir nesne için tahsis edilmez. null adres modern sistemlerin hemen hemen
+	hepsinde belleğin ilk gözüdür, yani sıfır numaralı adrestir. Ancak sıfır numaralı adres olmak zorunda değildir. Kullanılmayan
+	bir adres olmalıdır. Java'da null adres null isimli sabit ile temsil edilir. Bu sabite "null reference" denir. Bir
+	referansa null atandığında o referansın içerisinde bir adres vardır ancak adres kullanılmadığı için herhangi bir nesnenin
+	adresi olmaz. null referans temel türden değişkenlere atanamaz
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		int a = null; //error
+		Sample s;
+		String str;
+		Color c;
+		int[] b;
+
+		s = null;
+		str = null;
+		c = null;
+		b = null;
+	}
+}
+
+enum Color{RED, GREEN, BLUE}
+class Sample{
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir referansın default değeri null'dır. Singleton kalıbının "lazy" implementasyonunu anımsayınız
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Singleton s1 = Singleton.getInstance();
+		Singleton s2 = Singleton.getInstance();
+
+		System.out.println(s1 == s2 ? "Aynı nesne" : "Farklı nesne");
+	}
+}
+
+class Singleton{
+	private static Singleton ms_instance;
+
+	private int m_value;
+
+	private Singleton(){}
+
+	public static Singleton getInstance()
+	{
+		if(ms_instance == null)
+			ms_instance = new Singleton();
+
+		return ms_instance;
+	}
+
+	public int getValue()
+	{
+		return m_value;
+	}
+
+	public void setValue(int value)
+	{
+		m_value = value;
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir referansın null olması durumunda o referansın ilişkin olduğu türün elemanlarına erişim durumunda execption
+	oluşur. Aşağıdaki kod durumu göstermek için yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = null;
+
+		s.foo();
+	}
+}
+
+class Sample{
+	public void foo()
+	{
+
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte yorum satırı içerisinde yazılan döngü yazılmadığından ya da daha genel söyleyişle Engine
+	türden dizinin her bir elemanı olan referansın null olması ve o referanslara uygun nesnelerin adreslerinin verilmemesi
+	dolayısıyla exception oluşur
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Driver driver;
+		driver = new Driver();
+
+		driver.setUsername("AMehmet");
+		driver.setName("Ali Mehmet Cetinkol");
+		driver.setRating(100);
+
+		Car car = new Car(driver);
+
+		car.run();
+
+		System.out.println("**************************************");
+
+		Pilot[] pilots = {new Pilot(1, "Ali Cetinkol", 10000), new Pilot(2, "Orhan ozturk",
+				7000), new Pilot(3, "Mahmut Tuncer", 5000)};
+		Plane p = new Plane(4, pilots);
+
+		p.fly();
+	}
+}
+
+class  Plane{
+	private Engine[] m_engines;
+	private Pilot[] m_pilots;
+
+	private void startEngines()
+	{
+		for (Engine engine : m_engines) {
+			engine.startEngine();
+		}
+	}
+	private void accelerateEngines()
+	{
+		for (Engine engine : m_engines) {
+			engine.acclerateEngine();
+		}
+	}
+	private void slowEngines()
+	{
+		for (Engine engine : m_engines) {
+			engine.slowEngine();
+		}
+	}
+	private void stopEngines()
+	{
+		for (Engine engine : m_engines) {
+			engine.stopEngine();
+		}
+	}
+
+	public Plane(int engineCount, Pilot [] pilots)
+	{
+		m_pilots = pilots;
+		m_engines = new Engine[engineCount];
+
+		/*
+		for (int i = 0; i < engineCount; ++i)
+			m_engines[i] = new Engine();
+		 */
+	}
+
+	public void fly()
+	{
+		System.out.println("Pilots:");
+		for (Pilot p: m_pilots) {
+			System.out.printf("%d. %s, %d%n", p.getTitle(), p.getName(), p.getFlightDuration());
+		}
+
+		startEngines();
+		accelerateEngines();
+		//..
+
+		System.out.println("Flying...");
+		//..
+
+		slowEngines();
+
+		//..
+		stopEngines();
+
+	}
+}
+
+class Pilot{
+	private int m_title;
+	private String m_name;
+	private int m_flightDuration;
+
+	public Pilot(int title, String name, int flightDuration)
+	{
+		m_title = title;
+		m_name = name;
+		m_flightDuration = flightDuration;
+	}
+
+	public int getTitle() {
+		return m_title;
+	}
+
+	public void setTitle(int m_title) {
+		this.m_title = m_title;
+	}
+
+	public String getName() {
+		return m_name;
+	}
+
+	public void setName(String m_name) {
+		this.m_name = m_name;
+	}
+
+	public int getFlightDuration() {
+		return m_flightDuration;
+	}
+
+	public void setFlightDuration(int m_flightDuration) {
+		this.m_flightDuration = m_flightDuration;
+	}
+}
+
+class Car{
+	private Engine m_engine;
+	private Driver m_driver;
+
+	public Car(Driver driver)
+	{
+		m_driver = driver;
+		m_engine = new Engine();
+	}
+
+	public void brake()
+	{
+		System.out.println("brake");
+		m_engine.slowEngine();
+	}
+
+	public void run()
+	{
+		System.out.printf("Driver : %s, %d%n", m_driver.getName(), m_driver.getRating());
+
+		m_engine.startEngine();
+		m_engine.acclerateEngine();
+
+		System.out.println("running...");
+
+		brake();
+		m_engine.stopEngine();
+	}
+}
+
+class Driver{
+	private String m_username;
+	private String m_name;
+	private int m_rating;
+
+	public String getUsername() {
+		return m_username;
+	}
+
+	public void setUsername(String m_username) {
+		this.m_username = m_username;
+	}
+
+	public String getName() {
+		return m_name;
+	}
+
+	public void setName(String m_name) {
+		this.m_name = m_name;
+	}
+
+	public int getRating() {
+		return m_rating;
+	}
+
+	public void setRating(int m_rating) {
+		this.m_rating = m_rating;
+	}
+}
+
+class Engine{
+	//...
+	public void startEngine()
+	{
+		System.out.println("Start Engine");
+	}
+
+	public void acclerateEngine()
+	{
+		System.out.println("Accelerate Engine");
+	}
+
+	public void slowEngine()
+	{
+		System.out.println("Slow Engine");
+	}
+	public void stopEngine()
+	{
+		System.out.println("Stop Engine");
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	null referans bir referans değişkeni nesneden kopartmak için kullanılabilir. Bir referansa null atanması o referansın
+	gösterdiği nesnenin "garbage collected" olduğu anlamına gelmez. Aşağıdaki örnekte ** ile belirtilen atama ile
+	s1 referansının gösterdiği nesne "garbage collected" olmaz. Çünkü halen daha o nesneyi s2 referansı gösterrmektedir. Yani
+	o nesneyi gösteren referans sayısı sıfır olmamıştır. Ancak ** ile belirtilen atama ile artık nesneyi gösteren hiç bir
+	referans kalmamıştır, nesne "garbage collected" duruma gelmiştir. Örnek durumu göstermek için yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s1, s2;
+
+		s1 = new Sample();
+		s1.x = 10;
+		System.out.printf("s1.x = %d%n", s1.x);
+
+		s2 = s1;
+
+		s1 = null; //**
+		System.out.printf("s2.x = %d%n", s2.x);
+		s2 = null; //**
+		//**
+	}
+}
+
+class Sample{
+	public int x;
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte miv referansına null atanması derleyicinin "değer verilmeme ihtimali olan bir değişkeni kullanıyorsun"
+	şeklindeki hata durumunu engellemöek için kullanılmıştır. Derleyic programcının aşağıdaki algoritması anlayıp akışın
+	hiç bir switch deyiminden yakalanmadan çıkacağını anla(ya)maz. Üstelik anlamak zorunda da değildir. Hatta aşağıdaki
+	kod anlaması mümkün olmayacak şekilde de yazılabilir. Örneğin if deyimi ve yaptıkları bir metot içerisinde yazılıp burada
+	çağrılabilir. Bu durumda derleyici bunu anlayamaz. Şüphesiz aşağıdaki örnek farklı şekillerde de ytazılabilir. null
+	kullanımı göstermek için bu şekilde yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+import com.orhn.util.wrapper.MutableIntValue;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		System.out.print("Bir sayı giriniz:");
+		int a = Integer.parseInt(kb.nextLine());
+
+		if(a < 1 || a > 3){
+			System.out.println("Geçersiz bir deger girdiniz!....");
+			System.exit(1);
+		}
+
+		MutableIntValue miv = null;
+
+		switch (a){
+			case 1 -> miv = new MutableIntValue(-128);
+			case 2 -> miv = new MutableIntValue(0);
+			case 3 -> miv = new MutableIntValue(127);
+		}
+
+		System.out.printf("Value = %d%n", miv.getValue());
+	}
+}
 -----------------------------------------------------------
 -----------------------------------------------------------
 
