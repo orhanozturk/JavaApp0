@@ -16,30 +16,28 @@ import static com.orhn.util.datetime.DateUtil.DAY_OF_WEEKS;
 import static com.orhn.util.datetime.DateUtil.MONTHS;
 
 public class Date {
-    private static final String [] MONTHS_TR = {"", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"};
+    private static final String [] MONTHS_TR = {"", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz",
+            "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"};
+
     private static final String [] DAYS_OF_WEEK_TR = {"Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"};
+
     private static final String [] MONTHS_EN = {"", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
     private static final String [] DAYS_OF_WEEK_EN = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
     private static int getDayOfYear(int day, int month, int year)
     {
-        /*if (!isValidDate(day, month, year))
-            return -1;*/
-
         int totalDays = day;
 
-        for(int m = month - 1; m >= 1; --m)
+        for (int m = month - 1; m >= 1; --m)
             totalDays += MONTHS[m - 1].getDays(year);
 
         return totalDays;
-
     }
+
     private static int getDayOfWeek(int day, int month, int year)
     {
         int totalDays = getDayOfYear(day, month, year);
-
-        /*if (year < 1900 || totalDays  == -1)
-            return -1;*/
 
         for (int y = 1900; y < year; ++y)
             totalDays += Month.isLeapYear(y) ? 366 : 365;
@@ -49,13 +47,14 @@ public class Date {
 
     private static String getDaySuffix(int day)
     {
-        return switch (day){
+        return switch (day) {
             case 1, 21, 31 -> "st";
             case 2, 22 -> "nd";
             case 3, 23 -> "rd";
             default -> "th";
         };
     }
+
     private static boolean isValidDate(int day, int month, int year)
     {
         return  1 <= day && day <= 31 && 1 <= month && month <= 12 && day <= MONTHS[month - 1].getDays(year);
@@ -63,13 +62,12 @@ public class Date {
 
     private static void doWorkForException(String message)
     {
-        System.out.println(message);
-        System.exit(1); //Exception konusuna kadar bekliyoruz
+        throw new DateTimeException(message);
     }
 
     private static void checkDate(int day, int month, int year, String message)
     {
-        if(!isValidDate(day, month, year))
+        if (!isValidDate(day, month, year))
             doWorkForException(message);
     }
 
@@ -88,12 +86,6 @@ public class Date {
         checkDate(m_day, m_month, year, message);
     }
 
-
-    private int m_day;
-    private int m_month;
-    private int m_year;
-    private int m_dayOfWeek;
-
     private void set(int day, int month, int year)
     {
         m_day = day;
@@ -102,23 +94,27 @@ public class Date {
         m_dayOfWeek = getDayOfWeek(m_day, m_month, m_year);
     }
 
-    public Date()
+    private int m_day, m_month, m_year;
+    private int m_dayOfWeek;
+
+    public Date() //Bu ctor içerisinde yazılanların bilinmesi gerekmez. Sadece default'un anlamına odaklanınız
     {
         LocalDate today = LocalDate.now();
 
         set(today.getDayOfMonth(), today.getMonthValue(), today.getYear());
-    }
-    public Date(int day, int month, int year)
-    {
-        checkDate(day, month, year, String.format("Invalid date value(s) -> day: %d, month value: %d, year: %d",
-                day, month, year));
-        set(day, month, year);
     }
 
     public Date(int day, Month month, int year)
     {
         this(day, month.ordinal() + 1, year);
     }
+
+    public Date(int day, int month, int year)
+    {
+        checkDate(day, month, year, String.format("Invalid date value(s) -> day: %d, month value: %d, year: %d", day, month, year));
+        set(day, month, year);
+    }
+
     public int getDay()
     {
         return m_day;
@@ -126,11 +122,21 @@ public class Date {
 
     public void setDay(int day)
     {
-        if(m_day == day)
+        if (m_day == day)
             return;
 
         checkDay(day, "Invalid day value:" + day);
         set(day, m_month, m_year);
+    }
+
+    public Month getMonth()
+    {
+        return MONTHS[m_month - 1];
+    }
+
+    public void setMonth(Month month)
+    {
+        setMonthValue(month.ordinal() + 1);
     }
 
     public int getMonthValue()
@@ -138,23 +144,13 @@ public class Date {
         return m_month;
     }
 
-    public Month getMonth()
-    {
-        return DateUtil.MONTHS[m_month - 1];
-    }
-
     public void setMonthValue(int month)
     {
-        if(m_month == month)
+        if (m_month == month)
             return;
 
         checkMonth(month, "Invalid month value:" + month);
         set(m_day, month, m_year);
-    }
-
-    public void setMonth(Month month)
-    {
-        setMonthValue(month.ordinal() + 1);
     }
 
     public int getYear()
@@ -164,7 +160,7 @@ public class Date {
 
     public void setYear(int year)
     {
-        if(m_year == year)
+        if (m_year == year)
             return;
 
         checkYear(year, "Invalid year value:" + year);
@@ -174,10 +170,6 @@ public class Date {
     public DayOfWeek getDayOfWeek()
     {
         return DAY_OF_WEEKS[m_dayOfWeek];
-    }
-    public int getDayOfWeekValue()
-    {
-        return m_dayOfWeek;
     }
 
     public String getDayOfWeekTR()
@@ -225,11 +217,13 @@ public class Date {
         return String.format("%s %s", toShortDateStringEN(), getDayOfWeekEN());
     }
 
-    public String toShortDateStringTR() {
+    public String toShortDateStringTR()
+    {
         return String.format("%d %s %d", m_day, MONTHS_TR[m_month], m_year);
     }
 
-    public String toShortDateStringEN() {
+    public String toShortDateStringEN()
+    {
         return String.format("%d%s %s %d", m_day, getDaySuffix(m_day), MONTHS_EN[m_month], m_year);
     }
 }

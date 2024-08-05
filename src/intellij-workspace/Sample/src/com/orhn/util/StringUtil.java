@@ -12,6 +12,7 @@
 
 package com.orhn.util;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -310,4 +311,36 @@ public class StringUtil {
 
 		return str.substring(0, str.length() - delimiter.length());
 	}
+
+	public static String join(ArrayList list, String delimiter)
+	{
+		return join(list, delimiter, false);
+	}
+
+	public static String join(ArrayList list, char delimiter)
+	{
+		return join(list, delimiter, false);
+	}
+
+	public static String join(ArrayList list, char delimiter, boolean removeEmpties)
+	{
+		return join(list, delimiter + "", removeEmpties);
+	}
+
+	public static String join(ArrayList list, String delimiter, boolean removeEmpties)
+	{
+		String str = "";
+
+		for (Object o : list) {
+			String s = (String)o;
+
+			if (removeEmpties && s.isBlank())
+				continue;
+
+			str += s + delimiter;
+		}
+		return str.substring(0, str.length() - delimiter.length());
+	}
 }
+
+

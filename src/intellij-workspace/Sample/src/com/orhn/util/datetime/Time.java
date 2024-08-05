@@ -13,16 +13,11 @@ package com.orhn.util.datetime;
 import java.time.LocalTime;
 
 public class Time {
-
-    private  int m_hour;
-    private  int m_minute;
-    private  int m_second;
-    private  int m_millisecond;
+    private int m_hour, m_minute, m_second, m_millisecond;
 
     private static void doWorkForException(String message)
     {
-        System.out.println(message);
-        System.exit(1); //exception işlemleri konusunda dahil edeceğiz
+        throw new DateTimeException(message);
     }
 
     private static boolean isValid(int value, int max)
@@ -34,6 +29,7 @@ public class Time {
     {
         return isValid(hour, 23);
     }
+
     private static boolean isValidMinute(int minute)
     {
         return isValid(minute, 59);
@@ -43,6 +39,7 @@ public class Time {
     {
         return isValid(second, 59);
     }
+
     private static boolean isValidMillisecond(int millisecond)
     {
         return isValid(millisecond, 999);
@@ -53,34 +50,34 @@ public class Time {
         return isValidHour(hour) && isValidMinute(minute) && isValidSecond(second) && isValidMillisecond(millisecond);
     }
 
-    private  static void checkHour(int value)
+    private static void checkHour(int value)
     {
-        if(!isValidHour(value))
+        if (!isValidHour(value))
             doWorkForException("Invalid hour value -> " + value);
     }
 
-    private  static void checkMinute(int value)
+    private static void checkMinute(int value)
     {
-        if(!isValidMinute(value))
+        if (!isValidMinute(value))
             doWorkForException("Invalid minute value -> " + value);
     }
 
-    private  static void checkSecond(int value)
+    private static void checkSecond(int value)
     {
-        if(!isValidSecond(value))
+        if (!isValidSecond(value))
             doWorkForException("Invalid second value -> " + value);
     }
 
-    private  static void checkMillisecond(int value)
+    private static void checkMillisecond(int value)
     {
-        if(!isValidMillisecond(value))
+        if (!isValidMillisecond(value))
             doWorkForException("Invalid millisecond value -> " + value);
     }
 
-    private  static void checkTime(int hour, int minute, int second, int millisecond)
+    private void checkTime(int hour, int minute, int second, int millisecond)
     {
-        if(!isValidTime(hour, minute, second, millisecond))
-            doWorkForException(String.format("Invalid time value(s) : hour -> %d, minute -> %d, second -> %d, millisecond -> %d",
+        if (!isValidTime(hour, minute, second, millisecond))
+            doWorkForException(String.format("Invalid time value(s): hour -> %d, minute -> %d, second -> %d, millisecond -> %d",
                     hour, minute, second, millisecond));
     }
 
@@ -92,7 +89,7 @@ public class Time {
         m_millisecond = millisecond;
     }
 
-    public Time()
+    public Time() //Bu ctor içerisinde yazılanların bilinmesi gerekmez. Sadece default ctor'un anlamına odaklanınız
     {
         LocalTime now = LocalTime.now();
 
@@ -102,67 +99,76 @@ public class Time {
         m_millisecond = now.getNano() / 1_000_000;
     }
 
-    public Time (int hour, int minute)
+    public Time(int hour, int minute)
     {
         this(hour, minute, 0);
     }
 
-    public Time (int hour, int minute, int second)
+    public Time(int hour, int minute, int second)
     {
         this(hour, minute, second, 0);
     }
 
-    public Time (int hour, int minute, int second, int millisecond)
+    public Time(int hour, int minute, int second, int millisecond)
     {
         checkTime(hour, minute, second, millisecond);
         set(hour, minute, second, millisecond);
     }
 
-    public int getHour() {
+    public int getHour()
+    {
         return m_hour;
     }
 
-    public void setHour(int hour) {
-        if(hour == m_hour)
+    public void setHour(int hour)
+    {
+        if (hour == m_hour)
             return;
+
         checkHour(hour);
-        this.m_hour = hour;
+        m_hour = hour;
     }
 
-    public int getMinute() {
+    public int getMinute()
+    {
         return m_minute;
     }
 
-    public void setMinute(int minute) {
-        if(minute == m_minute)
+    public void setMinute(int minute)
+    {
+        if (minute == m_minute)
             return;
 
         checkMinute(minute);
-        this.m_minute = minute;
+        m_minute = minute;
     }
 
-    public int getSecond() {
+    public int getSecond()
+    {
         return m_second;
     }
 
-    public void setSecond(int second) {
-        if(second == m_second)
+    public void setSecond(int second)
+    {
+        if (second == m_second)
             return;
 
         checkSecond(second);
-        this.m_second = second;
+        m_second = second;
     }
 
-    public int getMillisecond() {
+    public int getMillisecond()
+    {
         return m_millisecond;
     }
 
-    public void setMillisecond(int millisecond) {
+    public void setMillisecond(int millisecond)
+    {
         if (millisecond == m_millisecond)
             return;
 
         checkMillisecond(millisecond);
-        this.m_millisecond = millisecond;
+        m_millisecond = millisecond;
     }
 
     public String toString()
@@ -180,3 +186,4 @@ public class Time {
         return String.format("%s.%03d", toString(), m_millisecond);
     }
 }
+

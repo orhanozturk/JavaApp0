@@ -1,38 +1,39 @@
 package com.orhn.app.company;
 
 public class CompanyApp {
-    private  static Worker getWorker() //Metot herhangi bir yerden bilgileri okuyor olarak düşünelim
+    private static Worker getWorker() //Metot herhangi bir yerden bilgileri okuyor olarak düşününüz
     {
-      Worker w = new Worker();
+        Worker w = new Worker();
 
-      w.setCitizenId("123456789");
-      w.setName("Ali");
-      w.setAddress("Edirne");
-      w.setFeePerHour(120.5);
-      w.setHourPerDay(8);
+        w.setCitizenId("12345678924");
+        w.setName("Ali");
+        w.setAddress("Şişli");
+        w.setFeePerHour(100.4);
+        w.setHourPerDay(8);
 
-      return w;
+        return w;
     }
 
-    private static Manager getManager()//Metot herhangi bir yerden bilgileri okuyor olarak düşünelim
+    private static Manager getManager() //Metot herhangi bir yerden bilgileri okuyor olarak düşününüz
     {
         Manager m = new Manager();
 
-        m.setCitizenId("333444234");
-        m.setName("Mehmet");
-        m.setAddress("İstanbul");
+        m.setName("Veli");
+        m.setCitizenId("12345678916");
+        m.setAddress("Mecidiyeköy");
         m.setSalary(30000);
         m.setDepartment("Pazarlama");
 
         return m;
     }
-    private static SalesManager getSalesManager()//Metot herhangi bir yerden bilgileri okuyor olarak düşünelim
+
+    private static SalesManager getSalesManager() //Metot herhangi bir yerden bilgileri okuyor olarak düşününüz
     {
         SalesManager sm = new SalesManager();
 
-        sm.setCitizenId("666633534");
-        sm.setName("Nazım");
-        sm.setAddress("Ankara");
+        sm.setName("Selami");
+        sm.setCitizenId("12345678918");
+        sm.setAddress("Beykoz");
         sm.setSalary(40000);
         sm.setDepartment("Satış");
         sm.setExtra(10000);
@@ -40,20 +41,21 @@ public class CompanyApp {
         return sm;
     }
 
-    private static ProjectWorker getProjectWorker()//Metot herhangi bir yerden bilgileri okuyor olarak düşünelim
+    private static ProjectWorker getProjectWorker() //Metot herhangi bir yerden bilgileri okuyor olarak düşününüz
     {
         ProjectWorker pw = new ProjectWorker();
 
-        pw.setCitizenId("555553535");
-        pw.setName("Aysel");
-        pw.setAddress("Kocaeli");
-        pw.setFeePerHour(120.5);
+        pw.setCitizenId("12345678924");
+        pw.setName("Ayşe");
+        pw.setAddress("Riva");
+        pw.setFeePerHour(100.4);
         pw.setHourPerDay(8);
         pw.setFeeFactor(1.5);
         pw.setProjectName("Chat system");
 
         return pw;
     }
+
 
     public static void run()
     {
@@ -62,6 +64,8 @@ public class CompanyApp {
         Worker w = getWorker();
         SalesManager sm = getSalesManager();
         ProjectWorker pw = getProjectWorker();
+
+        //...
 
         hr.payInsurance(m);
         hr.payInsurance(w);
