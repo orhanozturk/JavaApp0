@@ -1,70 +1,39 @@
 /*----------------------------------------------------------------------------------------------------------------------
-	Arayüz referansları taban sınıf referansı gibi kullanılabilir. Böylelikle "polymorphism" arayüzler ile de
-	gerçekleştirilebilmektedir. Yani arayüzler "çoklu türetmeyi (multiple inheritance)" kısmı olarak kullanabilme
-	olanağı sağlar.
-
-	Aşağıdaki örnekte Test sınıfo IY arayüzünü desteklemediğinde ** ile belirtilen çağrıda error oluşur
+	4. Bir sınıf referansının onun desteklemediği bir arayüz referansına dönüştürülmesi tür dönüştürme operatörü ile
+	yapılabilir. Çalışma zamanında kaynak referansın dinamik türünün hedef arayüzü destekleyipş desteklemediğine bakılır.
+	Destekliyorsa haklı dönüşümdür. Desteklemiyorsa haksız dönüşümdür, ClassCastException nesnesi fırlatılır
 ----------------------------------------------------------------------------------------------------------------------*/
 package com.orhn.app;
 
 class App {
 	public static void main(String [] args)
 	{
-		Util u = new Util();
-		Sample s = new Sample();
-		Test t = new Test();
+		A a = new C();
+		IX ix;
 
-		u.doWorkForIX(s);
-		u.doWorkForIY(s);
-		u.doWorkForIX(t);
-		u.doWorkForIY(t); //** error
+		ix = (IX)a; //Haklı dönüşüm
+
+		a = new B();
+
+		ix = (IX)a; //Haksız dönüşüm
+
+
+		System.out.println("Tekrar yapıyor musunuz?");
 
 	}
 }
 
-class Util {
+class C extends A implements IX {
 	//...
-	public void doWorkForIX(IX ix)
-	{
-		//...
-
-		ix.foo();
-	}
-
-
-	public void doWorkForIY(IY iy)
-	{
-		//...
-
-		iy.bar();
-	}
+}
+class B extends A {
+	//...
 }
 
-class Test implements IX {
-	public void foo()
-	{
-		System.out.println("Test.foo");
-	}
+class A {
+	//...
 }
-
-class Sample implements IX, IY {
-	public void foo()
-	{
-		System.out.println("Sample.foo");
-	}
-
-	public void bar()
-	{
-		System.out.println("Sample.bar");
-	}
-}
-
 
 interface IX {
-	void foo();
+	//...
 }
-
-interface IY {
-	void bar();
-}
-

@@ -37543,6 +37543,1285 @@ interface IY {
 }
 
 
+/*----------------------------------------------------------------------------------------------------------------------
+	Birden fazla arayüz içerisinde aynı imzaya ve aynı geri dönüş değerine sahip bir sanal metot varsa ve bir sınıf bu
+	arayüzleri destekliyorsa tüm arayüzler için bir tane metot override edilmiş olur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Util u = new Util();
+		Sample s = new Sample();
+		Test t = new Test();
+
+		u.doWorkForIX(s);
+		u.doWorkForIY(s);
+		u.doWorkForIX(t);
+	}
+}
+
+class Util {
+	//...
+	public void doWorkForIX(IX ix)
+	{
+		//...
+
+		ix.foo();
+	}
+
+
+	public void doWorkForIY(IY iy)
+	{
+		//...
+
+		iy.foo();
+	}
+}
+
+class Test implements IX {
+	public void foo()
+	{
+		System.out.println("Test.foo");
+	}
+}
+
+class Sample implements IX, IY {
+	public void foo()
+	{
+		System.out.println("Sample.foo");
+	}
+}
+
+
+interface IX {
+	void foo();
+}
+
+interface IY {
+	void foo();
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir sınıf bir arayüzü destekliyorsa o sınıftan türetilmiş olan bir sınıf da aynı arayüzü doğrudan destekler. Bu durum
+	türemiş sınıfın arayüz listesinde belirtilmek zorunda değildir. İstenirse belirtilebilir
+
+	Örnekte B, C ve D sınıfları açısından foo metodu A'nın metodudur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Util u = new Util();
+		A a = new A();
+		B b = new B();
+		C c = new C();
+		D d = new D();
+
+		u.doWorkForIX(a);
+		u.doWorkForIX(b);
+		u.doWorkForIX(c);
+		u.doWorkForIX(d);
+	}
+}
+
+class Util {
+	//...
+	public void doWorkForIX(IX ix)
+	{
+		//...
+
+		ix.foo();
+	}
+}
+
+
+class D extends A implements IX {
+	//...
+}
+
+class C extends A {
+	//...
+}
+
+class B extends A {
+	public void foo()
+	{
+		System.out.println("B.foo");
+	}
+}
+
+class A implements IX {
+	public void foo()
+	{
+		System.out.println("A.foo");
+	}
+}
+
+interface IX {
+	void foo();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte foo metodu final olarak override edilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class B extends A implements IX {
+	public void foo() //error
+	{
+		System.out.println("B.foo");
+	}
+}
+
+class A implements IX {
+	public final void foo()
+	{
+		System.out.println("A.foo");
+	}
+}
+
+interface IX {
+	void foo();
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir arayüz başka bir arayüzden türetilebilir. Burada extends anahtar sözcüğü kullanılır. Bu durumda türemiş arayüzü
+	destekleyeb bir sıonıf taban arayüzü de desteklemiş olur yani somut sınıf olabilmek için tüm abstract metotları
+	override etmesi gerekir. Aşağıdaki örnekte A sınıfı hem IY'yi hem de IX'i desteklemiş olur. Arayüz listesinde sadece
+	IY yazılması yeterli olur. İstenirse IX mde yazılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Util u = new Util();
+		A a = new A();
+
+		u.doWorkForIX(a);
+		u.doWorkForIY(a);
+	}
+}
+
+class Util {
+	//...
+	public void doWorkForIX(IX ix)
+	{
+		//...
+
+		ix.foo();
+	}
+
+	public void doWorkForIY(IY iy)
+	{
+		//...
+
+		iy.foo();
+		iy.bar();
+	}
+}
+
+
+class A implements IY {
+	public void foo()
+	{
+		System.out.println("A.foo");
+	}
+
+	public void bar()
+	{
+		System.out.println("A.bar");
+	}
+}
+
+interface IY extends IX {
+	void bar();
+}
+
+interface IX {
+	void foo();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Arayüzler arasında "çoklu türetme (multipla inheritance)" yapılabilir. Aşağıdaki örnekte A sınıfı IZ'yi
+	desteklediği için ayrıca IX'i ve IY'yi de desteklemiş olur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Util u = new Util();
+		A a = new A();
+
+		u.doWorkForIZ(a);
+	}
+}
+
+class Util {
+	//...
+
+	public void doWorkForIZ(IZ iz)
+	{
+		//...
+
+		iz.foo();
+		iz.bar();
+		iz.tar();
+	}
+}
+
+
+class A implements IZ {
+	public void foo()
+	{
+		System.out.println("A.foo");
+	}
+
+	public void bar()
+	{
+		System.out.println("A.bar");
+	}
+
+	public void tar()
+	{
+		System.out.println("A.tar");
+	}
+}
+
+
+interface IZ extends IX, IY {
+	void tar();
+}
+
+interface IY {
+	void bar();
+}
+
+interface IX {
+	void foo();
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	default metotlar sanaldır. Dolayısyla override edilebilirler. Bu durumda çok biçimli olarak override edilen çağrılır.
+	default metotlar gövdeli olduğundan override edilmek zorunda değildir. Aşağıdaki örnekte A sınıfı defaul foo metodunu
+	override etmiştir, B sınıfı ise override etmemiştir. Örneği çalıştırarak sonucu gözlemleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Util u = new Util();
+		A a = new A();
+		B b = new B();
+
+		u.doWorkForIX(a);
+		u.doWorkForIX(b);
+	}
+}
+
+class Util {
+	//...
+
+	public void doWorkForIX(IX ix)
+	{
+		//...
+
+		ix.foo();
+	}
+}
+
+
+class B implements IX {
+	//...
+}
+
+class A implements IX {
+	//...
+	public void foo()
+	{
+		System.out.println("A.foo");
+	}
+}
+
+interface IX {
+	//...
+	default void foo()
+	{
+		System.out.println("IX.foo");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	super referansı taban sınıfı temsil ettiğinden aşağıdaki örnekte taban sınıf da Object olduğunda error oluşur. Çünkü
+	foo ismi nitelikli kullanılmıştır ve nitelikli isim arama genel kurallarına göre aranır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class A implements IX {
+	public void foo()
+	{
+		System.out.println("A.foo");
+		super.foo(); //error: Burada super referansı Object türündendir
+	}
+}
+
+interface IX {
+	default void foo()
+	{
+		System.out.println("IX.foo");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	(Abstract) sınıflar ile arayüzler arasındaki farklar: (Maddelerin sırasının önemi yoktur)
+	- Arayüzler interface anahtar sözcüğü ile abstract sınıfar ise class anahtar sözcüğü ile bildirilir
+
+	- Arayüzler non-static veri elemanlarına sahip olamaz, abstract sınıflar olabilir
+
+	- Arayüzler nesne özelliği göstermediğinden ctor'ları olamaz, abstract sınıfların olabilir
+
+	- Arayüzlerin abstract metotları public ve abstract yazılmasa da bu şekildedir, abstract sınıflarda ise yazılmalıdır
+
+	- Arayüzlere Java 8 ile eklenen gövdeli non-static metotlar default anahtar sözcüğü ile bildirilmelidir, abstract
+	sınıflarda doğrudan erişim belirleyici yazılmalıdır
+
+	-  Arayüzlerin veri elemanları yazılsa da yazılmasa da public, static ve final olur, abstract sınıflarda bunlar
+	beliritlmeldir
+
+	- Bir sınıf bir arayüzü implements anahtar sözcüğü ile destekler (implementation), abstract sınıftan ise extends
+	anahtar sözcüğü ile türetilir. Burada arayüzler için türetme teriminin kullanılmadığına dikkat ediniz
+
+	- Bir sınıf istediği kadar arayüzü destekleyebilir, ancak tek bir sınıftan türetilebilir
+
+	- Arayüzler arasında çoklu türetme yapılabilir, sınıflar arasında geçersizdir
+
+	- Arayüzler türünden nesne hiç bir şekilde yaratıl(a)maz, abstract sınıf türünden nesne türemiş sınıf nesnesi içerisinde
+	otomatik olarak yaratılır
+
+	- Bir sınıfın en az bir tane abstract metodu varsa sınıf da abstract olarak bildirilmelidir. Bir arayüz abstract
+	olarak bildirilebilse de bildirilmemesiyle aynı anlamdadır
+
+	- Bir arayüzün protected ve no-modifier metotları olamaz, abstract sınıfların olabilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Soyut bir türün abstract sınıf mı yoksa arayüz mü yapılacağına nasıl karar verilecektir? Bu durumda şöyle bir
+	yol izlenebilir: "Önce interface düşünülmeli, interface özellikleri yazılacak türü karşılamıyprsa (abstract) sınıf
+	tercih edilmeldir"
+
+	interface yapılabildiği yerde abstact sınıf yerine yapılması, bu interface'i destekleyen sınıfın başka bir sınıftan
+	türetilmesine olanak sağlar
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	06.08.2024
+	Bazı durumlarda nesne içerisinde bir takım kaynaklar (resources) kullanılıyor olabilir. Bu kaynakların kullanılmaya
+	başlanmasına mantıksal olarak "kaynağın açılması" dersek, kaynak kullanımı bittikten sonra bu kaynağın artık
+	mantıksal olarak "kapatılması" yani artık serbest bırakılması gerekebilir. Java'da nesneler garbage collector tarafından
+	yok edildiğinden kullanılan kaynağı geri bırakmak için nesnenin ölmesi beklenmez. Çünkü örneğin bu kaynak iş bittikten
+	sonra başka nesneler tarafından tekrar kullanılmaya başlanabilir. Bu durumda eskiden kullanan nesne ölmezse yeni nesne
+	bu kaynağın kullanımına başlayamayabilir. Burada kaynak olarak belirttiğimiz bir dosya, bir cihaza erişim vb. olabilir.
+	Böylesi bir durumda Closeable arayüzü kullanılır. Closeable arayüzü abstract close metoduna sahiptir. Anlatılana benzer
+	kaynağı kullanan sınıf bu arayüzü destekler ve bu sınıfı kullanan programcı (client) kaynakla işi bittikten sonra
+	close metodunu çağırır. Java'da bu arayüzü destekleyen bir sınıf gören programcı yukarıdaki anlatılanları bilir ve
+	close metodunu çağırması gerektiğini anlar. Ya da tersine sınıf tasarımında yukarıdaki anlatılanlar gibi kaynak
+	kullanımı söz konusuysa ve kapatılması gerekiyorsa sınıf Closeable arayüzünü destekle ve close metodunda kullandığı
+	kaynağı geri bırakır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte finally bloğunda çağrılan close metodu metodu try-catch içerisine alınarak checked exception
+	fırlatılmasından dolayı oluşan error engellenmiştir. Ancak çoğu zaman (her zaman değil) close metodunun exception
+	fırlatması durumu programın ilgileneceği bir şey değildir. Yani açık olan bir kaynağınm close yapılamaması durumunda
+	çoğu zaman programcının yapabileceği birşey yoktur. Dolayısıyla aşağıdaki örnekte finally içerisinde try-catch
+	kullanılması checked exception probleminden dolayı yapılmıştır. Yani aslında gereksiz bir işlemdir. Örneğimizde
+	DeviceConnection demo sınıfının kaynak açıksa, close metodunun kontrol edilmesi gerekliliğini yok varsayınız
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		DeviceApp.run();
+	}
+}
+
+
+class DeviceApp {
+	public static void run()
+	{
+		DeviceConnection connection = null;
+
+		try {
+			connection = new DeviceConnection("https://123.67.87.98:50500/device/weather");
+			connection.doWork();
+		}
+		catch (Throwable ex) {
+			System.out.println(ex.getMessage());
+		}
+		finally {
+			try {
+				if (connection != null)
+					connection.close();
+			}
+			catch (Exception ex) {
+				//...
+			}
+		}
+	}
+}
+
+class DeviceConnection implements Closeable {
+	private final String m_url;
+
+	public DeviceConnection(String url)
+	{
+		//...
+		m_url= url;
+		System.out.printf("Connected: %s%n", m_url);
+	}
+
+	public void doWork()
+	{
+		Random r = new Random();
+
+		//...
+
+		if (r.nextBoolean())
+			throw new IllegalStateException("Illegal state");
+
+		System.out.printf("Working on connection at '%s'%n", m_url);
+	}
+
+	public void close() throws IOException
+	{
+		System.out.println("Connection closed");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki kod aşağıdaki gibi daha az karmaşık ve daha okunabilir olarak yazılabilir. Ayrıca bu yaklaşımda close
+	metodu için exception işlemesi de yapılabilir. Ancak yukarıdaki yaklaşımda close için yapılacak exception işlemesi
+	ayrıca yapılmak zorundadır. Java 7'ye kadar bu tarz durumlar için yaklaşım en yalın aşağıdaki gibi yapılabilmekteydi
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		DeviceApp.run();
+	}
+}
+
+class DeviceApp {
+	public static void run()
+	{
+		DeviceConnection connection = null;
+
+		try {
+			DeviceConnectionUtil.doWorkForDeviceConnection("https://123.67.87.98:50500/device/weather");
+		}
+		catch (Throwable ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+}
+
+class DeviceConnectionUtil {
+	public static void doWorkForDeviceConnection(String url) throws IOException
+	{
+		DeviceConnection connection = null;
+
+		try {
+			connection = new DeviceConnection(url);
+			connection.doWork();
+		}
+		finally {
+			if (connection != null)
+				connection.close();
+		}
+	}
+}
+class DeviceConnection implements Closeable {
+	private final String m_url;
+
+	public DeviceConnection(String url)
+	{
+		//...
+		m_url= url;
+		System.out.printf("Connected: %s%n", m_url);
+	}
+
+	public void doWork()
+	{
+		Random r = new Random();
+
+		//...
+
+		if (r.nextBoolean())
+			throw new IllegalStateException("Illegal state");
+
+		System.out.printf("Working on connection at '%s'%n", m_url);
+	}
+
+	public void close() throws IOException
+	{
+		System.out.println("Connection closed");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Java 7 ile birlikte eklenen eklenen "try-with resources (twr)" deyimi ile yukarıdaki problem daha etkin olarak
+	ve yalın olarak çözülebilir.twr deyimi ile AutoCloseable arayüzünü destekleyen sınıflar kullanılabilir. twr yukarıdaki
+	örnekteki işlemlerin otomatik olarak yapılanı biçiminde düşünülebilir. Closeable arayüzü Java 7 ile birlikte
+	AutoCloseable arayüzünden türetilir duruma getirilmiştiri. Bu durumda tüm Closeable sınıflar da aynı zamanda twr
+	ile kullanılabilir. Bu deyim ile close metodu otomatik olark çağrılacağından programcının çağırmayı unutması gibi
+	bir olasılık da ortadan kaldırılmış olur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		DeviceApp.run();
+	}
+}
+
+class DeviceApp {
+	public static void run()
+	{
+		try (DeviceConnection connection = new DeviceConnection("https://123.67.87.98:50500/device/weather")) {
+			connection.doWork();
+		}
+		catch (Throwable ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+}
+
+
+class DeviceConnection implements Closeable {
+	private final String m_url;
+
+	public DeviceConnection(String url)
+	{
+		//...
+		m_url= url;
+		System.out.printf("Connected: %s%n", m_url);
+	}
+
+	public void doWork()
+	{
+		Random r = new Random();
+
+		//...
+
+		if (r.nextBoolean())
+			throw new IllegalStateException("Illegal state");
+
+		System.out.printf("Working on connection at '%s'%n", m_url);
+	}
+
+	public void close() throws IOException
+	{
+		System.out.println("Connection closed");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	twr birden fazla sınıf ile de kullanılabilir. Bu durumda close metotları yaratılma sırasının tersinde çağrılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		DeviceApp.run();
+	}
+}
+
+class DeviceApp {
+	public static void run()
+	{
+		try (DeviceConnection connection = new DeviceConnection("https://123.67.87.98:50500/device/weather");
+			 Image image = new Image("holiday.jpg")) {
+			connection.doWork();
+			image.doWork();
+		}
+		catch (Throwable ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+}
+
+
+class DeviceConnection implements Closeable {
+	private final String m_url;
+
+	public DeviceConnection(String url)
+	{
+		//...
+		m_url= url;
+		System.out.printf("Connected: %s%n", m_url);
+	}
+
+	public void doWork()
+	{
+		Random r = new Random();
+
+		//...
+
+		if (r.nextBoolean())
+			throw new IllegalStateException("Illegal state");
+
+		System.out.printf("Working on connection at '%s'%n", m_url);
+	}
+
+	public void close() throws IOException
+	{
+		System.out.println("Connection closed");
+	}
+}
+
+class Image implements Closeable {
+	private final String m_filename;
+
+	public Image(String filename)
+	{
+		m_filename = filename;
+		System.out.printf("%s image opened%n", m_filename);
+	}
+
+	public void doWork()
+	{
+		//...
+		System.out.printf("Working on image:%s%n", m_filename);
+	}
+
+	public void close()
+	{
+		System.out.printf("%s image closed%n", m_filename);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	twr parantezi içerisinde yaratılan nesnelere ilişkin referanslar final kabul edilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		DeviceApp.run();
+	}
+}
+
+class DeviceApp {
+	public static void run()
+	{
+		try (DeviceConnection connection = new DeviceConnection("https://123.67.87.98:50500/device/weather");
+			 Image image = new Image("holiday.jpg")) {
+			connection.doWork();
+			image.doWork();
+			connection = new DeviceConnection("test"); //error
+			image = new Image("test.png"); //error
+		}
+		catch (Throwable ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+}
+
+
+class DeviceConnection implements Closeable {
+	private final String m_url;
+
+	public DeviceConnection(String url)
+	{
+		//...
+		m_url= url;
+		System.out.printf("Connected: %s%n", m_url);
+	}
+
+	public void doWork()
+	{
+		Random r = new Random();
+
+		//...
+
+		if (r.nextBoolean())
+			throw new IllegalStateException("Illegal state");
+
+		System.out.printf("Working on connection at '%s'%n", m_url);
+	}
+
+	public void close() throws IOException
+	{
+		System.out.println("Connection closed");
+	}
+}
+
+class Image implements Closeable {
+	private final String m_filename;
+
+	public Image(String filename)
+	{
+		m_filename = filename;
+		System.out.printf("%s image opened%n", m_filename);
+	}
+
+	public void doWork()
+	{
+		//...
+		System.out.printf("Working on image:%s%n", m_filename);
+	}
+
+	public void close()
+	{
+		System.out.printf("%s image closed%n", m_filename);
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Java 9 ile birlikte twr'den önce yaratılmış olan nesnelere ilişkin referanslar da twr paranetezi içerisinde
+	kullanılabilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		DeviceApp.run();
+	}
+}
+
+class DeviceApp {
+	public static void run()
+	{
+		DeviceConnection connection = new DeviceConnection("https://123.67.87.98:50500/device/weather");
+		Image image = new Image("holiday.jpg");
+
+		Util.doSomething(connection, image);
+	}
+}
+
+class Util {
+	public static void doSomething(DeviceConnection deviceConnection, Image image)
+	{
+		try (deviceConnection; image) { //Since Java 9
+			deviceConnection.doWork();
+			image.doWork();
+		}
+		catch (Throwable ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+}
+
+
+class DeviceConnection implements Closeable {
+	private final String m_url;
+
+	public DeviceConnection(String url)
+	{
+		//...
+		m_url= url;
+		System.out.printf("Connected: %s%n", m_url);
+	}
+
+	public void doWork()
+	{
+		Random r = new Random();
+
+		//...
+
+		if (r.nextBoolean())
+			throw new IllegalStateException("Illegal state");
+
+		System.out.printf("Working on connection at '%s'%n", m_url);
+	}
+
+	public void close() throws IOException
+	{
+		System.out.println("Connection closed");
+	}
+}
+
+class Image implements Closeable {
+	private final String m_filename;
+
+	public Image(String filename)
+	{
+		m_filename = filename;
+		System.out.printf("%s image opened%n", m_filename);
+	}
+
+	public void doWork()
+	{
+		//...
+		System.out.printf("Working on image:%s%n", m_filename);
+	}
+
+	public void close()
+	{
+		System.out.printf("%s image closed%n", m_filename);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	twr paranetezi içerisinde kullanılan referanslar da yine final erkisi gösterir (effectively final)
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		DeviceApp.run();
+	}
+}
+
+class DeviceApp {
+	public static void run()
+	{
+		DeviceConnection connection = new DeviceConnection("https://123.67.87.98:50500/device/weather");
+		Image image = new Image("holiday.jpg");
+
+
+		Util.doSomething(connection, image);
+	}
+}
+
+class Util {
+	public static void doSomething(DeviceConnection deviceConnection, Image image)
+	{
+		try (deviceConnection; image) { //error
+			deviceConnection.doWork();
+			image.doWork();
+			deviceConnection = new DeviceConnection("test.dat");
+		}
+		catch (Throwable ex) {
+			System.out.println(ex.getMessage());
+		}
+	}
+}
+
+
+class DeviceConnection implements Closeable {
+	private final String m_url;
+
+	public DeviceConnection(String url)
+	{
+		//...
+		m_url= url;
+		System.out.printf("Connected: %s%n", m_url);
+	}
+
+	public void doWork()
+	{
+		Random r = new Random();
+
+		//...
+
+		if (r.nextBoolean())
+			throw new IllegalStateException("Illegal state");
+
+		System.out.printf("Working on connection at '%s'%n", m_url);
+	}
+
+	public void close() throws IOException
+	{
+		System.out.println("Connection closed");
+	}
+}
+
+class Image implements Closeable {
+	private final String m_filename;
+
+	public Image(String filename)
+	{
+		m_filename = filename;
+		System.out.printf("%s image opened%n", m_filename);
+	}
+
+	public void doWork()
+	{
+		//...
+		System.out.printf("Working on image:%s%n", m_filename);
+	}
+
+	public void close()
+	{
+		System.out.printf("%s image closed%n", m_filename);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	twr bloğu tek başına olabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		DeviceApp.run();
+	}
+}
+
+class DeviceApp {
+	public static void run()
+	{
+		DeviceConnection connection = new DeviceConnection("https://123.67.87.98:50500/device/weather");
+		Image image = new Image("holiday.jpg");
+
+
+		try {
+			Util.doSomething(connection, image);
+		}
+		catch (IOException ex) {
+			//...
+		}
+	}
+}
+
+class Util {
+	public static void doSomething(DeviceConnection deviceConnection, Image image) throws IOException
+	{
+		try (deviceConnection; image) {
+			deviceConnection.doWork();
+			image.doWork();
+		}
+	}
+}
+
+
+class DeviceConnection implements Closeable {
+	private final String m_url;
+
+	public DeviceConnection(String url)
+	{
+		//...
+		m_url= url;
+		System.out.printf("Connected: %s%n", m_url);
+	}
+
+	public void doWork()
+	{
+		Random r = new Random();
+
+		//...
+
+		if (r.nextBoolean())
+			throw new IllegalStateException("Illegal state");
+
+		System.out.printf("Working on connection at '%s'%n", m_url);
+	}
+
+	public void close() throws IOException
+	{
+		System.out.println("Connection closed");
+	}
+}
+
+class Image implements Closeable {
+	private final String m_filename;
+
+	public Image(String filename)
+	{
+		m_filename = filename;
+		System.out.printf("%s image opened%n", m_filename);
+	}
+
+	public void doWork()
+	{
+		//...
+		System.out.printf("Working on image:%s%n", m_filename);
+	}
+
+	public void close()
+	{
+		System.out.printf("%s image closed%n", m_filename);
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	twr bloğu tek başına olabilir. Scanner sınıfı Closeable arayüzünü destekler
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		try (Scanner kb = new Scanner(System.in)) {
+			System.out.print("Bir sayı giriniz:");
+			int val = Integer.parseInt(kb.nextLine());
+
+			System.out.println(val * val);
+		}
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Biri sınıfın ya da arayüzün sanal metodu referansa geri dönen bir metot ise, bu metot override edilirken geri
+	dönüş değeri olan referansa ilişkin sınıftan türetilen veya geri dönüş değeri bir arayüz referansı ise o arayüzü
+	destekleyen bir sınıf türünden yazılabilir. Buna "covariant return type" denir. Bu kullanım yararlı olsa da Java'da
+	pek tercih edilmez. JavaSE'de bulunan bu tarz sınıflar bu yapıyı kullanmazlar
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class Y implements IA {
+	public X create()
+	{
+		X x = new X();
+
+		//...
+
+		return x;
+	}
+}
+class X implements IX {
+	//...
+}
+
+interface IA {
+	IX create();
+}
+
+interface IX {
+	//...
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Arayüzlerle İlgili Tür Dönüştürmeleri:
+	Bu dönüşümler 4 durum olarak ele alınabilir:
+	1. Bir sınıf referansının onun desteklediği bir arayüz referansına dönüştürülmesi
+	2. Bir arayüz referansının herhangi bir sınıf türüne dönüştürülmesi
+	3. Bir arayüz referansının başka bir arayüz referansına dönüştürülmesi
+	4. Bir sınıf referansının onun desteklemediği bir arayüz referansına dönüştürülmesi
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	1. Bir sınıf referansının onun desteklediği bir arayüz referansına dönüştürülmesi doğrudan yapılabilir. Bu durum çok
+	aşikar bir durumdur. Arayüz referansının taban sınıf referansı gibi kullanılmasıdır. Zaten interface'in hedeflerinden
+	biri de budur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A a = new A();
+		IX ix;
+
+		ix = a;
+
+		//...
+	}
+}
+
+class A implements IX {
+	//...
+}
+
+interface IX {
+	//...
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	2. Bir arayüz referansının herhangi bir sınıf türüne dönüştürülmesi tür dönmüştürülmesi operatörü yapılabilir. Ancak
+	çalışmanında arayüz referansının dinamik türünün hedef türü kapsayıp kapsamadığına bakılır. Kapsıyorsa haklı dönüşümdür,
+	akış devam eder. Kapsamıyorsa haksız dönüşümdür, ClassCastException nesnesi fırlatılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		RandomFactory factory = new RandomFactory();
+		IX ix;
+
+		ix = factory.create();
+
+		System.out.println(ix.getClass().getName());
+		A a = (A)ix;
+
+		System.out.println("Tekrar yapıyor musunuz?");
+
+		//...
+	}
+}
+
+class RandomFactory {
+	private final Random m_random = new Random();
+
+	public IX create()
+	{
+		return m_random.nextBoolean() ? new B() : new C();
+	}
+}
+
+
+class C extends A implements IX {
+	//...
+}
+
+class B implements IX {
+	//...
+}
+
+
+class A {
+	//...
+}
+
+interface IX {
+	//...
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	3. Bir arayüz referansının başka bir arayüz referansına dönüştürülmesi:
+	Bu durum iki şekilde incelenebilir:
+	- Kaynak arayüz referansına ilişkin tür hedef arayüz referansına ilişkin türden türetilmişse doğrudan yapılabilir
+
+	- Kaynak arayüz referansına ilişkin tür hedef arayüz referansına ilişkin türden türetilMEmişse tür dönüştürme operatörü
+	ile yapılabilir. Bu durumda çalışma zamanında kaynak arayüz referansının dinamik türünün hedef arayüzü destekleyip
+	desteklemediğine bakılır. Destekliyorsa haklı dönüşümdür. Desteklemiyorsa haksız dönüşümdür, ClassCastException
+	nesnesi fırlatılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A a = new A();
+		IY iy;
+		IX ix;
+
+		iy = a;
+
+		ix = iy; //upcasting
+
+		//...
+
+		B b = new B();
+
+		IZ iz;
+
+		iz = b;
+
+		ix = (IX)iz; //Haklı dönüşüm
+
+		C c = new C();
+
+		iz = c;
+
+		ix = (IX)iz; //Haksız dönüşüm
+
+		System.out.println("Tekrar yapıyor musunuz?");
+
+	}
+}
+
+
+class C implements IZ {
+	//...
+}
+
+class B implements IX, IZ {
+	//...
+}
+
+class A implements IY {
+	//...
+}
+
+interface IZ {
+	//...
+}
+
+interface IY extends IX {
+	//...
+}
+
+interface IX {
+	//...
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	4. Bir sınıf referansının onun desteklemediği bir arayüz referansına dönüştürülmesi tür dönüştürme operatörü ile
+	yapılabilir. Çalışma zamanında kaynak referansın dinamik türünün hedef arayüzü destekleyipş desteklemediğine bakılır.
+	Destekliyorsa haklı dönüşümdür. Desteklemiyorsa haksız dönüşümdür, ClassCastException nesnesi fırlatılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A a = new C();
+		IX ix;
+
+		ix = (IX)a; //Haklı dönüşüm
+
+		a = new B();
+
+		ix = (IX)a; //Haksız dönüşüm
+
+
+		System.out.println("Tekrar yapıyor musunuz?");
+
+	}
+}
+
+class C extends A implements IX {
+	//...
+}
+class B extends A {
+	//...
+}
+
+class A {
+	//...
+}
+
+interface IX {
+	//...
+}
+
 
 
 
