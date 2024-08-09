@@ -38822,6 +38822,2034 @@ interface IX {
 	//...
 }
 
+/*----------------------------------------------------------------------------------------------------------------------
+    08.08.2024
+	Genericler:
+	Derleme zamanında türden bağımsız kod yazabilmek için kullanılır (compile time polymorphism). Programcı generic bir tür
+	ya da metodu türden bağımsız olarak yazar. Generic tür ya da metotları kullanan programcı da hangi türde kullanacağına
+	karar vererek aşağıda anlatılan özelliklere göre daha güvenli ve okunabilir/algılanabilir kodlar yazabilir. Genericler
+	Java 5 ile dile eklenmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic sınıf bildiriminde generic parametreler denilen isimler kullanılı. Bu isimler açısal parantezler arasında
+	virgülle ayrılacak şekilde sınıf isminden sonra yazılır. Generic parametre isimleri değişken isimlendirme kurallarına
+	uygun isimler olmalıdır. Bu isimler kullanılırken belirlenecek tür isimlerinin birer şablonudur. Bu isimler
+	bildirildekileri tür boyunca geçerlidir (user defined type scope)
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class A<T> { //T generic parametre
+	private T m_t;
+	//...
+}
+
+abstract class B<T, K, L> { //T, K ve L generic parametreler
+	public abstract T foo(K k, L l);
+	//...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic sınıflar açılım (instantiation) ile kullanılabilir. Açılım ilgili generic parametrenin türünü belirtir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A<String> as; //A'nın String açılımı
+		A<Integer> ai; //A'nın Integer açılımı
+		B<String, Integer, Boolean> b; //B'ninn String, Integer, Boolean açılımı
+
+		//...
+	}
+}
+
+
+class A<T> { //T generic parametre
+	private T m_t;
+	//...
+}
+
+abstract class B<T, K, L> { //T, K ve L generic parametreler
+	public abstract T foo(K k, L l);
+	//...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic bir sınıf açılımsız kuıllanılabilir. Bu durumda generic parametrelerin türleri Object kabul edilir. Ancak
+	bu tamamen açılım anlamına gelmez. Yani Object açılımı ile aynı değildir. Generic türleri açılımsız kullanılması
+	iyi bir teknik değildir. Programcı generic parametrenin Object olması durumunda Object açılımı yaparak kullanmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A a1;
+		A<Object> a2;
+
+		//...
+	}
+}
+
+
+class A<T> { //T generic parametre
+	private T m_t;
+	//...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic türler (ve metotlar) için açılımlar temel türler olarak yapılamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A<int> a; //error
+	}
+}
+
+
+class A<T> { //T generic parametre
+	private T m_t;
+	//...
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic türler (ve metotlar) için açılımlar temel türlere ilişkin açılımlar gerektiğinde ilgili sarmalayan sınıf
+	türünden açılımlar yapılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A<Integer> a;
+	}
+}
+
+
+class A<T> { //T generic parametre
+	private T m_t;
+	//...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic sınıflar türünden nesne aşağıdaki gibi yine açısal parantez kullanılarak yapılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A<Boolean, Integer> x;
+		A<Integer, String> y;
+
+		x = new A<Boolean, Integer>();
+		y = new A<Integer, String>();
+	}
+}
+
+
+class A<T, K> {
+	private T m_t;
+	private K m_k;
+	//...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Java 7 ile birlikte new operatörü ile açılım yapılırken türler yazılmayabilir. Ancak açısal parantezler yazılmalıdır (diamond syntax).
+	Bu durumda açılıma ilişkin türlerin tespiti derleyici tarafından yapılır (type inference/deduction). Şüphesiz açısal
+	parantezin olmaması bir hata oluşturmaz ancak açılsal parantezsiz kullanılmamalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A<Boolean, Integer> x;
+		A<Integer, String> y;
+
+		x = new A<>();
+		y = new A<>();
+	}
+}
+
+
+class A<T, K> {
+	private T m_t;
+	private K m_k;
+	//...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic bir sınıf generic olmayan bir sınıftan türetilebilir. Bu durumda generic sınıfın her açılımı o taban
+	sınıftan türetilmiş olur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B<Integer> bi;
+		B <Boolean> bb;
+
+		bi = new B<>();
+		bb = new B<>();
+
+		A x;
+
+
+		x = bi;
+		x = bb;
+
+		//...
+	}
+}
+
+class B<T> extends A {
+	//...
+}
+
+class A {
+	//...
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic olmayan bir sınıf generic bir sınıfın herhangi bir açılımından türetilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B b = new B();
+		A<String> a;
+
+		a = b;
+
+		a.foo("ankara");
+		b.foo("istanbul");
+
+		A<Integer> ai = b; //error
+	}
+}
+
+class B extends A<String> {
+	//...
+}
+
+class A<T> {
+	public void foo(T t)
+	{
+		System.out.println(t);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic bir sınıf başka bir generic sınıftan türetilebilir. Bu durumda türemiş sınıf ilişkin generic parametre taban
+	sınıf için açılım olur. Yani türemiş sınıfın her açılımı taban sınıfın o açılımından türetilmiş olur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B<Integer> b = new B<>();
+		A<Integer> a;
+
+		a = b;
+
+		a.foo(10);
+		b.bar(20);
+
+		B<Boolean> bb = new B<>();
+		A<Boolean> ab;
+
+		ab = bb;
+
+		ab.foo(true);
+		bb.bar(false);
+	}
+}
+
+class B<T> extends A<T> {
+	//...
+	public void bar(T t)
+	{
+		//...
+		System.out.println(t);
+	}
+}
+
+class A<T> {
+	public void foo(T t)
+	{
+		//...
+		System.out.println(t);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		B<Integer, Boolean> x = new B<>();
+		A<Boolean> y;
+
+		y = x;
+
+
+		x.bar(10);
+		x.foo(true);
+		y.foo(false);
+
+		//...
+
+	}
+}
+
+class B<T, K> extends A<K> {
+	//...
+	public void bar(T t)
+	{
+		//...
+		System.out.println(t);
+	}
+}
+
+class A<T> {
+	public void foo(T t)
+	{
+		//...
+		System.out.println(t);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	ArrayList sınıfı generic bir sınıftır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Random r = new Random();
+		Scanner kb = new Scanner(System.in);
+		ArrayList<String> passwords = new ArrayList<>();
+
+		for (;;) {
+			System.out.print("Bir sayı giriniz:");
+			int count = Integer.parseInt(kb.nextLine());
+
+			if (count <= 0)
+				break;
+
+			passwords.add(StringUtil.getRandomTextEN(r, count));
+		}
+
+		for (String password : passwords)
+			System.out.printf("%s ", password);
+
+		System.out.println();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte ArrayList sınıfının add metodu çağrısında otomatik kutulama yapılmaktadır. Ayrıca for-each
+	döngü deyiminde döngü değişkeni için otomatik kutu açılmıştır. Örnek özelinde şüphesiz print çağrısında da
+	otomatik kutulama yapılmıştır. Burada programcı kutu açma tekrar kutulama maliyetini devre dışı bırakmak için
+	döngü değişkeninin Integer türden alabilir. Şüphesiz bu durum bu örnek için anlamldır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Random r = new Random();
+		Scanner kb = new Scanner(System.in);
+		ArrayList<Integer> numbers = new ArrayList<>();
+
+		for (;;) {
+			System.out.print("Bir sayı giriniz:");
+			int bound = Integer.parseInt(kb.nextLine());
+
+			if (bound <= 0)
+				break;
+
+			numbers.add(r.nextInt(bound)); //auto-boxing
+		}
+
+		for (int val : numbers) //auto-unboxing
+			System.out.printf("%s ", val);
+
+		System.out.println();
+
+		for (Integer val : numbers)
+			System.out.printf("%s ", val);
+
+		System.out.println();
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Çalışma zamanında generic bir sınıfın her açılımı aynı türdendir. Yani sınıf generic bile olsa o sınıfa ilişkin
+	tek bir tür bulunmaktadır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.ArrayList;
+
+class App {
+	public static void main(String [] args)
+	{
+		ArrayList<Boolean> flagList = new ArrayList<>();
+		ArrayList<String> texts = new ArrayList<>();
+		ArrayList<Double> values = new ArrayList<>();
+
+		System.out.println(flagList.getClass().getName());
+		System.out.println(texts.getClass().getName());
+		System.out.println(values.getClass().getName());
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic açılımlarda dizi türü de kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.ArrayUtil;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		ArrayList<int[]> list = new ArrayList<>();
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		for (;;) {
+			System.out.print("Bir sayı giriniz:");
+			int count = Integer.parseInt(kb.nextLine());
+
+			if (count <= 0)
+				break;
+
+			list.add(ArrayUtil.getRandomArray(r, count, 0, 99));
+		}
+
+		for (int [] a : list)
+			ArrayUtil.print(2, a);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.ArrayUtil;
+
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		ArrayList<ArrayList<Integer>> list = new ArrayList<>();
+		Scanner kb = new Scanner(System.in);
+		Random r = new Random();
+
+		for (;;) {
+			System.out.print("Bir sayı giriniz:");
+			int count = Integer.parseInt(kb.nextLine());
+
+			if (count <= 0)
+				break;
+
+			ArrayList<Integer> numbers = new ArrayList<>();
+			for (int val : ArrayUtil.getRandomArray(r, count, 0, 99))
+				numbers.add(val);
+
+			list.add(numbers);
+		}
+
+		for (ArrayList<Integer> numbers : list) {
+			for (int val : numbers)
+				System.out.printf("%d ", val);
+
+			System.out.println();
+		}
+
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic bir arayüüzn herhangi bir açılımını implemente eden bir sınıf içerisinde arayüzün metotları açılıma
+	uygun şekilde override edilmelidir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A a = new A();
+		B b = new B();
+
+		a.foo(true);
+		b.foo("ankara");
+	}
+}
+
+
+class B implements IX<String> {
+	public void foo(String str)
+	{
+		System.out.println(str.toUpperCase());
+	}
+}
+
+class A implements IX<Boolean> {
+	public void foo(Boolean flag)
+	{
+		System.out.println(flag ? "True" : "False");
+	}
+}
+interface IX<T> {
+	void foo(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Bir sınıf generic bir arayüzün birden fazla açılımını destekleyemez. Çünkü arakodda tüm açılan generic parametrelerin
+	türleri Object olarak alınır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class A implements IX<Boolean>, IX<String> { //error
+	public void foo(Boolean flag)
+	{
+
+	}
+
+	public void foo(String str)
+	{
+
+	}
+}
+
+interface IX<T> {
+	void foo(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnek geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class A implements IX<Boolean>, IY<String> { //error
+	public void foo(Boolean flag)
+	{
+
+	}
+
+	public void foo(String str)
+	{
+
+	}
+}
+interface IX<T> {
+	void foo(T t);
+}
+
+interface IY<T> {
+	void foo(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte error oluşmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class A implements IX<Boolean>, IY<String> {
+	public void foo(Boolean flag)
+	{
+
+	}
+
+	public void bar(String str)
+	{
+
+	}
+}
+interface IX<T> {
+	void foo(T t);
+}
+
+interface IY<T> {
+	void bar(T t);
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic parametrelere kısıt ya da sınır (constraint/upper bound) verilebilir. Bu işlem için extends anahtar sözcüğü
+	kullanılır. Aşağıdaki örnekte A sınıfı IX arayüzünü destekleyen bir tür ile açılabilir. Burada aslında A sınıfın generic
+	parametresi için bir kısı yani bir üst sınır verilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		A<Sample> as;
+		A<Integer> ai; //error
+	}
+}
+
+
+class A<T extends IX> {
+	//...
+	public void bar(T t)
+	{
+		t.foo();
+	}
+}
+
+class Sample implements IX {
+	public void foo()
+	{
+		System.out.println("Sample.foo");
+	}
+}
+
+interface IX {
+	void foo();
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	09.08.2024
+	int türden bir dizi referansı Integer türden bir dizi referansına atanamaz. Aslında sarmalayan sınıf türünden dizi
+	ile sarmaladığı türden dizi referansları arasında dönüşüm geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.ArrayUtil;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Util<Integer> util = new Util<>();
+		int[] a = ArrayUtil.getRandomArray(new Random(), 10, 0, 99);
+
+		util.display(a); //error
+	}
+}
+
+class Util<T> {
+	//...
+	public void display(T [] a)
+	{
+		for (T t : a)
+			System.out.println(t);
+	}
+}
+
+package com.orhn.util;
+
+import java.util.Random;
+
+public class ArrayUtil {
+
+    private ArrayUtil()
+    {
+
+    }
+    public static void swap(int [] a, int i, int k)
+    {
+        int temp = a[i];
+        a[i] = a[k];
+        a[k] = temp;
+    }
+
+    public static void swap(char [] a, int i, int k)
+    {
+        char temp = a[i];
+        a[i] = a[k];
+        a[k] = temp;
+    }
+
+    public static void fillRandomArray(Random r, int [] a, int min, int bound)
+    {
+        for(int i = 0; i < a.length; ++i)
+            a[i] = r.nextInt(min, bound);
+    }
+
+    public static void fillRandomArray(Random r, double [] a, double min, double bound)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] = r.nextDouble(min, bound);
+    }
+
+    public static void fillRandomArray(Random r, long [] a, long min, long bound)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] = r.nextLong(min, bound);
+    }
+
+    public static int [] join(int [] a, int [] b)
+    {
+        int [] result = new int[a.length + b.length];
+
+        int idx = 0;
+
+        for (int val : a)
+            result[idx++] = val;
+
+        for (int val : b)
+            result[idx++] = val;
+
+        return result;
+    }
+
+    public static int [] getRandomArray(Random r, int count, int min, int bound)
+    {
+        int [] a = new int[count];
+        fillRandomArray(r, a, min, bound);
+        return a;
+    }
+
+    public static double [] getRandomArray(Random r, int count, double min, double bound)
+    {
+        double [] a = new double[count];
+
+        fillRandomArray(r, a, min, bound);
+
+        return a;
+    }
+
+    public static long [] getRandomArray(Random r, int count, long min, long bound)
+    {
+        long [] a = new long[count];
+
+        fillRandomArray(r, a, min, bound);
+
+        return a;
+    }
+
+    public static int [][] getRandomMatrix(Random r, int m, int n, int min, int max)
+    {
+        int [][] a = new int[m][];
+
+        for (int i = 0; i < m; ++i)
+            a[i] = getRandomArray(r, n, min, max);
+
+        return a;
+    }
+
+    public static int[][] getRandomSquareMatrix(Random r, int n, int min, int max)
+    {
+        return getRandomMatrix(r, n, n, min, max);
+    }
+
+    public static void addBy(int [] a, int val)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] += val;
+    }
+
+    public  static int sumDiagonal(int [][] a)
+    {
+        int total = 0;
+
+        for (int i = 0; i < a.length; i++) {
+            total += a[i][i];
+        }
+
+        return total;
+    }
+
+    public static int sum(int [] a)
+    {
+        int total = 0;
+
+        for (int val : a)
+            total += val;
+
+        return total;
+    }
+
+    public static int sum(int [][] a)
+    {
+        int total = 0;
+
+        for (int i = 0; i < a.length; i++) {
+            total += sum(a[i]);
+        }
+
+        return total;
+    }
+
+    public  static int [][] transpose(int [][] a)
+    {
+        int [][] result = new int[a[0].length][a.length];
+
+        for (int i = 0; i < a.length; i++) {
+            for (int j = 0; j < a[i].length; j++) {
+                result[j][i] = a[i][j];
+            }
+        }
+
+        return result;
+    }
+
+    private static void bubbleSortAscending(int [] a)
+    {
+        for (int i = 0; i < a.length -1; ++i)
+            for (int k = 0; k < a.length -1 -i; ++k)
+                if(a[k] > a[k + 1])
+                    swap(a, k, k+1);
+    }
+
+    private static void bubbleSortDescending(int [] a)
+    {
+        for (int i = 0; i < a.length -1; ++i)
+            for (int k = 0; k < a.length -1 -i; ++k)
+                if(a[k] < a[k + 1])
+                    swap(a, k, k+1);
+    }
+
+    public static void bubbleSort(int [] a)
+    {
+        bubbleSort(a, false);
+    }
+    public static void bubbleSort(int [] a, boolean descending)
+    {
+        if(descending)
+            bubbleSortDescending(a);
+        else
+            bubbleSortAscending(a);
+    }
+
+    private  static void selectionSortAscending(int [] a)
+    {
+        int min, minIndex;
+
+        for (int i = 0; i < a.length - 1; ++i){
+            min = a[i];
+            minIndex = i;
+
+            for (int k = i + 1; k < a.length; ++k)
+                if(min > a[k]) {
+                    min = a[k];
+                    minIndex = k;
+                }
+
+            a[minIndex] = a[i];
+            a[i] = min;
+        }
+    }
+
+    private  static void selectionSortDescending(int [] a)
+    {
+        int max, maxIndex;
+
+        for (int i = 0; i < a.length - 1; ++i){
+            max = a[i];
+            maxIndex = i;
+
+            for (int k = i + 1; k < a.length; ++k)
+                if(max < a[k]) {
+                    max = a[k];
+                    maxIndex = k;
+                }
+
+            a[maxIndex] = a[i];
+            a[i] = max;
+        }
+    }
+    public static void selectionSort(int [] a)
+    {
+        selectionSort(a, false);
+    }
+
+    public static void selectionSort(int [] a, boolean descending)
+    {
+        if(descending)
+            selectionSortDescending(a);
+        else
+            selectionSortAscending(a);
+    }
+
+    public static int partition(int [] a, int threshold)
+    {
+        int partitionIndex = 0;
+
+        while (partitionIndex != a.length && a[partitionIndex] < threshold)
+            ++partitionIndex;
+
+        if(partitionIndex == a.length)
+            return partitionIndex;
+
+        for (int i = partitionIndex + 1; i < a.length; ++i)
+            if(a[i] < threshold)
+                swap(a, i, partitionIndex++);
+
+        return partitionIndex;
+    }
+
+    public static int [] getHistogramData(int [] a, int n)
+    {
+        int []counts = new int[n+1];
+
+        for(int val : a)
+            ++counts[val];
+
+        return counts;
+    }
+
+    public static void drawHistogram(int [] counts, int n, char ch)
+    {
+        int maxVal = max(counts);
+
+        for (int i = 0; i < counts.length; ++i) {
+            int nChar = (int)Math.floor(counts[i] * (double)n / maxVal);
+
+            while (nChar-- > 0)
+                System.out.print(ch);
+
+            System.out.println();
+        }
+    }
+
+    public static int max(int [] a)
+    {
+        int result = a[0];
+
+        for (int i = 1; i < a.length; i++) {
+            result = Math.max(result, a[i]);
+        }
+
+        return result;
+    }
+
+    public static int min(int [] a)
+    {
+        int result = a[0];
+
+        for (int i = 1; i < a.length; i++) {
+            result = Math.min(result, a[i]);
+        }
+
+        return result;
+    }
+
+    public static boolean isMatrix(int [][]a)
+    {
+        for (int i = 1; i < a.length; ++i)
+            if(a[i].length != a[0].length)
+                return false;
+
+        return true;
+    }
+
+    public static boolean isSquareMatrix(int [][]a)
+    {
+        return isMatrix(a) && a.length == a[0].length;
+    }
+
+    public static void reverse(char [] a)
+    {
+        for (int i = 0; i < a.length / 2; ++i)
+            swap(a, i, a.length - i - 1);
+    }
+    public static void reverse(int [] a)
+    {
+        for (int i = 0; i < a.length / 2; ++i)
+            swap(a, i, a.length - i - 1);
+    }
+
+    public static void print(int [] a)
+    {
+        for (int i = 0; i < a.length; ++i)
+            System.out.printf("%d ", a[i]);
+
+        System.out.printf("%n---------------------------------------%n");
+    }
+
+    public static void print(int n, int [] a)
+    {
+        String fmt = String.format("%%0%dd ", n);
+
+        for ( int ival : a)
+            System.out.printf(fmt, ival);
+
+        System.out.println();
+    }
+
+    public static void print(String [] s)
+    {
+        for(String str : s)
+            System.out.println(str);
+    }
+
+    public static void print(int [][]a)
+    {
+        print(1, a);
+    }
+
+    public static void print(int n, int [][]a)
+    {
+        for (int[] array : a)
+            print(n, array);
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte String türden dizi ile display çağrılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.StringUtil;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Util<String> util = new Util<>();
+		String [] texts = StringUtil.getRandomTextsEN(new Random(), 10, 5, 10);
+
+		util.display(texts);
+	}
+}
+
+class Util<T> {
+	//...
+	public void display(T [] a)
+	{
+		for (T t : a)
+			System.out.println(t);
+	}
+}
+
+/*-----------------------------------------------------
+  	FILE		: StringUtil.java
+  	AUTHOR		: Orhan OZTURK
+  	LAST UPDATE : 16.02.2023
+
+  	Aim:
+
+
+  	Copyleft(c) 1992 by Orhan ÖZTÜRK All Rights Free
+
+ -----------------------------------------------------*/
+
+package com.orhn.util;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Random;
+
+public class StringUtil {
+
+	private StringUtil()
+	{}
+
+	private static final String ALPHABET_TR = "abcçdefgğhıijklmnoöprsştuüvyz";
+	private static final String ALPHABET_EN = "abcdefghijklmnopqrstuwxvyz";
+	private static final String ALPHABET_CAPITAL_TR = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+	private static final String ALPHABET_CAPITAL_EN = "ABCDEFGHIJKLMNOPQRSTUWXVYZ";
+	private static final String ALPHABET_ALL_TR = ALPHABET_TR + ALPHABET_CAPITAL_TR;
+	private static final String ALPHABET_ALL_EN = ALPHABET_EN + ALPHABET_CAPITAL_EN;
+
+	/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Parametresi ile aldığı bir yazının ilk harfi büyük geri kalan harfleri küçük olacak şekilde ve
+ 	harf dışı karakterler de aynı kalacak şekilde bir yazı döndüren capitalizeWS isimli metodu StringUtil sınıfı
+ 	içerisinde yazınız ve aşağıdaki kod ile test ediniz. Metot yazının başında boşluk karakterleri olsa bile ilk
+ 	boşluk olmayan harfi büyütecek şekilde yazılacaktır
+ 	Örnek:   jAVA Programcısı ÇOK çalışmalıdır ->   Java programcısı çok çalışmalıdır
+   ----------------------------------------------------------------------------------------------------------------------*/
+	public static String capitalizeWS(String str)
+	{
+		int i;
+		int len = str.length();
+
+		for (i = 0; i < len && Character.isWhitespace(str.charAt(i)); i++)
+			;
+
+		return i == len ? str : str.substring(0, i) + Character.toUpperCase(str.charAt(i)) + str.substring(i + 1).toLowerCase();
+	}
+
+	/*----------------------------------------------------------------------------------------------------------------------
+	Sınıf Çalışması: Klavyeden elma girilene kadar alınan yazıların arasında - karakteri olacak birleştirilmiş bir
+	String oluşturan programı yazınız.
+	Örneğin ankara istanbul izmir girilirse -> ankara-istanbul-izmir
+	Örneğin: ankara girilirse -> ankara
+	Açıklamalar:
+	- Tamamı whitespace karakterlerden oluşan ve boş string yazıya eklenmeyecektir
+	----------------------------------------------------------------------------------------------------------------------*/
+	public static void concatWithHpyhen()
+	{
+		Scanner kb = new Scanner(System.in);
+
+		System.out.println("Yazıları girmeye baslayınız:");
+		String str = "";
+		String s;
+
+		while (!(s = kb.nextLine()).equals("elma")) {
+			if(s.trim().isEmpty())
+				continue;
+
+			str += s + "-";
+		}
+
+		if(!str.isEmpty())
+			str = str.substring(0, str.length() - 1);
+
+		System.out.println(str);
+	}
+
+	public static int countString(String s1, String s2)
+	{
+		int count = 0;
+
+		for(int i = 0; (i = s1.indexOf(s2, i)) != -1; ++i, ++count)
+			;
+
+		return count;
+	}
+
+	public static String changeCase(String s)
+	{
+		char []c = s.toCharArray();
+
+		for(int i = 0; i < c.length; ++i)
+			c[i] = Character.isLowerCase(c[i]) ? Character.toUpperCase(c[i]) : Character.toLowerCase(c[i]);
+
+		return String.valueOf(c);
+	}
+
+	public static int countStringIgnoreCase(String s1, String s2)
+	{
+		return countString(s1.toLowerCase(), s2.toLowerCase());
+	}
+
+	public static String getRandomTextTR(Random r, int n)
+	{
+		return getRandomText(r, n, ALPHABET_ALL_TR);
+	}
+
+	public static String getRandomTextTR(int n)
+	{
+		return getRandomTextTR(new Random(), n);
+	}
+
+	public static String getRandomTextEN(Random r, int n)
+	{
+		return getRandomText(r, n, ALPHABET_ALL_EN);
+	}
+
+	public static String [] getRandomTextsTR(int count, int min, int max)
+	{
+		return getRandomTextsTR(new Random(), count, min, max);
+	}
+
+	/**
+	 * Açıklama test
+	 *
+	 * @param r
+	 * @param count
+	 * @param min
+	 * @param max
+	 * @return
+	 *
+	 * Example Usega :
+	 */
+	public static String [] getRandomTextsTR(Random r, int count, int min, int max)
+	{
+		String [] result = new String[count];
+		for(int i = 0; i < count; ++i)
+			result[i] = getRandomTextTR(r, r.nextInt(min, max + 1));
+
+		return result;
+	}
+
+	/**
+	 * Açıklama test
+	 *
+	 * @param r
+	 * @param count
+	 * @param min
+	 * @param max
+	 * @return
+	 *
+	 * Example Usega :
+	 */
+	public static String [] getRandomTextsEN(Random r, int count, int min, int max)
+	{
+		String [] result = new String[count];
+		for(int i = 0; i < count; ++i)
+			result[i] = getRandomTextEN(r, r.nextInt(min, max + 1));
+
+		return result;
+	}
+
+	public static String getRandomTextEN(int n)
+	{
+		return getRandomTextEN(new Random(), n);
+	}
+
+	public static String getRandomText(Random r, int n, String sourceText)
+	{
+		String str = "";
+		int len = sourceText.length();
+
+		for(int i = 0; i < n; ++i)
+			str += sourceText.charAt(r.nextInt(len));
+
+		return str;
+	}
+
+	public static String padLeading(String s, int len, char ch)
+	{
+		int length = s.length();
+
+		return len <= length ? s : repeat(len - length, ch) + s;
+	}
+
+ 	public static String padLeading(String s, int len)
+ 	{
+ 		return padLeading(s, len, ' ');
+ 	}
+
+ 	public static String padTrailing(String s, int len, char ch)
+ 	{
+ 		int length = s.length();
+
+		return len <= length ? s : s + repeat(len - length, ch);
+ 	}
+
+ 	public static String padTrailing(String s, int len)
+ 	{
+ 		return padTrailing(s, len, ' ');
+ 	}
+
+ 	public static String repeat(int count, char ch)
+ 	{
+ 		return String.format("%" + count + "c", ' ').replace(' ', ch);
+ 	}
+
+ 	public static String getLastLongestPalindrome(String s)
+	{
+		String result = "";
+
+		int end = s.length();
+
+		while (end != 0) {
+			int begin = 0;
+
+			while (begin != end) {
+				String str = s.substring(begin++, end);
+
+				if(str.length() > 1 && isPalindrome(str) && result.length() < str.length())
+					result = str;
+			}
+
+			--end;
+		}
+
+		return result;
+
+	}
+
+	public static boolean isPalindrome(String s)
+	{
+		int left = 0;
+		int right = s.length() - 1;
+
+		while (left < right) {
+			char cLeft = Character.toLowerCase(s.charAt(left));
+
+			if(!Character.isLetter(cLeft)) {
+				++left;
+				continue;
+			}
+
+			char cRight = Character.toLowerCase(s.charAt(right));
+
+			if(!Character.isLetter(cRight)) {
+				--right;
+				continue;
+			}
+
+			if(cLeft != cRight)
+				return false;
+
+			++left;
+			--right;
+		}
+
+		return true;
+	}
+
+	public static boolean isPangramTR(String s)
+	{
+		return isPangram(s.toLowerCase(), ALPHABET_TR);
+	}
+
+	public static boolean isPangramEN(String s)
+	{
+		return isPangram(s.toLowerCase(), ALPHABET_EN);
+	}
+
+	public static boolean isPangram(String s, String alphabet)
+	{
+		int len = alphabet.length();
+
+		for (int i = 0; i < len; i++)
+			if(!s.contains(alphabet.charAt(i) + ""))
+				return false;
+
+		return true;
+	}
+
+	public static String reverse(String str)
+	{
+		String s = "";
+
+		for (int i = str.length() - 1; i >= 0; --i)
+			s += str.charAt(i);
+
+		return s;
+	}
+
+	public static String squeeze(String s1, String s2)
+	{
+		int len = s1.length();
+		char[] c = new char[len];
+		int idx = 0;
+
+		for (int i = 0; i < len; ++i){
+			char ch = s1.charAt(i);
+			if(!s2.contains(ch + ""))
+				c[idx++] = ch;
+		}
+
+		return String.valueOf(c, 0, idx);
+	}
+
+	public static String join(String [] s, char delimiter)
+	{
+		return join(s, delimiter + "");
+	}
+
+	public static String join(String [] s, String delimiter)
+	{
+		return String.join(delimiter, s);
+	}
+
+	public static String join(String [] s, char delimiter, boolean removeEmpties)
+	{
+		return join(s, delimiter + "", removeEmpties);
+	}
+
+	public static String join(String [] s, String delimiter, boolean removeEmpties)
+	{
+		String str = "";
+
+		for (int i = 0; i < s.length; i++) {
+			if(removeEmpties && s[i].isBlank())
+				continue;
+
+			str += s[i] + delimiter;
+		}
+
+		return str.substring(0, str.length() - delimiter.length());
+	}
+
+	public static String join(ArrayList list, String delimiter)
+	{
+		return join(list, delimiter, false);
+	}
+
+	public static String join(ArrayList list, char delimiter)
+	{
+		return join(list, delimiter, false);
+	}
+
+	public static String join(ArrayList list, char delimiter, boolean removeEmpties)
+	{
+		return join(list, delimiter + "", removeEmpties);
+	}
+
+	public static String join(ArrayList list, String delimiter, boolean removeEmpties)
+	{
+		String str = "";
+
+		for (Object o : list) {
+			String s = (String)o;
+
+			if (removeEmpties && s.isBlank())
+				continue;
+
+			str += s + delimiter;
+		}
+		return str.substring(0, str.length() - delimiter.length());
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic parametreler temel türler olarak belirlenemeyeceğinden programcılar bazı durumlarda generici metotları
+	ya da sınıfları hem kutulama maliyeti olmaması hem de temel türden diziler için de işlem yapılabilmesi için ayrı
+	yazarlar. Bunu sınıf ya da metot olarak da yapabilirler. Dizi söz konusu olmasa da bunun yapılması kutulama maliyetini
+	de ortadan kaldırır. Aşağıdaki örnekte display metodu temel türden diziler için ayrıca overload edilmiştir. Şüphesiz
+	bu durum "user defined type"'lar için de söz konusu olabilir. Örnek durumu göstermek için yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.ArrayUtil;
+import com.orhn.util.StringUtil;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Util<String> util = new Util<>();
+		Random r = new Random();
+		String [] texts = StringUtil.getRandomTextsEN(r, 10, 5, 10);
+		int [] a = ArrayUtil.getRandomArray(r, 10, 0, 99);
+		double [] b = ArrayUtil.getRandomArray(r, 10, 3.456, 8.987);
+		long [] c = ArrayUtil.getRandomArray(r, 10, 3_000_000_000L, 4_000_000_000L);
+
+		util.display(texts);
+		System.out.println("-------------------------------");
+		util.display(a);
+		System.out.println("-------------------------------");
+		util.display(b);
+		System.out.println("-------------------------------");
+		util.display(c);
+	}
+}
+
+class Util<T> {
+	//...
+	public void display(T [] a)
+	{
+		for (T t : a)
+			System.out.println(t);
+	}
+
+	public void display(int [] a)
+	{
+		for (int val : a)
+			System.out.printf("%d ", val);
+
+		System.out.println();
+	}
+
+	public void display(double [] a)
+	{
+		for (double val : a)
+			System.out.println(val);
+	}
+
+	public void display(long [] a)
+	{
+		for (long val : a)
+			System.out.println(val);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic bir sınıfın türemiş sınıf açılımı aynı generic sınıfın taban sınıf açılımına doğrudan atanamaz (invariant).
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		ArrayList<Integer> ints = new ArrayList<>();
+
+		System.out.print("Bir sayı giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; ++i)
+			ints.add(i * 10);
+
+		Util.display(ints); //error
+	}
+}
+
+class Util {
+	public static void display(ArrayList<Number> list)
+	{
+		for (Number n : list)
+			System.out.println(n);
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki dönüşüm explicit olarak da yapılamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		ArrayList<Integer> ints = new ArrayList<>();
+
+		System.out.print("Bir sayı giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; ++i)
+			ints.add(i * 10);
+
+		Util.display((ArrayList<Number>)ints); //error
+	}
+}
+
+class Util {
+	public static void display(ArrayList<Number> list)
+	{
+		for (Number n : list)
+			System.out.println(n);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki işlem ? extends ile aşağıdaki gibi yapılır duruma getirilebilir (covariant)
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		ArrayList<Integer> ints = new ArrayList<>();
+
+		System.out.print("Bir sayı giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; ++i)
+			ints.add(i * 10);
+
+		Util.display(ints);
+	}
+}
+
+class Util {
+	public static void display(ArrayList<? extends Number> list)
+	{
+		for (Number n : list)
+			System.out.println(n);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki foo çağrısı geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		ArrayList<Number> ints = new ArrayList<>();
+		ArrayList<Object> objects = new ArrayList<>();
+
+		System.out.print("Bir sayı giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; ++i)
+			ints.add(i * 10);
+
+		for (int i = 0; i < count; ++i)
+			objects.add(i);
+
+		Sample.foo(ints); //error
+		Sample.foo(objects); //error
+	}
+}
+
+class Sample {
+	public static void foo(ArrayList<Integer> list)
+	{
+		//...
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	? super sınırı ile metodun parametresi "contravariant" duruma getirilmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class App {
+	public static void main(String [] args)
+	{
+		Scanner kb = new Scanner(System.in);
+		ArrayList<Number> ints = new ArrayList<>();
+		ArrayList<Object> objects = new ArrayList<>();
+
+		System.out.print("Bir sayı giriniz:");
+		int count = kb.nextInt();
+
+		for (int i = 0; i < count; ++i)
+			ints.add(i * 10);
+
+		for (int i = 0; i < count; ++i)
+			objects.add(i);
+
+		Sample.foo(ints);
+		Sample.foo(objects);
+	}
+}
+
+class Sample {
+	public static void foo(ArrayList<? super Integer> list)
+	{
+		//...
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	enum türleri ve exception sınıfları generic olarak bildirilemez
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+enum A<T> {
+	//...
+}
+
+
+class MyException<T> extends RuntimeException { //error
+
+}
+
+package com.orhn.util;
+
+import java.util.Random;
+import java.util.Random;
+
+public final class ArrayUtil {
+    private ArrayUtil()
+    {
+    }
+
+    private static void bubbleSortAscending(int [] a)
+    {
+        for (int i = 0; i < a.length - 1; ++i)
+            for (int k = 0; k < a.length - 1 - i; ++k)
+                if (a[k + 1] < a[k])
+                    swap(a, k, k + 1);
+    }
+
+    private static void bubbleSortDescending(int [] a)
+    {
+        for (int i = 0; i < a.length - 1; ++i)
+            for (int k = 0; k < a.length - 1 - i; ++k)
+                if (a[k] < a[k + 1])
+                    swap(a, k, k + 1);
+    }
+
+    private static void selectionSortAscending(int [] a)
+    {
+        int min, minIndex;
+
+        for (int i = 0; i < a.length - 1; ++i) {
+            min = a[i];
+            minIndex = i;
+
+            for (int k = i + 1; k < a.length; ++k)
+                if (a[k] < min) {
+                    min = a[k];
+                    minIndex = k;
+                }
+
+            a[minIndex] = a[i];
+            a[i] = min;
+        }
+    }
+
+    private static void selectionSortDescending(int [] a)
+    {
+        int max, maxIndex;
+
+        for (int i = 0; i < a.length - 1; ++i) {
+            max = a[i];
+            maxIndex = i;
+
+            for (int k = i + 1; k < a.length; ++k)
+                if (max < a[k]) {
+                    max = a[k];
+                    maxIndex = k;
+                }
+
+            a[maxIndex] = a[i];
+            a[i] = max;
+        }
+    }
+
+    public static void addBy(int [] a, int val)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] += val;
+    }
+
+    public static void bubbleSort(int [] a)
+    {
+        bubbleSort(a, false);
+    }
+
+    public static void bubbleSort(int [] a, boolean descending)
+    {
+        if (descending)
+            bubbleSortDescending(a);
+        else
+            bubbleSortAscending(a);
+    }
+
+    public static void drawHistogram(int [] counts, int n, char ch)
+    {
+        int maxVal = max(counts);
+
+        for (int count : counts) {
+            int nChar = (int)Math.floor(count * (double)n / maxVal);
+
+            while (nChar-- > 0)
+                System.out.print(ch);
+
+            System.out.println();
+        }
+    }
+
+    public static void fillRandomArray(Random r, int [] a, int min, int bound)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] = r.nextInt(min, bound);
+    }
+
+    public static void fillRandomArray(Random r, double [] a, double min, double bound)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] = r.nextDouble(min, bound);
+    }
+
+    public static void fillRandomArray(Random r, long [] a, long min, long bound)
+    {
+        for (int i = 0; i < a.length; ++i)
+            a[i] = r.nextLong(min, bound);
+    }
+
+    public static int [] getHistogramData(int [] a, int n)
+    {
+        int [] counts = new int[n + 1];
+
+        for (int val : a)
+            ++counts[val];
+
+        return counts;
+    }
+
+    public static int [] getRandomArray(Random r, int count, int min, int bound)
+    {
+        int [] a = new int[count];
+
+        fillRandomArray(r, a, min, bound);
+
+        return a;
+    }
+
+    public static double [] getRandomArray(Random r, int count, double min, double bound)
+    {
+        double [] a = new double[count];
+
+        fillRandomArray(r, a, min, bound);
+
+        return a;
+    }
+
+    public static long [] getRandomArray(Random r, int count, long min, long bound)
+    {
+        long [] a = new long[count];
+
+        fillRandomArray(r, a, min, bound);
+
+        return a;
+    }
+
+    public static int [][] getRandomMatrix(Random r, int m, int n, int min, int max) //[min, max]
+    {
+        int [][] a = new int[m][];
+
+        for (int i = 0; i < m; ++i)
+            a[i] = getRandomArray(r, n, min, max);
+
+        return a;
+    }
+
+    public static int [][] getRandomSquareMatrix(Random r, int n, int min, int max) //[min, max]
+    {
+        return getRandomMatrix(r, n, n, min, max);
+    }
+
+    public static boolean isMatrix(int [][] a)
+    {
+        for (int i = 1; i < a.length; ++i)
+            if (a[i].length != a[0].length)
+                return false;
+
+        return true;
+    }
+
+    public static boolean isSquareMatrix(int [][] a)
+    {
+        return isMatrix(a) && a.length == a[0].length;
+    }
+
+    public static int [] join(int [] a, int [] b)
+    {
+        int [] result = new int[a.length + b.length];
+
+        int idx = 0;
+
+        for (int val : a)
+            result[idx++] = val;
+
+        for (int val : b)
+            result[idx++] = val;
+
+        return result;
+    }
+
+    public static int max(int [] a)
+    {
+        int result = a[0];
+
+        for (int i = 1; i < a.length; ++i)
+            result = Math.max(result, a[i]);
+
+        return result;
+    }
+
+    public static int min(int [] a)
+    {
+        int result = a[0];
+
+        for (int i = 1; i < a.length; ++i)
+            result = Math.min(result, a[i]);
+
+        return result;
+    }
+
+    public static int partition(int [] a, int threshold)
+    {
+        int partitionIndex = 0;
+
+        while (partitionIndex != a.length && a[partitionIndex] < threshold)
+            ++partitionIndex;
+
+        if (partitionIndex == a.length)
+            return partitionIndex;
+
+        for (int i = partitionIndex + 1; i < a.length; ++i)
+            if (a[i] < threshold)
+                swap(a, i, partitionIndex++);
+
+        return partitionIndex;
+    }
+
+    public static void print(int n, int [] a)
+    {
+        String fmt = String.format("%%0%dd ", n);
+
+        for (int val : a)
+            System.out.printf(fmt, val);
+
+        System.out.println();
+    }
+
+    public static void print(int [] a)
+    {
+        print(1, a);
+    }
+
+    public static void print(String [] s)
+    {
+        for (String str : s)
+            System.out.println(str);
+    }
+
+    public static void print(int [][] a)
+    {
+        print(1, a);
+    }
+
+    public static void print(int n,  int [][] a)
+    {
+        for (int [] array : a)
+            print(n, array);
+    }
+
+
+    public static void reverse(char [] a)
+    {
+        for (int i = 0; i < a.length / 2; ++i)
+            swap(a, i, a.length - 1 - i);
+    }
+
+    public static void reverse(int [] a)
+    {
+        for (int i = 0; i < a.length / 2; ++i)
+            swap(a, i, a.length - 1 - i);
+    }
+
+    public static void selectionSort(int [] a)
+    {
+        selectionSort(a, false);
+    }
+
+    public static void selectionSort(int [] a, boolean descending)
+    {
+        if (descending)
+            selectionSortDescending(a);
+        else
+            selectionSortAscending(a);
+    }
+
+    public static int sum(int [] a)
+    {
+        int total = 0;
+
+        for (int val : a)
+            total += val;
+
+        return total;
+    }
+
+    public static int sum(int [][] a)
+    {
+        int total = 0;
+
+        for (int [] array : a)
+            total += sum(array);
+
+        return total;
+    }
+
+    public static int sumDiagonal(int [][] a)
+    {
+        int total = 0;
+
+        for (int i = 0; i < a.length; ++i)
+            total += a[i][i];
+
+        return total;
+    }
+
+    public static void swap(char [] a, int i, int k)
+    {
+        char temp =  a[i];
+        a[i] = a[k];
+        a[k] = temp;
+    }
+
+    public static void swap(int [] a, int i, int k)
+    {
+        int temp =  a[i];
+        a[i] = a[k];
+        a[k] = temp;
+    }
+
+    public static int [][] transpose(int [][] a)
+    {
+        int [][] result = new int[a[0].length][a.length];
+
+        for (int i = 0; i < a.length; ++i)
+            for (int j = 0; j < a[i].length; ++j)
+                result[j][i] = a[i][j];
+
+        return result;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic metotlar: Java'da metotlar generic olarak bildirilebilir. Bu durumda generic parametreler metodun parametrelerinin
+	türlerinde ve geri dönüş değeri tür bilgisinde kullanılabilir.
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic metotlar için generic parametreler geri dönüğş değerinden açısal parantez içerisinde bildirilmelidir. Generic
+	metoların çağrısında generic parametre ya da parametrelerin türleri geçilen argümana göre tespit edilebiliyorsa
+	(type inference/deduction) çağrı tür belirtmeden de yapılabilir. Eğer çağrıda tür ya da türler belirtilecekse, metot
+	isminden önce yine açısal parantez içerisinde belirtilmelidir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.datetime.DateUtil;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = new Sample();
+
+		s.<String>bar("ankara");
+		Sample.<Boolean>foo(true);
+		s.bar("ankara");
+		Sample.foo(true);
+		Sample.foo(DateUtil.randomDate());
+	}
+}
+
+class Sample {
+	public static <T> void foo(T t)
+	{
+		System.out.println(t);
+	}
+
+	public <T> void bar(T t)
+	{
+		System.out.println(t);
+	}
+}
+
 
 
 

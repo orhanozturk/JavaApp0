@@ -139,6 +139,27 @@ public class StringUtil {
 
 		return result;
 	}
+
+	/**
+	 * Açıklama test
+	 *
+	 * @param r
+	 * @param count
+	 * @param min
+	 * @param max
+	 * @return
+	 *
+	 * Example Usega :
+	 */
+	public static String [] getRandomTextsEN(Random r, int count, int min, int max)
+	{
+		String [] result = new String[count];
+		for(int i = 0; i < count; ++i)
+			result[i] = getRandomTextEN(r, r.nextInt(min, max + 1));
+
+		return result;
+	}
+
 	public static String getRandomTextEN(int n)
 	{
 		return getRandomTextEN(new Random(), n);
