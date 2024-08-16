@@ -40850,6 +40850,1632 @@ class Sample {
 	}
 }
 
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki çağrılarda tür belirtilse bile ilgili türden parametreli metotlar çağprılır. Yani bu anlamda tür belirtmenin
+	generic çağrılsın gibi bir anlamı Java'da yoktur. Aşağıdaki gibi overload işlemleri bir işlemin türe özgü olarak
+	farklılaşması gibi durumlarda kullanılır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample.foo("ankara"); //#3
+		System.out.println("-----------------------------------");
+		Sample.<String>foo("ankara"); //#3
+		System.out.println("-----------------------------------");
+		Sample.foo(10); //#2
+		System.out.println("-----------------------------------");
+		Sample.<Integer>foo(10); //#2
+		System.out.println("-----------------------------------");
+		Sample.foo(Integer.valueOf(10)); //#1
+		System.out.println("-----------------------------------");
+		Sample.foo(3.4); //#1
+
+	}
+}
+
+class Sample {
+	public static <T> void foo(T t) //#1
+	{
+		System.out.println("foo(T)");
+		System.out.println(t);
+	}
+
+	public static  void foo(int val)  //#2
+	{
+		System.out.println("foo(int)");
+		System.out.println(val);
+	}
+
+	public static  void foo(String val)  //#3
+	{
+		System.out.println("foo(String)");
+		System.out.println(val);
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic sınıfların static metotlarında ve static veri elemanlarında generic parametreler kullanılamaz. Generic sınıfların
+	static elemanlarına erişirken generic tür bildirimi geçersizdir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample.bar("ankara");
+		Sample.bar(3.4);
+		Sample<Integer>.bar(23); //error
+	}
+}
+
+
+class Sample<T> {
+	private T m_t;
+	private static T ms_t; //error
+
+	public static void bar(T t)
+	{
+		System.out.println(t);
+	}
+
+	public void foo(T t)
+	{
+		System.out.println(t);
+	}
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic sınıfların static metotlarında generic parametreler kullanılamayacağı bu metotların generic olarak ayrı yapılması
+	gerekir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample.bar("ankara");
+		Sample.bar(3.4);
+		Sample<String> ss = new Sample<>();
+		Sample<Boolean> sb = new Sample<>();
+
+		ss.foo("ankara");
+		sb.foo(true);
+	}
+}
+
+
+class Sample<T> {
+	private T m_t;
+	public static <K> void bar(K k)
+	{
+		System.out.println(k);
+	}
+
+	public void foo(T t)
+	{
+		System.out.println(t);
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Generic sınıfların static metotlarında generic parametreler kullanılamayacağı bu metotların generic olarak ayrı yapılması
+	gerekir. Aşağıdaki örnekte static metodun generic parametresi ile sınıfın generic parametresi aynı isimdedir (shadowing).
+	Bu bir sorun oluşturmaz. Hatta bazı programcılar bu yazımı tercih ederler
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample.bar("ankara");
+		Sample.bar(3.4);
+		Sample<String> ss = new Sample<>();
+		Sample<Boolean> sb = new Sample<>();
+
+		ss.foo("ankara");
+		sb.foo(true);
+	}
+}
+
+
+class Sample<T> {
+	private T m_t;
+	public static <T> void bar(T t)
+	{
+		System.out.println(t);
+	}
+
+	public void foo(T t)
+	{
+		System.out.println(t);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample.bar("ankara", true);
+		Sample.bar(3.4, 23);
+		Sample<String, Boolean> ssb = new Sample<>();
+		Sample<Boolean, Integer> sbi = new Sample<>();
+
+		ssb.foo("ankara", false);
+		sbi.foo(true, 10);
+	}
+}
+
+
+class Sample<T, K> {
+	private T m_t;
+	public static <T, K> void bar(T t, K k)
+	{
+		System.out.println(t);
+		System.out.println(k);
+	}
+
+	public void foo(T t, K k)
+	{
+		System.out.println(t);
+		System.out.println(k);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örnekte generic bir sınıfın içerisinde non-static bir metot generic yapılmıştır (member generic). Örnekte dikkat
+	edilirse foo metodunun ilk iki parametresinin türleri s referansının bildiriminde belirtilen türlerdir. Geri kalanlar ise
+	çağrı sırasında geçilen argümanların türlerine göre tespit edilecektir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample<Integer, Boolean> s = new Sample<>();
+
+		System.out.printf("Result:%s%n", s.foo(10, true, "ankara", true));
+		System.out.printf("Result:%f%n", s.foo(10, true, 5.6, false));
+	}
+}
+
+
+class Sample<T, K> {
+	public <L, M> L foo(T t, K k, L l, M m)
+	{
+		System.out.println(t);
+		System.out.println(k);
+		System.out.println(l);
+		System.out.println(m);
+
+		return l;
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Java'da generic kavramı genel olarak arakoda yansıtılmadığı için aynı paket içerisinde aynı isimde fakat farklı sayıda
+	generic parametreye sahip türler bildirilemez
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class Tuple<T1> { //error
+	//...
+}
+
+class Tuple<T1, T2> { //error
+	//...
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Pair sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.console.Console;
+import com.orhn.util.StringUtil;
+import com.orhn.util.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Random r = new Random();
+		ArrayList<Pair<String, Sensor>> sensors = new ArrayList<>();
+		int count = Console.readInt("Bir sayı giriniz:");
+
+		for (int i = 0; i < count; ++i) {
+			String name = StringUtil.getRandomTextTR(r, 10);
+			sensors.add(new Pair<>(name, new Sensor(i + 1, name, Util.getRandomHost(r))));
+		}
+
+		for (Pair<String, Sensor> pair : sensors)
+			System.out.println(pair.getSecond());
+	}
+}
+
+class Util {
+	public static String getRandomHost(Random r)
+	{
+		return r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256);
+	}
+}
+
+class Sensor {
+	private int m_id;
+	private String m_name;
+	private String m_host;
+
+	public Sensor(int id, String name, String host)
+	{
+		m_id = id;
+		m_name = name;
+		m_host = host;
+	}
+
+	public int getId()
+	{
+		return m_id;
+	}
+
+	public void setId(int id)
+	{
+		m_id = id;
+	}
+
+	public String getName()
+	{
+		return m_name;
+	}
+
+	public void setName(String name)
+	{
+		m_name = name;
+	}
+
+	public String getHost()
+	{
+		return m_host;
+	}
+
+	public void setHost(String host)
+	{
+		m_host = host;
+	}
+
+	public String toString()
+	{
+		return String.format("[%d]%s %s", m_id, m_name, m_host);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Pair sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.console.Console;
+import com.orhn.util.StringUtil;
+import com.orhn.util.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Random r = new Random();
+		ArrayList<Pair<String, Sensor>> sensors = new ArrayList<>();
+		int count = Console.readInt("Bir sayı giriniz:");
+
+		for (int i = 0; i < count; ++i) {
+			String name = StringUtil.getRandomTextTR(r, 10);
+			sensors.add(Pair.of(name, new Sensor(i + 1, name, Util.getRandomHost(r))));
+		}
+
+		for (Pair<String, Sensor> pair : sensors)
+			System.out.println(pair.getSecond());
+	}
+}
+
+class Util {
+	public static String getRandomHost(Random r)
+	{
+		return r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256);
+	}
+}
+
+class Sensor {
+	private int m_id;
+	private String m_name;
+	private String m_host;
+
+	public Sensor(int id, String name, String host)
+	{
+		m_id = id;
+		m_name = name;
+		m_host = host;
+	}
+
+	public int getId()
+	{
+		return m_id;
+	}
+
+	public void setId(int id)
+	{
+		m_id = id;
+	}
+
+	public String getName()
+	{
+		return m_name;
+	}
+
+	public void setName(String name)
+	{
+		m_name = name;
+	}
+
+	public String getHost()
+	{
+		return m_host;
+	}
+
+	public void setHost(String host)
+	{
+		m_host = host;
+	}
+
+	public String toString()
+	{
+		return String.format("[%d]%s %s", m_id, m_name, m_host);
+	}
+}
+
+/*----------------------------------------------------------------------
+	FILE        : Pair.java
+	AUTHOR      : Java-Feb-2022 Group
+	LAST UPDATE : 06.11.2022
+
+	Immutable Pair class that represents a Tuple<F, S>
+
+	Copyleft (c) 1993 by C and System Programmers Association (CSD)
+	All Rights Free
+-----------------------------------------------------------------------*/
+package com.orhn.util.tuple;
+
+public class Pair<F, S> {
+    private final F m_first;
+    private final S m_second;
+
+    public static <F, S> Pair<F, S> of(F first, S second)
+    {
+        return new Pair<>(first, second);
+    }
+
+    public Pair()
+    {
+        this(null, null);
+    }
+
+    public Pair(F first, S second)
+    {
+        m_first = first;
+        m_second = second;
+    }
+
+    public F getFirst()
+    {
+        return m_first;
+    }
+
+    public S getSecond()
+    {
+        return m_second;
+    }
+
+    public String toString()
+    {
+        return String.format("(%s, %s)", m_first, m_second);
+    }
+
+    //...
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	12.08.2024
+	Generic parametre türünden nesne new operatörü ile doğrudan yaratılamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class Sample<T> {
+	private T m_t;
+
+	public Sample(/*....*/)
+	{
+		m_t = new T(); //error
+	}
+}
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki kuraldan daolayı generic türden dizi de new operatörü ile doğrudan yaratılamaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+
+class Sample<T> {
+	private T [] m_t;
+
+	public Sample(int n)
+	{
+		m_t = new T[n]; //error
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki problem aşağıdaki gibi bir yöntemle çözülebilir. Aşağıdaki kodda uyarının problem oluşturduğu bir durumun
+	oluşması için çalışma zamanında özel bazı işlemler yapılması gerekit. Çünkü Object dizisinin referansı dışarıda Objec[]
+	türünden verilmemiştir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class Sample<T> {
+	private T [] m_t;
+
+	public Sample(int n)
+	{
+		m_t = (T [])new Object[n]; // Uyarı önemsiz. Şimdilik görmezden geliniz
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class Sample<T> {
+	private T m_t;
+
+	public Sample(int n)
+	{
+		m_t = (T)new Object();
+	}
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki örneklerde uyarı vermesinin nedenini anlamak için aşağıdaki örneği inceleyiniz. Örnekte objs referansı
+	tamamen durumu anlatmak için bildirilmiş ve public yapılmıştır. Yukarıdaki örneklerde yaratılmış olan Object veya
+	Object[] türünden nesnelerin referansları sınıf dışında kullanılabilir olmadığından bir problem oluşmaz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample<String> s = new Sample<>(10);
+
+		s.add("ankara");
+		s.add("zonguldak");
+
+		s.objs[1] = 3;
+
+		for (int i = 0; i < s.size(); ++i) {
+			String city = s.get(i);
+			System.out.println(city);
+		}
+
+		System.out.println("Tekrar yapıyor musunuz?");
+	}
+}
+
+
+class Sample<T> {
+	private T []m_t;
+	private int m_index;
+
+	public Object[] objs;
+
+	public Sample(int n)
+	{
+		objs =new Object[n];
+		m_t = (T[])objs;
+	}
+
+	public boolean add(T value)
+	{
+		if (m_index == m_t.length)
+			return false;
+
+		m_t[m_index++] = value;
+
+		return true;
+	}
+
+	public int size()
+	{
+		return m_index;
+	}
+
+	public T get(int i)
+	{
+		return m_t[i];
+	}
+
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	CSDArrayList sınıfı
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.collection.CSDArrayList;
+import com.orhn.util.console.Console;
+import com.orhn.util.StringUtil;
+import com.orhn.util.tuple.Pair;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Random r = new Random();
+		CSDArrayList<Pair<String, Sensor>> sensors = new CSDArrayList<>();
+		int count = Console.readInt("Bir sayı giriniz:");
+
+		for (int i = 0; i < count; ++i) {
+			String name = StringUtil.getRandomTextTR(r, 10);
+			sensors.add(Pair.of(name, new Sensor(i + 1, name, Util.getRandomHost(r))));
+		}
+
+		int size = sensors.size();
+
+		for (int i = 0; i < size; ++i) {
+			Pair<String, Sensor> pair = sensors.get(i);
+
+			System.out.println(pair.getSecond());
+		}
+	}
+}
+
+class Util {
+	public static String getRandomHost(Random r)
+	{
+		return r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256);
+	}
+}
+
+class Sensor {
+	private int m_id;
+	private String m_name;
+	private String m_host;
+
+	public Sensor(int id, String name, String host)
+	{
+		m_id = id;
+		m_name = name;
+		m_host = host;
+	}
+
+	public int getId()
+	{
+		return m_id;
+	}
+
+	public void setId(int id)
+	{
+		m_id = id;
+	}
+
+	public String getName()
+	{
+		return m_name;
+	}
+
+	public void setName(String name)
+	{
+		m_name = name;
+	}
+
+	public String getHost()
+	{
+		return m_host;
+	}
+
+	public void setHost(String host)
+	{
+		m_host = host;
+	}
+
+	public String toString()
+	{
+		return String.format("[%d]%s %s", m_id, m_name, m_host);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın "static initializer" elemanı sınıfın bir elemanı ilk kez kullanıldığından toplamda bir kez olmak üzere
+	çalıştırılır. Eğer birden fazla static initializer varsa bu durumda yukarıdan aşağıya doğru sırayla çalıştırılır.
+	Pratikte bir tane static initializer yeterli olur. Anımsanacağı gibi sınıfın static ve final veri elemanları da
+	eğer bildirim noktasında ilkdeğerlenmezse, static initializer'da değer verilebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample.foo();
+		System.out.println("-------------------------");
+		Sample.foo();
+	}
+}
+
+class Sample {
+	static {
+		System.out.println("static initializer1");
+	}
+
+	static {
+		System.out.println("static initializer2");
+	}
+
+	public static void foo()
+	{
+		//...
+	}
+}
+
+/*----------------------------------------------------------------------
+	FILE        : StringUtil.java
+	AUTHOR      : Java-Feb-2022 Group
+	LAST UPDATE : 13.11.2022
+
+	Utility class for string operations
+
+	Copyleft (c) 1993 by C and System Programmers Association (CSD)
+	All Rights Free
+-----------------------------------------------------------------------*/
+package com.orhn.util;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public final class StringUtil {
+	private static final String ALPHABET_TR;
+	private static final String ALPHABET_EN;
+	private static final String ALPHABET_CAPITAL_TR;
+	private static final String ALPHABET_CAPITAL_EN;
+	private static final String ALPHABET_ALL_TR;
+	private static final String ALPHABET_ALL_EN;
+
+	static {
+		ALPHABET_TR = "abcçdefgğhıijklmnoöprsştuüvyz";
+		ALPHABET_EN = "abcdefghijklmnopqrstuwxvyz";
+		ALPHABET_CAPITAL_TR = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+		ALPHABET_CAPITAL_EN = "ABCDEFGHIJKLMNOPQRSTUWXVYZ";
+		ALPHABET_ALL_TR = ALPHABET_TR + ALPHABET_CAPITAL_TR;
+		ALPHABET_ALL_EN = ALPHABET_EN + ALPHABET_CAPITAL_EN;
+	}
+
+	private StringUtil()
+	{
+	}
+
+	public static String capitalizeWS(String s)
+	{
+		int i;
+		int len = s.length();
+
+		for (i = 0; i < len && Character.isWhitespace(s.charAt(i)); ++i)
+			;
+
+		return i == len ? s : s.substring(0, i) + Character.toUpperCase(s.charAt(i)) + s.substring(i + 1).toLowerCase();
+	}
+
+	public static String changeCase(String s)
+	{
+		char [] c = s.toCharArray();
+
+		for (int i = 0; i < c.length; ++i)
+			c[i] = Character.isLowerCase(c[i]) ? Character.toUpperCase(c[i]) : Character.toLowerCase(c[i]);
+
+		return String.valueOf(c);
+	}
+
+	public static int countString(String s1, String s2)
+	{
+		int count = 0;
+
+		for (int i = -1; (i = s1.indexOf(s2, i + 1)) != -1; ++count)
+			;
+
+		return count;
+	}
+
+	public static int countStringIgnoreCase(String s1, String s2)
+	{
+		return countString(s1.toLowerCase(), s2.toLowerCase());
+	}
+
+	public static String getLastLongestPalindrome(String s)
+	{
+		String result = "";
+
+		int end = s.length();
+
+		while (end != 0) {
+			int begin = 0;
+
+			while (begin != end) {
+				String str = s.substring(begin++, end);
+
+				if (str.length() > 1 && isPalindrome(str) && result.length() < str.length())
+					result = str;
+			}
+
+			--end;
+		}
+
+		return result;
+	}
+
+	public static String getRandomText(Random r, int n, String sourceText)
+	{
+		char [] c = new char[n];
+		int len = sourceText.length();
+
+		for (int i = 0; i < n; ++i)
+			c[i] = sourceText.charAt(r.nextInt(len));
+
+		return String.valueOf(c);
+	}
+
+	public static String getRandomTextEN(Random r, int n)
+	{
+		return getRandomText(r, n, ALPHABET_ALL_EN);
+	}
+
+	public static String getRandomTextEN(int n)
+	{
+		return getRandomTextTR(new Random(), n);
+	}
+
+	public static String getRandomTextTR(Random r, int n)
+	{
+		return getRandomText(r, n, ALPHABET_ALL_TR);
+	}
+
+	public static String getRandomTextTR(int n)
+	{
+		return getRandomTextTR(new Random(), n);
+	}
+
+	public static String [] getRandomTextsEN(int count, int min, int max)
+	{
+		return getRandomTextsEN(new Random(), count, min, max);
+	}
+
+	public static String [] getRandomTextsEN(Random r, int count, int min, int max)
+	{
+		String [] result = new String[count];
+
+		for (int i = 0; i < count; ++i)
+			result[i] = getRandomTextEN(r, r.nextInt(min, max + 1));
+
+		return result;
+	}
+
+	public static String [] getRandomTextsTR(int count, int min, int max)
+	{
+		return getRandomTextsTR(new Random(), count, min, max);
+	}
+
+	public static String [] getRandomTextsTR(Random r, int count, int min, int max)
+	{
+		String [] result = new String[count];
+
+		for (int i = 0; i < count; ++i)
+			result[i] = getRandomTextTR(r, r.nextInt(min, max + 1));
+
+		return result;
+	}
+
+	public static boolean isPalindrome(String s)
+	{
+		int left = 0;
+		int right = s.length() - 1;
+
+		while (left < right) {
+			char cLeft = Character.toLowerCase(s.charAt(left));
+
+			if (!Character.isLetter(cLeft)) {
+				++left;
+				continue;
+			}
+
+			char cRight = Character.toLowerCase(s.charAt(right));
+
+			if (!Character.isLetter(cRight)) {
+				--right;
+				continue;
+			}
+
+			if (cLeft != cRight)
+				return false;
+
+			++left;
+			--right;
+		}
+
+		return true;
+	}
+
+	public static boolean isPangram(String s, String alphabet)
+	{
+		int len = alphabet.length();
+
+		for (int i = 0; i < len; ++i)
+			if (!s.contains(alphabet.charAt(i) + ""))
+				return false;
+
+		return true;
+	}
+
+	public static boolean isPangramEN(String s)
+	{
+		return isPangram(s.toLowerCase(), ALPHABET_EN);
+	}
+
+	public static boolean isPangramTR(String s)
+	{
+		return isPangram(s.toLowerCase(), ALPHABET_TR);
+	}
+
+	public static String join(String [] s, char delimiter)
+	{
+		return join(s, delimiter + "");
+	}
+
+	public static String join(String [] s, char delimiter, boolean removeEmpties)
+	{
+		return join(s, delimiter + "", removeEmpties);
+	}
+
+	public static String join(String [] s, String delimiter)
+	{
+		return String.join(delimiter, s);
+	}
+
+	public static String join(String [] s, String delimiter, boolean removeEmpties)
+	{
+		String str = "";
+
+		for (String sVal : s) {
+			if (removeEmpties && sVal.isBlank())
+				continue;
+
+			str += sVal + delimiter;
+		}
+
+		return str.substring(0, str.length() - delimiter.length());
+	}
+
+	public static String join(ArrayList list, String delimiter)
+	{
+		return join(list, delimiter, false);
+	}
+
+	public static String join(ArrayList list, char delimiter)
+	{
+		return join(list, delimiter, false);
+	}
+
+	public static String join(ArrayList list, char delimiter, boolean removeEmpties)
+	{
+		return join(list, delimiter + "", removeEmpties);
+	}
+
+	public static String join(ArrayList list, String delimiter, boolean removeEmpties)
+	{
+		String str = "";
+
+		for (Object o : list) {
+			String s = (String)o;
+
+			if (removeEmpties && s.isBlank())
+				continue;
+
+			str += s + delimiter;
+		}
+		return str.substring(0, str.length() - delimiter.length());
+	}
+
+	public static String padLeading(String s, int len, char ch)
+	{
+		int length = s.length();
+
+		return len <= length ? s : (ch + "").repeat(len - length) + s;
+	}
+
+	public static String padLeading(String s, int len)
+	{
+		return padLeading(s, len, ' ');
+	}
+
+	public static String padTrailing(String s, int len, char ch)
+	{
+		int length = s.length();
+
+		return len <= length ? s : (ch + "").repeat(len - length);
+	}
+
+	public static String padTrailing(String s, int len)
+	{
+		return padTrailing(s, len, ' ');
+	}
+
+	public static String reverse(String str)
+	{
+		char [] c = str.toCharArray();
+
+		ArrayUtil.reverse(c);
+
+		return String.valueOf(c);
+	}
+
+	public static String squeeze(String s1, String s2)
+	{
+		int len = s1.length();
+		char [] c = new char[len];
+		int idx = 0;
+
+		for (int i = 0; i < len; ++i) {
+			char ch = s1.charAt(i);
+
+			if (!s2.contains(ch + ""))
+				c[idx++] = ch;
+		}
+
+		return String.valueOf(c, 0, idx);
+	}
+	public static String squeezeIgnoreCase(String s1, String s2)
+	{
+		return squeeze(s1.toLowerCase(), s2.toLowerCase());
+	}
+}
+
+/*-----------------------------------------------------
+  	FILE		: NumberUtil.java
+  	AUTHOR		: Orhan OZTURK
+  	LAST UPDATE : 16.02.2023
+
+  	Aim:
+
+
+  	Copyleft(c) 1992 by Orhan ÖZTÜRK All Rights Free
+
+ -----------------------------------------------------*/
+
+package com.orhn.util;
+
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.log10;
+import static java.lang.Math.abs;
+
+public final class NumberUtil {
+
+    private static final String [] ONES;
+    private static final String [] TENS;
+
+    static {
+        ONES = new String[]{"", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz"};
+        TENS = new String[]{"", "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş", "seksen", "doksan"};
+    }
+
+    private NumberUtil()
+    {
+    }
+
+    private static int [] getDigits(long a, int n)
+    {
+        a = Math.abs(a);
+        int [] result = new int[a == 0 ? 1 : (int)(log10(a) / n) + 1];
+        int powOfTen = (int)pow(10, n);
+
+        for (int i = result.length - 1; i >= 0; result[i--] = (int)(a % powOfTen), a /= powOfTen)
+            ;
+
+        return result;
+    }
+
+    private static String numToText3DigitsTR(String str, int val)
+    {
+        int a = val / 100;
+        int b = val / 10 % 10;
+        int c = val % 10;
+
+        if (a != 0) {
+            if (a != 1)
+                str += ONES[a];
+            str += "yüz";
+        }
+
+        if (b != 0)
+            str += TENS[b];
+
+        if (c != 0)
+            str += ONES[c];
+
+        return str;
+    }
+
+    private static String numToText3DigitsTR(int val)
+    {
+        return val == 0 ? "sıfır" : numToText3DigitsTR(val < 0 ? "eksi" : "", Math.abs(val));
+    }
+
+    public static boolean areFriends(int a, int b)
+    {
+        return sumFactors(a) == b && sumFactors(b) == a;
+    }
+
+    public static int calculateDigitalRoot(int a)
+    {
+        int root = abs(a);
+
+        while (root > 9)
+            root = digitsSum(root);
+
+        return root;
+    }
+
+    public static int countDigits(long a)
+    {
+        return a == 0 ? 1 : (int)log10(abs(a)) + 1;
+    }
+
+    public static int digitsSum(int a)
+    {
+        int sum = 0;
+
+        while (a != 0) {
+            sum += a % 10;
+            a /= 10;
+        }
+
+        return sum;
+    }
+
+    public static int factorial(int n)
+    {
+        int result = 1;
+
+        for (int i = 2; i <= n; ++i)
+            result *= i;
+
+        return result;
+    }
+    public static int fibonacciNumber(int n)
+    {
+        if (n <= 2)
+            return n - 1;
+
+        int prev1 = 1, prev2 = 0, val = 0;
+
+        for (int i = 2; i < n; ++i) {
+            val = prev1 + prev2;
+            prev2 = prev1;
+            prev1 = val;
+        }
+
+        return val;
+    }
+
+    public static int [] getDigits(long a)
+    {
+        return getDigits(a, 1);
+    }
+
+    public static int [] getDigitsInTwos(long a)
+    {
+        return getDigits(a, 2);
+    }
+
+    public static int [] getDigitsInThrees(long a)
+    {
+        return getDigits(a, 3);
+    }
+
+    public static int getDigitsPowSum(int a)
+    {
+        int n = countDigits(a);
+        int total = 0;
+
+        while (a != 0) {
+            total += pow(a % 10, n);
+            a /= 10;
+        }
+
+        return total;
+    }
+
+    public static int getHardyRamanujanPairCount(int a)
+    {
+        int count = 0;
+
+        EXIT_LOOP:
+        for (int x = 1; x * x * x < a; ++x)
+            for (int y = x + 1; x * x * x + y * y * y <= a; ++y) {
+                if (x * x * x + y * y * y == a) {
+                    if (++count == 2)
+                        break EXIT_LOOP;
+
+                    ++x;
+                }
+            }
+        return count;
+    }
+
+    public static int getPrime(int n)
+    {
+        int count = 0;
+        int val = 2;
+
+        for (;;) {
+            if (isPrime(val))
+                ++count;
+
+            if (count == n)
+                return val;
+
+            ++val;
+        }
+    }
+
+    public static int indexOfPrime(long a)
+    {
+        int i = 1;
+        long val = 2;
+
+        for (;;) {
+            if (val == a)
+                return i;
+
+            if (isPrime(val))
+                ++i;
+
+            ++val;
+        }
+    }
+    public static boolean isArmstrong(int a)
+    {
+        return a >= 0 && getDigitsPowSum(a) == a;
+    }
+
+    public static boolean isDecimalHarshad(int a)
+    {
+        return a > 0 && a % digitsSum(a) == 0;
+    }
+
+    public static boolean isHardyRamanujan(int a)
+    {
+        return a > 0 && getHardyRamanujanPairCount(a) == 2;
+    }
+
+    public static boolean isPerfect(int a)
+    {
+        return sumFactors(a) == a;
+    }
+
+    public static boolean isPrime(long a)
+    {
+        if (a <= 1)
+            return false;
+
+        if (a % 2 == 0)
+            return a == 2;
+
+        if (a % 3 == 0)
+            return a == 3;
+
+        if (a % 5 == 0)
+            return a == 5;
+
+        if (a % 7 == 0)
+            return a == 7;
+
+        for (long i = 11; i * i <= a; i += 2)
+            if (a % i == 0)
+                return false;
+
+        return true;
+    }
+
+    public static boolean isSuperPrime(long a)
+    {
+        return isPrime(a) && isPrime(indexOfPrime(a));
+    }
+
+    public static int max(int a, int b, int c)
+    {
+        return Math.max(Math.max(a, b), c);
+    }
+
+    public static int mid(int a, int b, int c)
+    {
+        if (a <= b && b <= c || c <= b && b <= a)
+            return b;
+
+        if (b <= a && a <= c || c <= a && a <= b)
+            return a;
+
+        return c;
+    }
+
+    public static int min(int a, int b, int c)
+    {
+        return Math.min(Math.min(a, b), c);
+    }
+
+    public static void printCollatz(int n)
+    {
+        if (n <= 0) {
+            System.out.println("Geçersiz sayı");
+            return;
+        }
+
+        System.out.println(n);
+
+        while (n != 1)
+            System.out.println(n = (n % 2 == 0) ? (n / 2) : (3 * n + 1));
+    }
+
+    public static void printGoldBach(int val)
+    {
+        for (int a = 2; a < val; ++a) {
+            int b = val - a;
+
+            if (isPrime(a) && isPrime(b) && a <= b)
+                System.out.printf("%d + %d = %d == %d%n", a, b, a + b, val);
+        }
+    }
+
+    public static int sumFactors(int a)
+    {
+        if (a == 1)
+            return 1;
+
+        int result = 0;
+        int sqrtVal = (int)sqrt(a);
+
+        for (int i = 2; i <= sqrtVal; ++i)
+            if (a % i == 0)
+                result += (i == a / i) ? i : (i + a / i);
+
+        return result + 1;
+    }
+}
+/***
+ *  FILE            : Date.java
+ *  AUTHOR          : Orhan ÖZTÜRK
+ *  LAST UPDATE     : 18.05.2023
+ *
+ *  Date class that represents a local date
+ *
+ *  Copyleft(c) 1992 by Orhan OZTURK All Rights Free
+ */
+
+package com.orhn.util.datetime;
+
+import java.time.LocalDate;
+
+import static com.orhn.util.datetime.DateUtil.MONTHS;
+import static com.orhn.util.datetime.DateUtil.DAY_OF_WEEKS;
+
+public class Date {
+    private static final String [] MONTHS_TR;
+    private static final String [] DAYS_OF_WEEK_TR;
+    private static final String [] MONTHS_EN;
+    private static final String [] DAYS_OF_WEEK_EN;
+
+    static {
+        MONTHS_TR = new String[]{"", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"};
+        DAYS_OF_WEEK_TR = new String[]{"Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"};
+        MONTHS_EN = new String[]{"", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        DAYS_OF_WEEK_EN = new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    }
+
+    private static int getDayOfYear(int day, int month, int year)
+    {
+        int totalDays = day;
+
+        for (int m = month - 1; m >= 1; --m)
+            totalDays += MONTHS[m - 1].getDays(year);
+
+        return totalDays;
+    }
+
+    private static int getDayOfWeek(int day, int month, int year)
+    {
+        int totalDays = getDayOfYear(day, month, year);
+
+        for (int y = 1900; y < year; ++y)
+            totalDays += Month.isLeapYear(y) ? 366 : 365;
+
+        return totalDays % 7;
+    }
+
+    private static String getDaySuffix(int day)
+    {
+        return switch (day) {
+            case 1, 21, 31 -> "st";
+            case 2, 22 -> "nd";
+            case 3, 23 -> "rd";
+            default -> "th";
+        };
+    }
+
+    private static boolean isValidDate(int day, int month, int year)
+    {
+        return  1 <= day && day <= 31 && 1 <= month && month <= 12 && day <= MONTHS[month - 1].getDays(year);
+    }
+
+    private static void doWorkForException(String message)
+    {
+        throw new DateTimeException(message);
+    }
+
+    private static void checkDate(int day, int month, int year, String message)
+    {
+        if (!isValidDate(day, month, year))
+            doWorkForException(message);
+    }
+
+    private void checkDay(int day, String message)
+    {
+        checkDate(day, m_month, m_year, message);
+    }
+
+    private void checkMonth(int month, String message)
+    {
+        checkDate(m_day, month, m_year, message);
+    }
+
+    private void checkYear(int year, String message)
+    {
+        checkDate(m_day, m_month, year, message);
+    }
+
+    private void set(int day, int month, int year)
+    {
+        m_day = day;
+        m_month = month;
+        m_year = year;
+        m_dayOfWeek = getDayOfWeek(m_day, m_month, m_year);
+    }
+
+    private int m_day, m_month, m_year;
+    private int m_dayOfWeek;
+
+    public Date() //Bu ctor içerisinde yazılanların bilinmesi gerekmez. Sadece default'un anlamına odaklanınız
+    {
+        LocalDate today = LocalDate.now();
+
+        set(today.getDayOfMonth(), today.getMonthValue(), today.getYear());
+    }
+
+    public Date(int day, Month month, int year)
+    {
+        this(day, month.ordinal() + 1, year);
+    }
+
+    public Date(int day, int month, int year)
+    {
+        checkDate(day, month, year, String.format("Invalid date value(s) -> day: %d, month value: %d, year: %d", day, month, year));
+        set(day, month, year);
+    }
+
+    public int getDay()
+    {
+        return m_day;
+    }
+
+    public void setDay(int day)
+    {
+        if (m_day == day)
+            return;
+
+        checkDay(day, "Invalid day value:" + day);
+        set(day, m_month, m_year);
+    }
+
+    public Month getMonth()
+    {
+        return MONTHS[m_month - 1];
+    }
+
+    public void setMonth(Month month)
+    {
+        setMonthValue(month.ordinal() + 1);
+    }
+
+    public int getMonthValue()
+    {
+        return m_month;
+    }
+
+    public void setMonthValue(int month)
+    {
+        if (m_month == month)
+            return;
+
+        checkMonth(month, "Invalid month value:" + month);
+        set(m_day, month, m_year);
+    }
+
+    public int getYear()
+    {
+        return m_year;
+    }
+
+    public void setYear(int year)
+    {
+        if (m_year == year)
+            return;
+
+        checkYear(year, "Invalid year value:" + year);
+        set(m_day, m_month, year);
+    }
+
+    public DayOfWeek getDayOfWeek()
+    {
+        return DAY_OF_WEEKS[m_dayOfWeek];
+    }
+
+    public String getDayOfWeekTR()
+    {
+        return DAYS_OF_WEEK_TR[m_dayOfWeek];
+    }
+
+    public String getDayOfWeekEN()
+    {
+        return DAYS_OF_WEEK_EN[m_dayOfWeek];
+    }
+
+    public boolean isLeapYear()
+    {
+        return Month.isLeapYear(m_year);
+    }
+
+    public boolean isWeekend()
+    {
+        return m_dayOfWeek == 0 || m_dayOfWeek == 6;
+    }
+
+    public boolean isWeekday()
+    {
+        return !isWeekend();
+    }
+
+    public String toString()
+    {
+        return toString('/');
+    }
+
+    public String toString(char delimiter)
+    {
+        return String.format("%02d%c%02d%c%04d", m_day, delimiter, m_month, delimiter, m_year);
+    }
+
+    public String toLongDateStringTR()
+    {
+        return String.format("%s %s", toShortDateStringTR(), getDayOfWeekTR());
+    }
+
+    public String toLongDateStringEN()
+    {
+        return String.format("%s %s", toShortDateStringEN(), getDayOfWeekEN());
+    }
+
+    public String toShortDateStringTR()
+    {
+        return String.format("%d %s %d", m_day, MONTHS_TR[m_month], m_year);
+    }
+
+    public String toShortDateStringEN()
+    {
+        return String.format("%d%s %s %d", m_day, getDaySuffix(m_day), MONTHS_EN[m_month], m_year);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Sınıfın "non-static initializer" elemanı nesne yaratılırken ctor'un başında çalıştırılan bloktur. Her ctor'un başına
+	derleyici tarafından bu kodlar yerleştirilir. Birden fazla non-static initializer varsa yünme yukarıdan aşağıya
+	sırada çalıştırılır. Pratikte yine bir tanesi yeterli olacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = new Sample();
+		System.out.println("-------------------------");
+		Sample k = new Sample(10);
+	}
+}
+
+class Sample {
+	{
+		System.out.println("static initializer1");
+	}
+
+	{
+		System.out.println("static initializer2");
+	}
+
+	public Sample()
+	{
+		System.out.println("I am a default ctor");
+	}
+
+	public Sample(int a)
+	{
+		System.out.println("I am a ctor with parameter type int");
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz. Örnek durumu göstermek için yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import java.util.Random;
+
+class App {
+	public static void main(String [] args)
+	{
+		Sample s = new Sample();
+		System.out.println(s.getValue());
+		System.out.println("-------------------------");
+		Sample k = new Sample(10);
+		System.out.println(k.getValue());
+	}
+}
+
+class Sample {
+	private static final Random RANDOM = new Random();
+	private int m_value;
+
+	{
+		m_value = RANDOM.nextInt(100);
+		System.out.printf("value:%d%n", m_value);
+	}
+
+	public Sample()
+	{
+
+	}
+
+	public Sample(int a)
+	{
+		m_value += a;
+	}
+
+	public int getValue()
+	{
+		return m_value;
+	}
+}
+
 
 
 

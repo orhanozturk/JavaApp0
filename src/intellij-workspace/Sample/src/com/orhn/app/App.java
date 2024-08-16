@@ -1,46 +1,22 @@
 /*----------------------------------------------------------------------------------------------------------------------
-	Aşağıdaki çağrılarda tür belirtilse bile ilgili türden parametreli metotlar çağprılır. Yani bu anlamda tür belirtmenin
-	generic çağrılsın gibi bir anlamı Java'da yoktur. Aşağıdaki gibi overload işlemleri bir işlemin türe özgü olarak
-	farklılaşması gibi durumlarda kullanılır
+	Aşağıdaki örneği inceleyiniz. Örnek durumu göstermek için yazılmıştır
 ----------------------------------------------------------------------------------------------------------------------*/
 package com.orhn.app;
+
+import java.util.Random;
 
 class App {
 	public static void main(String [] args)
 	{
-		Sample.foo("ankara"); //#3
-		System.out.println("-----------------------------------");
-		Sample.<String>foo("ankara"); //#3
-		System.out.println("-----------------------------------");
-		Sample.foo(10); //#2
-		System.out.println("-----------------------------------");
-		Sample.<Integer>foo(10); //#2
-		System.out.println("-----------------------------------");
-		Sample.foo(Integer.valueOf(10)); //#1
-		System.out.println("-----------------------------------");
-		Sample.foo(3.4); //#1
+		String currentWorkingDirectory = System.getProperty("user.dir");
 
+		System.out.printf("Current working  Directory:%s%n", currentWorkingDirectory);
+
+		if(args.length > 0)
+			System.setProperty("user.dir", args[0]);
+
+		currentWorkingDirectory = System.getProperty("user.dir");
+
+		System.out.printf("Current Working  Directory:%s%n", currentWorkingDirectory);
 	}
 }
-
-class Sample {
-	public static <T> void foo(T t) //#1
-	{
-		System.out.println("foo(T)");
-		System.out.println(t);
-	}
-
-	public static  void foo(int val)  //#2
-	{
-		System.out.println("foo(int)");
-		System.out.println(val);
-	}
-
-	public static  void foo(String val)  //#3
-	{
-		System.out.println("foo(String)");
-		System.out.println(val);
-	}
-
-}
-

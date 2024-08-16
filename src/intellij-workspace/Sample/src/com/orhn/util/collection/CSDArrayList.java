@@ -1,21 +1,18 @@
-
 /*----------------------------------------------------------------------
 	FILE        : CSDArrayList.java
 	AUTHOR      : Java-Feb-2022 Group
-	LAST UPDATE : 17.09.2022
+	LAST UPDATE : 13.11.2022
 
 	CSDArrayList class
 
 	Copyleft (c) 1993 by C and System Programmers Association (CSD)
 	All Rights Free
 -----------------------------------------------------------------------*/
-
-
 package com.orhn.util.collection;
 
-public class CSDArrayList {
+public class CSDArrayList<E> {
     private static final int DEFAULT_CAPACITY = 10;
-    private Object [] m_elems;
+    private E [] m_elems;
     private int m_index;
 
     private static void doWorkForIllegalArgumentException(String message)
@@ -45,7 +42,7 @@ public class CSDArrayList {
         Object [] temp = new Object[capacity];
 
         System.arraycopy(m_elems, 0, temp, 0, m_index);
-        m_elems = temp;
+        m_elems = (E[])temp;
     }
 
     private void enlargeCapacityIfNecessary()
@@ -56,16 +53,16 @@ public class CSDArrayList {
 
     public CSDArrayList()
     {
-        m_elems = new Object[DEFAULT_CAPACITY];
+        m_elems = (E[])new Object[DEFAULT_CAPACITY];
     }
 
     public CSDArrayList(int initialCapacity)
     {
         checkCapacity(initialCapacity);
-        m_elems = new Object[initialCapacity];
+        m_elems = (E[])new Object[initialCapacity];
     }
 
-    public boolean add(Object elem)
+    public boolean add(E elem)
     {
         enlargeCapacityIfNecessary();
 
@@ -74,7 +71,7 @@ public class CSDArrayList {
         return true;
     }
 
-    public void add(int index, Object elem)
+    public void add(int index, E elem)
     {
         enlargeCapacityIfNecessary();
 
@@ -103,7 +100,7 @@ public class CSDArrayList {
             changeCapacity(Math.max(m_elems.length * 2, minCapacity));
     }
 
-    public Object get(int index)
+    public E get(int index)
     {
         checkIndex(index);
 
@@ -115,10 +112,10 @@ public class CSDArrayList {
         return m_index == 0;
     }
 
-    public Object remove(int index)
+    public E remove(int index)
     {
         checkIndex(index);
-        Object oldElem = m_elems[index];
+        E oldElem = m_elems[index];
 
         for (int i = index; i < m_index - 1; ++i)
             m_elems[i] = m_elems[i + 1];
@@ -128,10 +125,10 @@ public class CSDArrayList {
         return oldElem;
     }
 
-    public Object set(int index, Object elem)
+    public E set(int index, E elem)
     {
         checkIndex(index);
-        Object oldElem = m_elems[index];
+        E oldElem = m_elems[index];
 
         m_elems[index] = elem;
 
