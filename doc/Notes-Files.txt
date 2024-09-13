@@ -1,0 +1,1478 @@
+/*-----------------------------------------------------------------------------------------------------------------------
+	Programın komut satırı argümanları (command line arguments): Program çalıştırılırken programa geçilen yazılar denir.
+	 Bu argümanlar program çalıştırılırken şu şekildeki genel biçimle verilebilir:
+		java <program> <arg1> <arg2> ... <argN>
+	Burada argümanlar whitespace karakterler ile ayrılar. Eğer whitespace içeren bir yazı verilecekse argüman işletim
+	sistemine göre "" veya '' içerisine alınır. Bu durumun bir standardı yoktur. Yani whitespace içeren tek bir argümanın
+	verilmesi sisteme göre değişiklik gösterebilmektedir. Java'da programın komut satırı argümanları main metodunun
+	parametresi olan String dizisinden elde edilebilir. Yani program çalıştırılırken main metodu komut satırı argümanlarından
+	oluşan bir String dizi referansı çağrılır. Eğer hiç komut satırı argümanı geçilmezse length'i sıfır olan bir dizi referansı
+	ile çağrılır.
+-----------------------------------------------------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------------------------------------------------------
+	Anahtar Notlar: Program terimi teknik olarak çalışabilir veya çalıştırılabilir dosyaya verilen isimdir. Yani örneğin
+	main metodu olan bir byte code veya çalıştırılabilir bir jar dosyası bir programdır. Programın işletim sistemi
+	tarafından yüklenip çalıştırılması durumunda buna "process" denir. Java programları için işletim sistemi düzeyinde
+	process aslında JVM'dir. JVM byte kodları yorumlayarak makine koduna dönüştürür. Bu işleme JIT compilation dendiğini
+	anımsayınız
+-----------------------------------------------------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz
+-----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.console.Console;
+
+class App {
+	public static void main(String[] args)
+	{
+		for (String arg : args)
+			Console.writeLine(arg);
+	}
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz
+-----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.console.Console;
+
+class App {
+	private static char getOperation(String s)
+	{
+		String ops = "+-x/%";
+		int index;
+
+		if (s.length() != 1 || (index = ops.indexOf(s.charAt(0))) == -1)
+			throw new IllegalArgumentException();
+
+		return ops.charAt(index);
+	}
+
+	private static double calculate(double a, double b, char op)
+	{
+		return switch (op) {
+			case '+' -> a + b;
+			case '-' -> a - b;
+			case 'x' -> a * b;
+			default -> a / b;
+		};
+	}
+
+	public static void main(String[] args)
+	{
+		try {
+			if (args.length != 3) {
+				Console.writeErrLine("usage: java com.orhn.app.App <value1> <operation> <value2>");
+				System.exit(1);
+			}
+
+			double a = Double.parseDouble(args[0]);
+			double b = Double.parseDouble(args[2]);
+			char op = getOperation(args[1]);
+
+			Console.writeLine("%f %c %f = %f", a, op, b, calculate(a, b, op));
+		}
+		catch (NumberFormatException ignore) {
+			Console.writeErrLine("Invalid values!...");
+		}
+		catch (IllegalArgumentException ignore) {
+			Console.writeErrLine("Invalid operation!...");
+		}
+	}
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz
+-----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+import com.orhn.util.console.Console;
+import com.orhn.util.console.CommandLineUtil;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+
+class App {
+	private static char getOperation(String s)
+	{
+		String ops = "+-x/%";
+		int index;
+
+		if (s.length() != 1 || (index = ops.indexOf(s.charAt(0))) == -1)
+			throw new IllegalArgumentException();
+
+		return ops.charAt(index);
+	}
+
+	private static double calculate(double a, double b, char op)
+	{
+		return switch (op) {
+			case '+' -> a + b;
+			case '-' -> a - b;
+			case 'x' -> a * b;
+			default -> a / b;
+		};
+	}
+
+	public static void main(String[] args)
+	{
+		try {
+			checkLengthEquals(3, args.length,"usage: java com.orhn.app.App <value1> <operation> <value2>");
+			double a = Double.parseDouble(args[0]);
+			double b = Double.parseDouble(args[2]);
+			char op = getOperation(args[1]);
+
+			Console.writeLine("%f %c %f = %f", a, op, b, calculate(a, b, op));
+		}
+		catch (NumberFormatException ignore) {
+			Console.writeErrLine("Invalid values!...");
+		}
+		catch (IllegalArgumentException ignore) {
+			Console.writeErrLine("Invalid operation!...");
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Temel Dosya İşlemleri: Java'da giriş/çıkış (input/output) işlemleri tarihsel süreç içerisinde çeşitli değişikliklere
+    uğramış ve yine pek çok eklenti yapılmıştır. Dosya işlemleri de giriş çıkış işlemleri olduğundan bu tarihsel süreçten
+    etkilenmiştir. Burada temel olan ve en çok kısımlar ele alınacaktır. Bu anlamda diğer detaylar "Java ile Uygulama Geliştirme 1 ve 2"
+    kurslarında ele alınacaktır.
+
+    İkincil belleklerde (secondary memory) organize edilmiş alanlara dosya (file) denir. Dosyaların isimleri ve özellikleri vardır.
+    Dosya işlemleri aslında işletim sistemi tarafından yapılır. İşletim sisteminin dosya işlemleri ile ilgili faaliyetlerinden oluşan
+    bölümüne dosya sistemi (file system) denir. Java'nın bu konudaki sınıfları dolaylı olarak işletim sisteminin sistem fonksiyonları
+    veya API (Application Programming Interface) fonksiyonlarını çağırmaktadır.
+
+    Bir dosyanın yerini belirten yazısal ifadeye "yol ifadesi (path)" denilmektedir. Windows'ta dizin (directory) geçişleri
+    '\' karakteri ile UNIX/Linux ve Mac OS X sistemlerinde '/' ile belirtilir. Windows sistemlerinde ayrıca bir de
+    sürücü (drive) kavramı vardır. UNIX/Linux sistemlerinde ve Mac OS X sistemlerinde sürücü kavramı yoktur. Windows
+    sistemlerinde her sürücünün ayrı bir kökü ve dizin ağacı (directory tree) vardır. Sürücünün kök dizini onun en dış
+    dizinidir.
+
+    Yol ifadeleri mutlak (absolute) ve göreli (relative) olmak üzere ikiye ayrılmaktadır. Eğer sürücü ifadesinden
+    sonraki (yol ifadesinde sürücü de belirtilmeyebilir) ilk karakter '\' veya '/' ise böyle yol ifadelerine mutlak,
+    değilse göreli yol ifadeleri denilmektedir. Örneğin:
+
+    "c:\a\b\c.dat"	---> mutlak yol ifadesi
+    "\x\y\z.txt"	---> mutlak yol ifadesi
+    "x\y\z.txt" 	---> göreli
+    "x.txt"			---> göreli
+    "c:/a/b/c.dat"	---> mutlak yol ifadesi
+    "/x/y/z.txt"	---> mutlak yol ifadesi
+    "x/y/z.txt" 	---> göreli
+    "x.txt"			---> göreli
+
+    Her process'in bir çalışma dizini (current working directory) vardır. Programın çalışma dizini göreli yol ifadelerinin
+    çözülmesi (resolve) için orijin belirtir. Örneğin, process'imizin çalışma dizini (cwd) "c:\temp" olsun. Biz bu programda
+    "x\y\z.dat" biçiminde bir yol ifadesi kullanırsak toplamda "c:\temp\x\y\z.dat" dosyasını belirtmiş oluruz. Prosesin
+    çalışma dizini istenildiği zaman değiştirilebilir. Ancak işin başında genel olarak programın çalıştırıldığı dizindir.
+    Örnek Windows işletim sistemi için anlatılmıştır. Benzer şekilde örneğin cwd /tmp dizini ise "x/y/z.dat" biçimindeki
+    göreli yol ifadesi toplamda "/tmp/x/y/z.dat" biçiminde olacaktır.
+
+    Mutlak yol ifadeleri kök dizinden itibaren çözülür. Windows sistemlerine özgü olarak eğer yol ifadesinde sürücü
+    belirtilmemişse prosesin çalışma dizininin bulunduğu sürücü o mutlak yol ifadesindeki sürücü olarak alınır. Örneğin
+    prosesin çalışma dizini "d:\temp" olsun. "\a\b\c.dat" mutlak yol ifadesi d'nin kök dizininden itibaren yol belirtir
+    yani örnekteki yol ifadesi "d:\a\b\c.dat" olarak ele alınır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java'da process'in çalışma dizini System sınıfının getProperty metoduna "user.dir" string sabiti argüman olarak
+    geçilerek elde edilebilir. Bununla birlikte process'in çalışma dizinini değiştirmek için System sınıfının setProperty
+    metodu yine "user.dir" string sabiti ile kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------------------------------
+	Aşağıdaki örneği inceleyiniz
+-----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+
+package com.orhn.app;
+
+import com.orhn.util.console.Console;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+        Console.writeLine(System.getProperty("user.dir"));
+        System.setProperty("user.dir", args[0]);
+        Console.writeLine(System.getProperty("user.dir"));
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    Aslında Java'da sisteme yönelik pek çok bilgi de çeşitli property isimleriyle alınabilir. Şüphesiz bunların hepsi
+    değiştirilemez. Aşağıda bazı bilgilere ilişkin anahtarlar (key) kullanılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+
+package com.orhn.app;
+
+import com.orhn.util.console.Console;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        Console.writeLine(System.getProperty("file.separator") .charAt(0) == '/' ? "Unix-Linux" : "Windows");
+        Console.writeLine(System.getProperty("os.arch"));
+        Console.writeLine(System.getProperty("os.name"));
+        Console.writeLine(System.getProperty("os.version"));
+        Console.writeLine(System.getProperty("java.vendor"));
+        Console.writeLine(System.getProperty("user.name"));
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Windows’ta dosya ve dizin isimlerinin büyük harf küçük harf duyarlılığı yoktur. Windows dosyanın ismini bizim
+	belirttiğimiz gibi saklar. Ancak işleme sokarken büyük harf küçük harf farkını dikkate almaz. Ancak UNIX/Linux
+	sistemlerinde (Mac OS X dahil) dosya ve dizin isimlerinin büyük harf küçük harf duyarlılığı vardır.
+
+	Yol ifadelerinde kullanabileceğimiz iki özel dizin ismi vardır. Bunlar “.” ve “..” isimleridir. “.” o anda belirtilen
+	dizinin aynısı, “..” ise o anda belirtilen dizinin üst dizini (parent directory) anlamına gelir. Örneğin “a\b\..\c.txt”
+	yol ifadesi aslında “a\x.txt” ile eşdeğerdir.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anahtar Notlar: Dosya işlemleri sırasında bir çok durum oluşabilir. Örneğin, bir dosya ilgili dizinde bulunamayabilir,
+    o anki processin o dosyaya yazma hakkı olmayabilir vs. Bu durumda genel olarak metotlar exception'lar fırlatabilmektedir.
+    Programcı bu exceptionlara dikkat etmelidir. Bu exception sınıfları genel olarak IOException veya IOException sınıfından
+    türetilmiş olan exception sınıflarıdır. IOException sınıfının checked bir exception sınıfı olduğuna dikkat ediniz
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Text ve Binary Dosyalar
+
+    Bilgisayar dünyasında içeriklerine göre dosyalar kabaca “text” ve “binary” dosyalar biçiminde ikiye ayrılmaktadır.
+    Aslında bu ayrım tamamen mantıksal düzeydedir. Dosyanın içerisinde ne olursa olsun dosyalar byte topluluklarından
+    oluşurlar. Dosyaların uzantıları onların içerisinde ne olduğuna yönelik bir ipucu vermek için düşünülmüştür.
+    İçerisinde yalnızca yazıların bulunduğu dosyalara “text” dosyalar, içerisinde yazıların dışında başka birtakım
+    bilgilerin de bulunduğu dosyalara “binary” dosyalar denilmektedir. Örneğin notepad’te oluşturmuş olduğumuz dosyalar
+    tipik text dosyalardır. Halbuki uzantısı “.exe” ve ya “.obj” olan dosyaların içerisinde yazı yoktur. Bunlar tipik
+    binary dosyalardır. Uzantısı “.doc” olan veya “.docx” olan dosyalar da aslında “binary” dosyalardır. Her ne kadar bu
+    dosyaların içerisinde yazılar varsa da yazıların dışında başka metadata bilgileri de vardır.
+
+    Text ve binary modda açılan dosyalar için Windows ve Unix/Linux (Mac OS X dahil) sistemlerinde farklılıklar
+    bulunmaktadır. Bir dosya text modda açılmışsa ve çalışılan sistem windows ise yazma yapan herhangi bir fonksiyon
+    Line feed (LF) ('\n') karakterini yazdığında aslında dosyaya Carriage Return (CR)('\r') ve LF karakterlerinin ikisi
+    birden yazılır. Benzer şekilde dosyadan okuma yapan fonksiyonlar çalışılan sistem Windows ise ve dosya text modda
+    açılmışsa CRLF karakterlerini yanyana gördüğünde yalnızca LF olarak okuma yaparlar. Bu konu ileride detaylandırılacaktır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java'da dosyalar üzerinde işlem yapan pek çok sınıf vardır. Bu sınıfları iki gruba ayırabiliriz:
+    - Dosyanın bütünü üzerinde işlem yapan sınıflar ve metotlar. Örneğin, bir dosyayı silen, kopyalayan, yer değiştiren
+    gibi.
+
+    - Dosyanın içerisindeki veriler üzerinde işlem yapan sınıflar ve metotlar. Örneğin, dosyaya yazma yapan, dosyadan
+    okuma yapan sınıflar gibi.
+
+    Java'da dosya işlemi yapan sınıflar genel olarak java.io ve java.nio paketlerinde bulunmaktadır.
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    10.09.2024
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Dosyanın Bütünü Üzerinde İşlem Yapan Sınıflar ve Metotlar
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    File Sınıfı
+    Bu sınıf bir dosya ya da dizine (directory) ilişkin bütünsel işlemleri yapan sınıftır. File sınıfının kullanılması
+    için önce programcı dosya yolunu (path) vererek bir File nesnesi oluşturur. Sınıfın dosyanın bütünü üzerinde işlem
+    yapan birçok yararlı metodu bulunmaktadır. File sınıfının ayrıca başka parametreli ctor'ları da bulunmaktadır. File
+    sınıfının hemen hemen tüm metotları SecurityException fırlatabilirler. Bu exception özel durumlarda fırlatılır. Bu
+    exception'a ilişkin durumlar burada ele alınmayacaktır. Aslında input/output yönelik bir çok metot bu exception'ı
+    fırlatır
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    File sınıfı türünden nesne yaratıldığında yol ifadesinin geçerli olup olmadığı kontrol edilmez. File sınıfının exists
+    metodu verilen yol ifadesine ilişkin dosya ya da dizinin varlığını test etmek amaçlı kullanılabilir. File sınıfının
+    isDirectory ve isFile metotları ilgili path'in bir dizin ve dosya belirtip belirtmediğini test etmek
+    için kullanılabilir. Bu metotlar yol ifadesinin bulunmaması olması durumunda da false değerine geri dönerler. Bu
+    sebeple yol ifadesi geçerliliği gerekirse ayrıca kontrol edilmelidir. İşletim sistemlerinde dosya gibi ele alınan
+    ancak ne teknik anlamda dosya ne de teknik anlamda directory olan yapılar da bulunmaktadır. Bunlar sisteme göre
+    değişiklik gösterebilmektedir. Aşağıdaki örneği inceleyiniz ve çeşitli işletim sistemlerinde çalıştırarak test ediniz
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.File;
+
+import static com.orhn.util.console.CommandLineUtil.*;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    private static void printStatus(File f)
+    {
+        if(f.isDirectory())
+            writeLine("Directory");
+        else if(f.isFile())
+            writeLine("File");
+        else
+            writeLine("Unknown");
+    }
+
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            File f = new File(args[0]);
+
+            if(f.exists()){
+                printStatus(f);
+            } else
+                writeLine("No path in system!...");
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    File sınıfının getAbsolutePath isimli metodu ile File sınıfına verilen yol ifadesi mutlak olarak elde edilir. Zaten
+    mutlak verilmişse aynısı, mutlak verilmemişse çalışma dizini ile birleştirilmiş hali elde edilir. File sınıfının
+    getName isimli metodu ile yol ifadesine ilişkin dosyanın veya dizinin doğrudan ismi elde edilebilir. Benzer şekilde
+    getParent isimli metodu ile de dosya ya da dizinin üst dizini (parent) elde edilebilir. geParentFile isimli metodu
+    ile üst dizine ilişkin File referansı elde edilebilir. getParent ve getParentFile metotları, içerisinde hiç '/' ve '\'
+    olmayan bir yol ifadesi ile yaratılmış File nesnesinden elde ediliyorsa null değere dönerler. Bu durumda en iyi
+    yöntem getAbsoluteFile metodu ile mutlak yol ifadesine ilişkin File referansı alınıp getParent veya getParentFile
+    çağrılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.File;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.writeErrLine;
+import static com.orhn.util.console.Console.writeLine;
+
+public class Application {
+    private static void printDetails(File f)
+    {
+        File path = f.getAbsoluteFile();
+        writeLine("Absoulute Path:%s", f.getAbsolutePath());
+        writeLine("Parent:%s", path.getParent());
+    }
+
+    private static void printStatus(File f)
+    {
+        if(f.isDirectory())
+            writeLine("%s is a Directory", f.getName());
+        else if(f.isFile())
+            writeLine("%s is a File", f.getName());
+        else
+            writeLine("%s is Unknown", f.getName());
+
+        printDetails(f);
+    }
+
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            File f = new File(args[0]);
+
+            if(f.exists()){
+                printStatus(f);
+            } else
+                writeLine("%s is invalid!", f.getAbsolutePath());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    File sınıfının delete metodu ilgili yol ifadesinde bulunan dosya ya da dizini silmektedir. Boş olmayan dizinler
+    silinemez. Bunun için önce dizinin boşaltılması sonra silinmesi gerekir. File sınıfının delete metodunun geri dönüş
+    değeri yol ifadesine ilişkin bilginin silinip silinmediğine belirten boolean türündendir. Bu geri dönüş değerinden
+    dosyanın hangi sebepten silinemediği anlaşılamaz
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.File;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    private static void delete(File f)
+    {
+        if(f.delete())
+            writeLine("%s deleted", f.getName());
+        else
+            writeLine("%s can not be deleted", f.getName());
+    }
+
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            File f = new File(args[0]);
+
+            if(f.exists()){
+                delete(f);
+            } else
+                writeLine("%s not found!", f.getName());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    File nesnesi bir dizin gösteriyorsa bu durumda o dizin içerisindeki dosyalar ve dizinler elde edilebilir. Bir dizin
+    içerisindeki dosyaların ve dizinlerin isimleri list metoduyla elde edilebilir. list metodu eğer File nesnesine
+    ilişkin yol ifadesi bir dizin değilse veya bir IO problemi oluşursa null değerine geri döner
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.File;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    private static void listContentsForDirectory(File dir)
+    {
+        String [] files = dir.list();
+
+        if(files != null)
+            for (String file : files)
+                writeLine(file);
+        else
+            writeLine("Io error occurred!...");
+    }
+
+    private static void listContents(File f) {
+        if (f.isDirectory()) {
+            listContentsForDirectory(f);
+        }
+        else
+            writeErrLine("%s is not a directory", f.getName());
+    }
+
+    public static void run(String[] args) {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            File f = new File(args[0]);
+
+            if (f.exists()) {
+                listContents(f);
+            } else writeLine("%s not found!", f.getName());
+        } catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    File nesnesi bir dizin gösteriyorsa bu durumda o dizin içerisindeki dosyalar ve dizinler elde edilebilir. Bir dizin
+    içerisindeki dosyaların ve dizinlerin isimleri list metoduyla elde edilebilir. list metodu eğer File nesnesine
+    ilişkin yol ifadesi bir dizin değilse veya bir IO problemi oluşursa null değerine geri döner
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.File;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+
+public class Application {
+    private static void listContentsForDirectory(File dir)
+    {
+        String [] files = dir.list();
+
+        if (files != null)
+            for (String file : files)
+                writeLine(file);
+        else
+            writeErrLine("IO error occurred!...");
+    }
+
+    private static void listContents(File f)
+    {
+        if (f.isDirectory())
+            listContentsForDirectory(f);
+        else
+            writeErrLine("%s is not a directory", f.getName());
+    }
+
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            File f = new File(args[0]);
+
+            if (f.exists())
+                listContents(f);
+            else
+                writeLine("'%s' not found", f.getName());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir içerisindeki dosyalara ve dizinlere işlişkin File referanlarından oluşan dizi listFiles metodu ile elde edilebilir.
+    listFiles metodu eğer File nesnesine ilişkin yol ifadesi bir dizin değilse veya IO problemi oluşursa null değerine
+    geri döner. File sınıfının length metodu ile ilgili dosyanın uzunluğu byte cinsinden elde edilebilir.
+
+    Anahtar Notlar: İşletim sistemlerinde dizinlerin uzunlukları (length) dizine ilişkin bir bilgi olarak tutulmaz. Bu
+    durumda dizin ağacı dolaşılarak içerisindeki dosyalardan hesaplanması gerekir. Bu sebeple bir dizine ilişkin File
+    nesnesi ile length metodu çağrıldığında sisteme göre farklı değerler elde edilebilir. Yani aslında bu length bilgisinin
+    bir dizinin kapladığı alan anlamında doğrudan bir ilişkisi yoktur
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.File;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    private static void printFile(File file)
+    {
+        if(file.isFile())
+            writeLine("%s %d", file.getName(), file.length());
+        else if (file.isDirectory())
+            writeLine("%s <DIR>", file.getName());
+        else
+            writeLine("%s <Unknown>", file.getName());
+    }
+
+    private static void listContentsForDirectory(File dir) {
+        File[] files = dir.listFiles();
+
+        if (files != null)
+            for (var file : files)
+                printFile(file);
+        else
+            writeErrLine("IO error occurred!...");
+    }
+
+    private static void listContents(File f) {
+        if (f.isDirectory())
+            listContentsForDirectory(f);
+        else
+            writeErrLine("%s is not a directory", f.getName());
+    }
+
+    public static void run(String[] args) {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            File f = new File(args[0]);
+
+            if (f.exists())
+                listContents(f);
+            else
+                writeLine("'%s' not found", f.getName());
+        } catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    File sınıfının mkdir metodu verilen yol ifadesine ilişkin bir dizin yaratır. Eğer yol ifadesine ilişkin dizin
+    varsa bu durumda hiç birşey yapmaz. Metodun geri dönüş değeri dizinin yaratılıp yaratılmadığını gösteren boolean
+    türden değerdir. mkdir metodu yaratılmak istenen dizine ilişkin yol ifadesi geçersizse dizini yaratamaz ve false
+    değerine döner.
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.File;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+
+    public static void run(String[] args) {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            File f = new File(args[0]);
+
+            if(f.getAbsoluteFile().getParentFile().exists())
+                writeLine(f.mkdir() ? "%s created" : "%s exists", f.getName());
+            else
+                writeLine("Invalid path");
+
+        } catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Verilen yol ifadesine ilişkin tüm dizinlerin yaratılabilmesi için mkdirs metodu kullanılmalıdır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.File;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            File f = new File(args[0]);
+
+            writeLine(f.mkdirs() ? "%s created" : "%s exists", f.getName());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+/*----------------------------------------------------------------------------------------------------------------------
+    12.09.2024
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Dosyanın bütünü üzerinde işlem yapan bazı sınıflar ve arayüzler JavaSE'ye daha sonradan eklenmiştir. Yeni eklenen bu
+    sınıflar ve arayüzler genel olarak java.nio paketi içerisinde bulunurlar
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Path Arayüzü, Paths ve Files Sınıfları
+    Path arayüzü dosya ve dizinler üzerinde daha kolay işlem yapılmasını sağlayan bir arayüzdür. Kullanımı karışık gibi
+    gözükse de birçok işlemi kolaylaştırmaktadır. Tipik olarak bir Path referansı elde etmek için Java 11 ile birlikte
+    of metodu kullanılabilir. Java 11 öncesinde Path referansı elde etmek için genel olarak Paths isimli sınıfın get
+    metotları kullanılıyordu. Ancak bu sınıfın dökümanlarına göre ileride "deprecated" olabileceği söylendiğinden Java 11+
+    için bu sınıfın kullanımı tavsiye edilmez. Path arayüzü, Paths sınıfı ve Files sınıfı java.nio.file paketi içerisinde
+    bildirilmiştir ve Java 7 ile birlikte eklenmiştir
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki basit örnek Java 11 öncesi Path referansı elde edilmesinin Paths sınıfıyla yapılışını göstermektedir. Paths
+    sınıfının get metodu formatı geçersiz bir path için InvalidPathException fırlatır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            Path path = Paths.get(args[0]);
+            writeLine(path);
+        }
+        catch (InvalidPathException ignore) {
+            writeErrLine("Invalid path");
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki basit örnek Java 11+ için Path referansı elde edilmesinin of metodu ile yapılışını göstermektedir. Path
+    arayüzünün of metodu formatı geçersiz bir path için InvalidPathException fırlatır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            Path path = Path.of(args[0]);
+
+            writeLine(String.valueOf(path));
+        }
+        catch (InvalidPathException ignore) {
+            writeErrLine("Invalid path");
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Anahtar Notlar: Bir path'in geçerli veya geçersiz olmasına yönelik formatı işletime sistemine özgüdür, değişiklik
+    gösterebilmektedir
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Files utility sınıfı birçok yararlı static metot barındırır. Aslında File sınıfının da içerisinde bulunan birçok yararlı
+    metodu barındırır. Ancak File sınıfında da Files'da da olmayan bazı metotlar vardır. Benzer şekilde Files sınıfında da
+    File sınıfında olmayan bazı metotlar vardır. Aslında genel olarak Files sınıfı, File sınıfının birçok işleminin daha
+    detaylandırılmış biçimidir. Files sınıfı (aslında bazı metotları anlamında File sınıfı da) yalnızca dosyanın bütünü
+    üzerinde işlemler yapan metotlara sahip değildir. Dosyanın verileri üzerinde işlem yapan çeşitli metotları da vardır.
+    Dosyanın verileri üzerinde işlem yapan metotlar ileride ele alınacaktır. Files sınıfının bir çok metodu yol ifadesini
+    Path arayüzü olarak alırlar. Files sınıfının metotları çeşitli durumlar için çeşitli exception'lar fırlatırlar
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Files sınıfının exists, notExists, isRegularFile, isDirectory gibi metotları vardır. Bu metotların LinkOption parametresi
+    optional'dır, geçilmeyebilir. Bu parametrenin anlamı bu kursta ele alınmayacaktır. Files sınıfının delete ve deleteIfExists
+    metotları path'e ilişkin dosyayı silerler. delete metodu parametresi ile aldığı path'e ilişkin dosya yoksa NoSuchFileException
+    fırlatır. Path bir dizin belirtiyorsa ve boş değilse DirectoryNotEmptyException fırlatır. Herhangi bir IO problemi
+    oluşursa IOException fırlatır. deleteIfExists metodu aldığı path'e ilişkin dosya yoksa false, varsa true değerine
+    geri döner. Bu metot'da directory için doluysa DirectoryNotEmptyException fırlatır. Herhangi bir IO problemi oluşursa
+    IOException fırlatır. Files sınıfının exists ve notExists isimli metotları da vardır. Bu metotların da LinkOption
+    parametreleri optional'dır, geçilmeyebilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.IOException;
+import java.nio.file.*;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    private static void delete(Path path)
+    {
+        try {
+            Files.delete(path);
+            writeLine("%s deleted", path.getFileName());
+        }
+        catch (NoSuchFileException ignore) {
+            writeErrLine("No such file %s", path.getFileName());
+        }
+        catch (DirectoryNotEmptyException ignore) {
+            writeErrLine("Directory not empty:%s", path.getFileName());
+        }
+        catch (IOException ex) {
+            writeErrLine("IO Problem occurred:%s", ex.getMessage());
+        }
+    }
+
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            Path path = Path.of(args[0]);
+            delete(path);
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yukarıdaki örnekte path'in kontrolü exists metodu ile aşağıdaki gibi yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.IOException;
+import java.nio.file.*;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    private static void delete(Path path)
+    {
+        try {
+            Files.delete(path);
+            writeLine("%s deleted", path.getFileName());
+        }
+        catch (DirectoryNotEmptyException ignore) {
+            writeErrLine("Directory not empty:%s", path.getFileName());
+        }
+        catch (IOException ex) {
+            writeErrLine("IO Problem occurred:%s", ex.getMessage());
+        }
+    }
+
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            Path path = Path.of(args[0]);
+            if (Files.exists(path))
+                delete(path);
+            else
+                writeErrLine("No such file %s", path.getFileName());
+
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Yukarıdaki örnekte path'in kontrolü notExists metodu ile aşağıdaki gibi yapılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.IOException;
+import java.nio.file.*;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    private static void delete(Path path)
+    {
+        try {
+            Files.delete(path);
+            writeLine("%s deleted", path.getFileName());
+        }
+        catch (DirectoryNotEmptyException ignore) {
+            writeErrLine("Directory not empty:%s", path.getFileName());
+        }
+        catch (IOException ex) {
+            writeErrLine("IO Problem occurred:%s", ex.getMessage());
+        }
+    }
+
+    public static void run(String[] args)
+    {
+        checkLengthEquals(1, args.length, "wrong number of arguments");
+
+        try {
+            Path path = Path.of(args[0]);
+
+            if (Files.notExists(path))
+                writeErrLine("No such file %s", path.getFileName());
+            else
+                delete(path);
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Files sınıfının copy metotları belirli bir kaynaktan başka bir kaynağa kopyalama yapmak amaçlı kullanılmaktadır. Bu
+    metodun bir çok overload'u bulunmaktadır. Path türünden iki argümanla çağrılabilen overload'u birinci parametre ile
+    alınan path'in, ikinci parametredeki path'e doğrudan kopyalanmasını sağlar. Bu metot kaynak (source) path ile
+    belirtilen dosyayı bulamazsa NoSuchFileException fırlatır. Metot iki argüman ile çağrıldığında, hedef (destination/target)
+    path'e ilişkin bir dosya mevcutsa bu durumda FileAlreadyExistsException nesnesini fırlatır. Bu metot hedef Path
+    referansına geri döner
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.IOException;
+import java.nio.file.*;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        checkLengthEquals(2, args.length, "wrong number of arguments");
+
+        try {
+            Path src = Path.of(args[0]);
+            Path dest = Path.of(args[1]);
+
+            Files.copy(src, dest);
+
+        }
+        catch (NoSuchFileException ex) {
+            writeLine("Source file not found!");
+        } catch (FileAlreadyExistsException ex) {
+            writeLine("Destination already exists. You can not copy!...");
+        }
+        catch (InvalidPathException ex) {
+            writeErrLine("Invalid path: %s", ex.getMessage());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Files sınıfının aşağıda kullanılan copy metodu CopyOption arayüzü türünden bir referans alır. Bu arayüzü destekleyen
+    StandardCopyOption isimli bir enum ile bu argüman verilebilir. REPLACE_EXISTING isimli enum sabiti ile hedef dosya
+    varsa bile yenisi ile değiştirilir. REPLACE_EXISTING değeri ile dizin kopyalaması yapıldığında hedef dizin varsa
+    ve içi boş değilse DirectoryEmptyException nesnesi fırlatılır. COPY_ATTRIBUTES isimli enum sabiti dosyanın tüm
+    özelliklerini hedef dosya için de kopyalar. Bir dosyaya ilişkin attribute'lar sistemden sisteme değişiklik gösterebilmektedir.
+    Bir standardı yoktur. ATOMIC_MOVE move metodu ve "multi-threaded" uygulamalara yöneliktir. Burada ele alınmayacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.IOException;
+import java.nio.file.*;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        checkLengthEquals(2, args.length, "wrong number of arguments");
+
+        try {
+            Path src = Path.of(args[0]);
+            Path dest = Path.of(args[1]);
+
+            Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+
+        }
+        catch (NoSuchFileException ex) {
+            writeLine("Source file not found!");
+        }
+        catch (DirectoryNotEmptyException ex){
+            writeLine("Target directory is not empty!...");
+        }
+        catch (InvalidPathException ex) {
+            writeErrLine("Invalid path: %s", ex.getMessage());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Files sınıfının move metodu kaynak yol ifadesinden hedef yol ifadesine taşıma işlemi yapar. copy metoduna benzer
+    şekilde kullanılabilir. move metodu iki argüman ile çağrılırsa exception bakımından copy metodu gibi davranır. Ayrıca
+    move metodu "rename" için de kullanılabilir. move metodu COPY_ATTRIBUTES sabitini desteklemez. Bu gesabitin geçilmesi
+    durumunda UnsupportedOperationExceoption fırlatılır
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.io.IOException;
+import java.nio.file.*;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        checkLengthEquals(2, args.length, "wrong number of arguments");
+
+        try {
+            Path src = Path.of(args[0]);
+            Path dest = Path.of(args[1]);
+
+            Files.move(src, dest, StandardCopyOption.REPLACE_EXISTING);
+
+        }
+        catch (NoSuchFileException ex) {
+            writeLine("Source file not found!");
+        }
+        catch (DirectoryNotEmptyException ex){
+            writeLine("Target directory is not empty!...");
+        }
+        catch (InvalidPathException ex) {
+            writeErrLine("Invalid path: %s", ex.getMessage());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+package com.orhn.app;
+
+class App {
+	public static void main(String[] args)
+	{
+		Application.run(args);
+	}
+}
+
+package com.orhn.app;
+
+import java.nio.file.*;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.*;
+
+public class Application {
+    public static void run(String[] args)
+    {
+        checkLengthEquals(2, args.length, "wrong number of arguments");
+
+        try {
+            Path src = Path.of(args[0]);
+            Path dest = Path.of(args[1]);
+
+            Files.move(src, dest, StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch (NoSuchFileException ex) {
+            writeLine("Source file not found!...");
+        }
+        catch (DirectoryNotEmptyException ex) {
+            writeLine("Target directory is not empty!...");
+        }
+        catch (InvalidPathException ex) {
+            writeErrLine("Invalid path: %s", ex.getMessage());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Komut satırından aşağıdaki gibi çalışan programı yazınız:
+        java org.csystem.app.io.file.copy.BackupAndCopyApp <src> <dest>
+    Program src ile aldığı dosyayı dest ile aldığı dosya olarak kopyalayacaktır. Hedef dosya varsa hedef dosya ismi ve
+    uzantısının sonuna "-bak" eklenerek yedeklenecektir. Daha önce yedeklenmişse üzerine yazılacaktır. Bu işlemden sonra
+    kopyalama yapılacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+package com.orhn.app.io.file.copy;
+
+import com.orhn.app.io.file.BackupAndCopy;
+
+import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.NoSuchFileException;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.writeErrLine;
+
+public class BackupAndCopyApp {
+    private static void run(String [] args)
+    {
+        checkLengthEquals(2, args.length, "usage: java org.csystem.app.io.file.copy.BackupAndCopyApp <src> <dest>");
+
+        try {
+            BackupAndCopy backupAndCopy = new BackupAndCopy(args[0], args[1]);
+
+            backupAndCopy.copy("-bak");
+        }
+        catch (InvalidPathException ex) {
+            writeErrLine("Invalid path:", ex.getInput());
+        }
+        catch (NoSuchFileException ex) {
+            writeErrLine("Source file not found!...");
+        }
+        catch (IOException ex) {
+            writeErrLine("IO problem occurred:%s", ex.getMessage());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+
+    public static void main(String[] args)
+    {
+        run(args);
+    }
+}
+
+
+package com.orhn.app.io.file;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
+public class BackupAndCopy {
+    private final Path m_src;
+    private final Path m_dest;
+
+    private void checkSourceFileIfExists() throws NoSuchFileException
+    {
+        if(Files.notExists(m_src))
+            throw new NoSuchFileException(m_src.toString());
+    }
+
+    private void backup(String suffix) throws IOException
+    {
+        Files.move(m_dest, Path.of(m_dest + suffix), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public BackupAndCopy(String src, String dest)
+    {
+        this(Path.of(src), Path.of(dest));
+    }
+
+    public BackupAndCopy(Path src, Path dest)
+    {
+        m_src = src;
+        m_dest = dest;
+    }
+
+    public void copy(String suffix) throws IOException
+    {
+        checkSourceFileIfExists();
+
+        if(Files.exists(m_dest))
+            backup(suffix);
+
+        Files.copy(m_src, m_dest, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+    }
+}
+
+kullanımı :  /usr/lib/jvm/openjdk-22.0.1/bin/java com.orhn.app.io.file.copy.BackupAndCopyApp test jest
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Sınıf Çalışması: Yukarıdaki örneği backup yapılan dosya varsa kullanıcıya  aşağıdaki gibi soracak biçime getiriniz:
+        Backup file exists. Do you want to overwrite?
+    Cevabın Y ve N olmasına göre işlemi yapınız. Burada Y veya N karakteri dışında bir karakter için hiç bir işlem
+    yapılmayacaktır. Eğer N girilirse hedef dosya, yedekeleme yapılmadan kopyalanacaktır
+----------------------------------------------------------------------------------------------------------------------*/
+
+package com.orhn.app.io.file.copy;
+
+import com.orhn.app.io.file.BackupAndCopy;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+
+import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
+import static com.orhn.util.console.Console.readChar;
+import static com.orhn.util.console.Console.writeErrLine;
+
+public class BackupAndCopyOverwriteBackupApp {
+    private static boolean overwrite(String path)
+    {
+        if (!Files.exists(Path.of(path + "-bak")))
+            return true;
+        char c;
+
+        while ((c = readChar("Backup file exists. Do you want to overwrite?")) != 'N' && c != 'n' && c != 'Y' && c != 'y')
+            ;
+
+        return c == 'Y';
+    }
+
+    private static void run(String [] args)
+    {
+        checkLengthEquals(2, args.length, "usage: java org.csystem.app.io.file.copy.BackupAndCopyApp <src> <dest>");
+
+        try {
+            BackupAndCopy backupAndCopy = new BackupAndCopy(Path.of(args[0]), Path.of(args[1]));
+
+            backupAndCopy.copy("-bak", overwrite(args[1]));
+        }
+        catch (InvalidPathException ex) {
+            writeErrLine("Invalid path:", ex.getInput());
+        }
+        catch (NoSuchFileException ex) {
+            writeErrLine("Source file not found!...");
+        }
+        catch (IOException ex) {
+            writeErrLine("IO problem occurred:%s", ex.getMessage());
+        }
+        catch (Throwable ex) {
+            writeErrLine("Problem occurred:%s", ex.getMessage());
+        }
+    }
+
+    public static void main(String[] args)
+    {
+        run(args);
+    }
+}
+
+
+package com.orhn.app.io.file;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
+public class BackupAndCopy {
+    private final Path m_src;
+    private final Path m_dest;
+
+    private void checkSourceFileIfExists() throws NoSuchFileException
+    {
+        if (Files.notExists(m_src))
+            throw new NoSuchFileException(m_src.toString());
+    }
+
+    private void backup(String suffix) throws IOException
+    {
+        Files.move(m_dest, Path.of(m_dest + suffix), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public BackupAndCopy(String src, String dest)
+    {
+        this(Path.of(src), Path.of(dest));
+    }
+
+    public BackupAndCopy(Path src, Path dest)
+    {
+        m_src = src;
+        m_dest = dest;
+    }
+
+    public void copy(String suffix) throws IOException
+    {
+        copy(suffix, true);
+    }
+
+    public void copy(String suffix, boolean overwriteBackupFile) throws IOException
+    {
+        checkSourceFileIfExists();
+
+        if (Files.exists(m_dest) && overwriteBackupFile)
+            backup(suffix);
+
+        Files.copy(m_src, m_dest, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    13.09.2024
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Files sınıfının createDirectory metodu aldığı Path'e ilişkin dizini yaratmak için kullanılabilir. Bu matodun ikinci
+    parametresi dosya özelliklerine (file attributes) ilişkindir. Sistemden sisteme değişiklik gösterebilmektedir. Burada
+    ele alınmayacaktır. Metodun ikinci parametresine argüman geçilmediğinde default attribute'lar geçerli olacaktır. Metot
+    yaratılmak istenen directory'ye ilişkin path varsa FileAlreadyExistsException fırlatır. İkinci parametreye geçilen
+    argüman geçersizse (aslında o sistemde desteklenmiyorsa) UnsupportedOperationException fırlatır. Herhangi bir IO problemi
+    durumunda IOException fırlatır. createDirectory metodu yaratılmak istenen dizine ilişkin parent directory'ler yoksa
+    yaratmaz. Parent directory'lerin de birlikte yaratılması için createDirectories metodu kullanılabilir
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örneği inceleyiniz
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
