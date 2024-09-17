@@ -1,4 +1,4 @@
-package com.orhn.app;
+package com.orhn.app.io.file.output;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -6,26 +6,27 @@ import java.io.IOException;
 import java.util.Random;
 
 import static com.orhn.util.console.CommandLineUtil.checkLengthEquals;
-import static com.orhn.util.console.Console.write;
-import static com.orhn.util.console.Console.writeErrLine;
+import static com.orhn.util.console.Console.*;
 
-public class Application {
+public class WriteRandomBytesApp {
     private static void writeFile(String path, int count)
     {
-        try(FileOutputStream fos = new FileOutputStream(path)) {
+        try (FileOutputStream fos = new FileOutputStream(path)) {
             Random random = new Random();
 
-            for(int i = 0; i < count; ++i){
+            for (int i = 0; i < count; ++i) {
                 byte val = (byte)random.nextInt(-128, 127);
-                write("%d", val);
+
+                write("%d ", val);
                 fos.write(val);
             }
+            writeLine();
         }
-        catch (FileNotFoundException ex) {
+        catch (FileNotFoundException ignore) {
             writeErrLine("%s is directory", path);
         }
-        catch (IOException ex){
-            writeErrLine("IO error occurred:%s", ex.getMessage());
+        catch (IOException ex) {
+            writeErrLine("IO error occurred:%s",ex.getMessage());
         }
     }
 
@@ -34,8 +35,9 @@ public class Application {
         checkLengthEquals(2, args.length, "wrong number of arguments");
 
         try {
-           int count = Integer.parseInt(args[1]);
-           writeFile(args[0], count);
+            int count = Integer.parseInt(args[1]);
+
+            writeFile(args[0], count);
         }
         catch (NumberFormatException ignore) {
             writeErrLine("Invalid count value!...");
@@ -43,5 +45,10 @@ public class Application {
         catch (Throwable ex) {
             writeErrLine("Problem occurred:%s", ex.getMessage());
         }
+    }
+
+    public static void main(String[] args)
+    {
+        run(args);
     }
 }
